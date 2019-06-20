@@ -5,7 +5,7 @@ from django.urls import reverse
 def home(request):
     """The home page."""
     context = {}
-    return render(request, 'home/base.html', context)
+    return render(request, 'home/home.html', context)
 
 
 def home_redirect(request):

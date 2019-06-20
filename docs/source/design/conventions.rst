@@ -6,7 +6,10 @@ Conventions
   - 4 spaces per indent (to conform to Python Convention)
 
 
+- File Structure
 
+  - templates
+  - static: css and sass, images, js
 
 
 

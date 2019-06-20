@@ -19,3 +19,12 @@ acronym [STEAM](https://en.wikipedia.org/wiki/STEAM_fields).
 
 - [ ] Provide an online platform where students can complete and turn in work
       with login credentials that can be easily reset from any mobile device.
+
+
+## TODO:
+- [ ] Properly document the file structure.
+  - [ ] extend manage.py to create the files for you.
+
+- [ ] Design a cool logo for KGI STEAM.
+
+- [ ] Consider adding a blog section.

@@ -1,0 +1,31 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KGI STEAM</title>
+
+    <!-- KGI STEAM base.css -->
+    <link rel="stylesheet" href="{% static 'home/css/base.css' %}">
+ 
+    <!-- MathJax (most up-to-date version)  https://www.mathjax.org/#gettingstarted -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+    <!-- Page CSS -->
+    {% block page_css  %}{% endblock %}
+ 
+    <!-- Spectre CSS https://www.mathjax.org/#gettingstarted -->
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+  </head>
+
+  <body>
+    {% block body_content %}
+    {% endblock %}
+  </body>
+</html>

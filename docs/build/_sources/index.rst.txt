@@ -10,6 +10,10 @@ Welcome to KGI STEAM's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   apps/courses
+   apps/home
+   apps/users   
+
    design/conventions
    design/features
    design/techstack

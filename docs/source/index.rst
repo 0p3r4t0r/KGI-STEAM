@@ -11,6 +11,7 @@ Welcome to KGI STEAM's documentation!
    :caption: Contents:
 
    apps/courses
+   apps/home
    apps/users   
 
    design/conventions
