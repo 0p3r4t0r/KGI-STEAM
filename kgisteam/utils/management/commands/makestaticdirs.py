@@ -1,6 +1,5 @@
 import sys
-
-from os.path import isdir
+import os
 
 from django.apps import apps
 from django.core.management import BaseCommand, CommandError
@@ -13,9 +12,6 @@ class Command(BaseCommand):
         https://github.com/django/django/blob/master/django/core/management/commands/makemigrations.py
         https://docs.djangoproject.com/en/2.2/howto/custom-management-commands/#accepting-optional-arguments"
     """
-    
-    # directory: if exists --> 1 else --> 0
-    dirs_exists = { 'css': 0, 'css/scss': 0, 'images': 0, 'js': 0 }
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -36,15 +32,23 @@ class Command(BaseCommand):
             sys.exit(2)
 
         if app_labels:
-            self.make_dirs()
+            for app_label in app_labels:
+                self.make_static_dirs(app_label)
 
-    def make_dirs(self, dirs=None):
-        if dirs is None:
-            dirs = self.dirs_exists
-        '''
-            1. Check if every dir exists.
-            2. If it doesn't exists, create it.
-        '''
-        print(dirs) 
-            
-      
+    def make_dir(self, path):
+        try:
+            os.makedirs(path)
+        except FileExistsError:
+            print('directory already exists: {}'.format(path))
+        except OSError:
+            print('failed to create directory: {}'.format(path))
+
+    def make_static_dirs(self, app_label):
+        static_base = os.path.join(app_label, 'static', app_label)
+        self.make_dir(static_base)
+
+        static_dirs = [ 'css', 'css/scss', 'images', 'js' ]
+        static_dir_paths = [ os.path.join(static_base, static_dir) 
+                                for static_dir in static_dirs ]
+        for static_dir_path in static_dir_paths:
+            self.make_dir(static_dir_path)
