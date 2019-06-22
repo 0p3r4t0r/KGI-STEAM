@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.static_dirs = [ 'css', 'css/scss', 'images', 'js' ]
+        self.static_dirs = [ 'css', 'images', 'js', 'scss' ]
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -51,12 +51,18 @@ class Command(BaseCommand):
         for static_dir_path in self.static_dir_paths(app_label):
             if not os.path.isdir(static_dir_path):
                 print('directory not found: {}'.format(static_dir_path))
-        ''' 
-        dirs_in_app = os.listdir(app_label)
-        if (set(self.static_dirs).intersection(set(dirs_in_app)) !=
-            set(self.static_dirs)):
-            print('missing') 
-        '''
+        
+        static_base = self.static_base_path(app_label)
+        try:
+            app_static_dirs = os.listdir(static_base)
+            if set(self.static_dirs) != set(app_static_dirs):
+                print('Check staic directories for app: {}.'.format(app_label))
+                print('\tconvention:', sorted(self.static_dirs))
+                print('\treality:   ', sorted(app_static_dirs))
+            else:
+                print('{}: All good.'.format(app_label))
+        except FileNotFoundError:
+            print('directory not found: {}'.format(static_base))
 
     def make_dir(self, path):
         try:
@@ -67,8 +73,11 @@ class Command(BaseCommand):
         except OSError:
             print('failed to create directory: {}'.format(path))
 
+    def static_base_path(self, app_label):
+        return os.path.join(app_label, 'static', app_label)
+
     def static_dir_paths(self, app_label):
-        static_base = os.path.join(app_label, 'static', app_label)
+        static_base = self.static_base_path(app_label)
         static_dir_paths = [ os.path.join(static_base, static_dir) 
                                 for static_dir in self.static_dirs ]
         static_dir_paths.insert(0, static_base)
