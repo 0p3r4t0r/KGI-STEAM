@@ -6,14 +6,22 @@
             <object class="image" type="image/svg+xml" data="{% static 'home/icons/kgisteamLogo.svg' %}">
                 EdTech/EdTeach
             </object>
-            <span class="has-text-weight-bold is-size-1">
-                KGI&nbsp;
+            <span id="logo-KGI" class="has-text-weight-bold is-size-1 logo-acronym">
+                KGI
+            </span>
+            <span class="is-size-1">
+                &nbsp;
             </span>
             {% for letter in 'STEAM' %}
-            <span class="has-text-weight-bold is-size-1">
+            <span id="logo-{{ letter }}" class="has-text-weight-bold is-size-1 logo-acronym">
                 {{ letter }}
             </span>
             {% endfor %}
         </a>
+    </div>
+    <div class="navbar-menu is-active">
+        <section class="section">
+            test
+        </section>
     </div>
 </nav>
