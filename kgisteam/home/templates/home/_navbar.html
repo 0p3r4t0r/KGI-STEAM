@@ -1,10 +1,19 @@
-<header class="navbar bg-dark">
-  <section class="navbar-section">
-    <a href="{% url 'home' %}" class="navbar-brand mr-2">KGI STEAM</a>
-  </section>
-  <section class="navbar-center">
-    <!-- centered logo or brand -->
-  </section>
-  <section class="navbar-section">
-  </section>
-</header>
+{% load static %}
+
+<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="{% url 'home' %}">
+            <object class="image" type="image/svg+xml" data="{% static 'home/icons/kgisteamLogo.svg' %}">
+                EdTech/EdTeach
+            </object>
+            <span class="has-text-weight-bold is-size-1">
+                KGI&nbsp;
+            </span>
+            {% for letter in 'STEAM' %}
+            <span class="has-text-weight-bold is-size-1">
+                {{ letter }}
+            </span>
+            {% endfor %}
+        </a>
+    </div>
+</nav>
