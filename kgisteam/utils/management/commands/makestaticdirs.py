@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.static_dirs = [ 'css', 'images', 'js', 'scss' ]
+        self.static_dirs = [ 'css', 'icons', 'images', 'js', 'scss' ]
 
     def add_arguments(self, parser):
         parser.add_argument(
