@@ -10,19 +10,21 @@
 <section class="hero is-primary">                                               
     <div class="hero-body">                                                       
         <div class="container">                                                     
-            <div class="columns is-centered is-multiline is-size-1-desktop has-text-weight-bold">                                         
-                <div class="column is-full">
-                    <p id="hero-KGI">
-                        Keyless
-                    </p>
+            <div class="columns is-centered is-size-1-tablet is-size-2-mobile has-text-weight-bold">                                         
+                <div class="column" id="hero-1"> 
+                    <span id="hero-KGI">KGI</span>
+                    <span id="hero-space">&nbsp;</span>
+                    {% spaceless %}
+                    {% for letter in 'STEAM' %}
+                    <span id="hero-{{ letter }}">{{ letter }}</span>
+                    {% endfor %}
+                    {% endspaceless %}
                 </div>
-                {% for letter in steam_acronym %}
-                <div class="column is-full">
-                    <span id="hero-{{ letter }}">
-                        {{ letter }}
-                    </span>
-                </div>
-                {% endfor %}
+                <div class="column" id="hero-2">
+                    {% for word in steam_acronym %}
+                    <span class="" id="hero-{{ word }}">{{word}}</span>
+                    {% endfor %}
+                </div>    
             </div>                                                    
         </div>                                                                  
     </div>                                                                    
