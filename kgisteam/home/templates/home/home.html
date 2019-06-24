@@ -10,28 +10,19 @@
 <section class="hero is-primary">                                               
     <div class="hero-body">                                                       
         <div class="container">                                                     
-            <div class="columns is-centered">                                         
-                <div class="column is-one-third">
-                    <section class="section has-text-centered">
-                        <object class="image" data="{% static 'home/icons/kgisteamLogo.svg' %}" id="logo-icon" type="image/svg+xml"/>                                                         
-                        </object>
-                    </section>
-                    <section class="section has-text-centered has-text-weight-bold is-size-1">
-                        <span id="hero-KGI">
-                            KGI
-                        </span>
-                        <span>
-                            &nbsp;
-                        </span>
-                        {% for letter in 'STEAM' %}                                         
-                        <span id="hero-{{ letter }}">
-                        {{ letter }}                                                    
-                        </span>
-                        {% endfor %}
-                    <section>
+            <div class="columns is-centered is-multiline is-size-1-desktop has-text-weight-bold">                                         
+                <div class="column is-full">
+                    <p id="hero-KGI">
+                        Keyless
+                    </p>
                 </div>
-                <div class="column">
+                {% for letter in steam_acronym %}
+                <div class="column is-full">
+                    <span id="hero-{{ letter }}">
+                        {{ letter }}
+                    </span>
                 </div>
+                {% endfor %}
             </div>                                                    
         </div>                                                                  
     </div>                                                                    
