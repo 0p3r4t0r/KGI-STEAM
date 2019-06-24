@@ -2,26 +2,14 @@
 
 <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-        <a class="navbar-item" href="{% url 'home' %}">
-            <object class="image" type="image/svg+xml" data="{% static 'home/icons/kgisteamLogo.svg' %}">
-                EdTech/EdTeach
+        <a class="navbar-item" href="{% url 'home' %}" id="logo">
+            <object class="image" data="{% static 'home/icons/kgisteamLogo.svg' %}" id="logo-icon" type="image/svg+xml">
+                EdTech
+                EdTeach
             </object>
-            <span id="logo-KGI" class="has-text-weight-bold is-size-1 logo-acronym">
-                KGI
+            <span class="has-text-weight-bold is-size-1" id="logo-text">
+                KGI STEAM
             </span>
-            <span class="is-size-1">
-                &nbsp;
-            </span>
-            {% for letter in 'STEAM' %}
-            <span id="logo-{{ letter }}" class="has-text-weight-bold is-size-1 logo-acronym">
-                {{ letter }}
-            </span>
-            {% endfor %}
         </a>
-    </div>
-    <div class="navbar-menu is-active">
-        <section class="section">
-            test
-        </section>
     </div>
 </nav>

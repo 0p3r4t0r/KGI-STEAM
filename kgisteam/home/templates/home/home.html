@@ -7,5 +7,33 @@
 
 
 {% block body_content %}
-  {% include 'home/_navbar.html' %}
+<section class="hero is-primary">                                               
+    <div class="hero-body">                                                       
+        <div class="container">                                                     
+            <div class="columns is-centered">                                         
+                <div class="column is-one-third">
+                    <section class="section has-text-centered">
+                        <object class="image" data="{% static 'home/icons/kgisteamLogo.svg' %}" id="logo-icon" type="image/svg+xml"/>                                                         
+                        </object>
+                    </section>
+                    <section class="section has-text-centered has-text-weight-bold is-size-1">
+                        <span id="hero-KGI">
+                            KGI
+                        </span>
+                        <span>
+                            &nbsp;
+                        </span>
+                        {% for letter in 'STEAM' %}                                         
+                        <span id="hero-{{ letter }}">
+                        {{ letter }}                                                    
+                        </span>
+                        {% endfor %}
+                    <section>
+                </div>
+                <div class="column">
+                </div>
+            </div>                                                    
+        </div>                                                                  
+    </div>                                                                    
+</section>
 {% endblock %}

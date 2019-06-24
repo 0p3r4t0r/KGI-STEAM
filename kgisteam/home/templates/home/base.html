@@ -9,7 +9,8 @@
 
         <title>KGI STEAM</title>
         
-        {% include 'home/_bulma.html' %}
+        <!-- Bulma CSS (minified): https://bulma.io/documentation/overview/start/ -->   
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
 
         <!-- KGI STEAM base.css: kgisteam/home/static/home/base.css -->
         <link rel="stylesheet" href="{% static 'home/css/base.css' %}">
@@ -19,6 +20,7 @@
     </head>
 
     <body>
+        {% include 'home/_navbar.html' %}
         {% block body_content %}
         {% endblock %}
     </body>
