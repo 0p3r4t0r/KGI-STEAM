@@ -5,7 +5,7 @@ from django.urls import reverse
 def home(request):
     """The home page."""
     context = {
-        'steam_acronym': ('Science', 'Technology', 'Engineering', 
+        'steam_acronym': ('Keyless', 'Science', 'Technology', 'Engineering', 
                             'Art', 'Mathematics',)
     }
     return render(request, 'home/home.html', context)
