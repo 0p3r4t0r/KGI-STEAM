@@ -3,15 +3,16 @@
 
 
 {% block page_css %}
+<link rel="stylesheet" href="{% static 'home/css/home.css' %}">
 {% endblock %}
 
 
 {% block body_content %}
-<section class="hero is-primary">                                               
-    <div class="hero-body">                                                       
-        <div class="container">                                                     
-            <div class="columns is-centered is-size-1-tablet is-size-2-mobile has-text-weight-bold">                                         
-                <div class="column" id="hero-1"> 
+<section class="hero is-primary"> 
+    <div class="hero-body">
+        <div class="container"> 
+            <div class="columns is-size-1-tablet is-size-2-mobile has-text-weight-bold"> 
+                <div class="column" id="hero-1">
                     <span id="hero-KGI">KGI</span>
                     <span id="hero-space">&nbsp;</span>
                     {% spaceless %}
@@ -22,11 +23,11 @@
                 </div>
                 <div class="column" id="hero-2">
                     {% for word in steam_acronym %}
-                    <span class="" id="hero-{{ word }}">{{word}}</span>
+                    <span class="is-invisible logo-letter_" id="hero-{{ word }}">{{word}}</span>
                     {% endfor %}
-                </div>    
-            </div>                                                    
-        </div>                                                                  
-    </div>                                                                    
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 {% endblock %}
