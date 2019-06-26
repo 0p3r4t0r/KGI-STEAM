@@ -7,7 +7,6 @@ from django.core.management import BaseCommand, CommandError
 
 class Command(BaseCommand):
     """ Creates directories for static files if they don't exist.
-
        
         https://github.com/django/django/blob/master/django/core/management/commands/makemigrations.py
         https://docs.djangoproject.com/en/2.2/howto/custom-management-commands/#accepting-optional-arguments"
@@ -48,35 +47,41 @@ class Command(BaseCommand):
                 self.check_static_dirs(app_label)
 
     def check_static_dirs(self, app_label):
+        ''' Check that all the directories in self.static_dirs exists for a
+            given app.
+        '''
         for static_dir_path in self.static_dir_paths(app_label):
             if not os.path.isdir(static_dir_path):
-                print('directory not found: {}'.format(static_dir_path))
+                self.stdout.write('directory not found: {}'.format(static_dir_path))
         
         static_base = self.static_base_path(app_label)
         try:
-            app_static_dirs = os.listdir(static_base)
+            app_static_dirs = [ sd for sd in os.listdir(static_base) if not sd.startswith('.') ]
             if set(self.static_dirs) != set(app_static_dirs):
-                print('Check staic directories for app: {}.'.format(app_label))
-                print('\tconvention:', sorted(self.static_dirs))
-                print('\treality:   ', sorted(app_static_dirs))
+                self.stdout.write('Check staic directories for app: {}.'.format(app_label))
+                self.stdout.write('\tconvention: ' + str(sorted(self.static_dirs)))
+                self.stdout.write('\treality:    ' + str(sorted(app_static_dirs)))
             else:
-                print('{}: All good.'.format(app_label))
+                self.stdout.write('{}: All good.'.format(app_label))
         except FileNotFoundError:
-            print('directory not found: {}'.format(static_base))
+            self.stdout.write('directory not found: {}'.format(static_base))
 
     def make_dir(self, path):
+        ''' Attempt to make a directory.'''
         try:
             os.makedirs(path)
-            print('directory created: {}'.format(path))
+            self.stdout.write('directory created: {}'.format(path))
         except FileExistsError:
-            print('directory already exists: {}'.format(path))
+            self.stdout.write('directory already exists: {}'.format(path))
         except OSError:
-            print('failed to create directory: {}'.format(path))
+            self.stdout.write('failed to create directory: {}'.format(path))
 
     def static_base_path(self, app_label):
+        ''' Create the path app_label/static/app_label.'''
         return os.path.join(app_label, 'static', app_label)
 
     def static_dir_paths(self, app_label):
+        ''' Return a list of all static dirs for an application.'''
         static_base = self.static_base_path(app_label)
         static_dir_paths = [ os.path.join(static_base, static_dir) 
                                 for static_dir in self.static_dirs ]
@@ -84,5 +89,6 @@ class Command(BaseCommand):
         return static_dir_paths
 
     def make_static_dirs(self, app_label):
+        ''' Create all static dirs for an application.'''
         for static_dir_path in self.static_dir_paths(app_label):
             self.make_dir(static_dir_path)
