@@ -1,3 +1,2 @@
 Django>=2.2
-beautifulsoup4
 Sphinx>=2.1.1

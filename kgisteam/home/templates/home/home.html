@@ -3,7 +3,7 @@
 
 
 {% block page_css %}
-<link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+<link href="{% static 'home/css/home.css' %}" rel="stylesheet">
 {% endblock %}
 
 
@@ -11,7 +11,7 @@
 <section class="hero is-primary"> 
     <div class="hero-body">
         <div class="container"> 
-            <div class="columns is-size-1-tablet is-size-2-mobile has-text-weight-bold"> 
+            <div class="columns has-text-weight-bold is-size-1-tablet is-size-2-mobile"> 
                 <div class="column hero-column_">
                     <span class="name-acronym_" id="hero-KGI">KGI</span>
                     <span id="hero-space">&nbsp;</span>
