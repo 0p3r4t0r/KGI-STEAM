@@ -5,15 +5,15 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta content="initial-scale=1, width=device-width" name="viewport">
 
         <title>KGI STEAM</title>
         
         <!-- Bulma CSS (minified): https://bulma.io/documentation/overview/start/ -->   
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" rel="stylesheet">
 
         <!-- KGI STEAM base.css: kgisteam/home/static/home/base.css -->
-        <link rel="stylesheet" href="{% static 'home/css/base.css' %}">
+        <link href="{% static 'home/css/base.css' %}" rel="stylesheet">
 
         <!-- Page CSS -->
         {% block page_css  %}{% endblock %}

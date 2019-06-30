@@ -12,14 +12,12 @@ class Command(BaseCommand):
         https://docs.djangoproject.com/en/2.2/howto/custom-management-commands/#accepting-optional-arguments"
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.static_dirs = [ 'css', 'icons', 'images', 'js', 'scss' ]
+    static_dirs = [ 'css', 'icons', 'images', 'js', 'scss' ]
 
     def add_arguments(self, parser):
         parser.add_argument(
             'args', metavar='app_label', nargs='*',
-            help='Specify the label(s) to make static directories for.',
+            help='Specify the app(s) to make static directories for.',
         )
         parser.add_argument(
             '--check', action='store_true',
@@ -30,6 +28,7 @@ class Command(BaseCommand):
         app_labels = set(app_labels)
         has_bad_labels = False
         for app_label in app_labels:
+            """ Check that the app exists."""
             try:
                 apps.get_app_config(app_label)
             except LookupError as err:
