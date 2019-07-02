@@ -10,15 +10,20 @@ from html.parser import HTMLParser
 class HTMLChecker(HTMLParser):
     """ https://docs.python.org/3/library/html.parser.html
     """
+
+    check_attrs_error = ''
+    check_attrvals_errors = iter(())
+    check_djtags_errors = iter(())
  
     def handle_starttag(self, tag, attrs: list):
-        self.check_attributes(tag, attrs)
-        self.check_attribute_values(tag, attrs)
-        self.check_django_tags(tag, attrs)
+        self.line, self.column = self.getpos()
+        self.check_attrs_error = self.check_attributes(tag, attrs)
+        self.check_attrvals_errors = self.check_attribute_values(tag, attrs)
+        self.check_djtags_errors = self.check_django_tags(tag, attrs)
 
     def check_attributes(self, tag, attrs: list):
         attrs = [ attr[0] for attr in attrs ]
-        self.is_sorted(tag, attrs, error_message='attribute order')    
+        return self.is_sorted(tag, attrs, error_message='attribute order')    
 
     def check_attribute_values(self, tag, attrs: list):
         for attr in attrs:
@@ -26,16 +31,9 @@ class HTMLChecker(HTMLParser):
             if attr_values is not None:
                 attr_values = self.cut_django_tags(attr_values)
                 attr_values = attr_values.split(' ')
-                self.is_sorted(tag, attr_values, error_message='value order')
-
-    def cut_django_tags(self, values: str) -> str:
-        """ Remove the django tags from the string values.
-        """
-        django_tag = self.find_django_tag(values)
-        while django_tag:
-            values = values.replace(django_tag, '')
-            django_tag = self.find_django_tag(values) 
-        return values 
+                result = self.is_sorted(tag, attr_values, error_message='value order')
+                if result:
+                    yield result
 
     def check_django_tags(self, tag, attrs: list):
         for attr in attrs:
@@ -47,12 +45,23 @@ class HTMLChecker(HTMLParser):
                     django_tags.append(django_tag)
                     attr_values = attr_values.replace(django_tag, '')
                     django_tag = self.find_django_tag(attr_values)
-                self.is_sorted(tag, django_tags, 'django tag order')
-    
+                result = self.is_sorted(tag, django_tags, 'django tag order')
+                if result:
+                    yield result
+     
+    def cut_django_tags(self, values: str) -> str:
+        """ Remove the django tags from the string values.
+        """
+        django_tag = self.find_django_tag(values)
+        while django_tag:
+            values = values.replace(django_tag, '')
+            django_tag = self.find_django_tag(values) 
+        return values 
+
     def find_django_tag(self, values: str) -> str:
         """ Get the django tags from a string.
         """
-        DJANGO_TAG = '^.*(\{%[^\%}]+\%}).*'
+        DJANGO_TAG = '^[^{%]*({[^}]+%}).*'
         django_tag = re.match(DJANGO_TAG, values)
         if django_tag:
             return django_tag.group(1)
@@ -63,10 +72,9 @@ class HTMLChecker(HTMLParser):
         FORMAT_STR = '\tline {position} {tag}: {error_message}\n\t\tchange: {html}\n\t\tto:     {html_sorted}\n'
         html_sorted = sorted(html)
         if html != html_sorted:
-            line_number, line_spaces = self.getpos()
-            print(FORMAT_STR.format(position=line_number, tag=tag,
+            return FORMAT_STR.format(position=self.line, tag=tag,
                     error_message=error_message,
-                    html=html, html_sorted=html_sorted))
+                    html=html, html_sorted=html_sorted)
 
 
 class Command(BaseCommand):
@@ -111,11 +119,17 @@ class Command(BaseCommand):
         for app_label in app_labels:
             """ Check the html"""
             for file_path in self.template_file_paths(app_label):
-                print('checking file: {}'.format(file_path))
+                self.stdout.write('checking file: {}'.format(file_path))
                 with open(file_path) as f:
                     for line in f:
                         checker.feed(line)
-
+                        if checker.check_attrs_error:
+                            self.stdout.write(checker.check_attrs_error)
+                            checker.check_attrs_error = None
+                        for error in checker.check_attrvals_errors:
+                            self.stdout.write(error)
+                        for error in checker.check_djtags_errors:
+                            self.stdout.write(error)
 
     def template_base_dir(self, app_label):
         return os.path.join(app_label, 'templates', app_label)
