@@ -34,9 +34,19 @@
 <section class="section">
     <div class="container">
         <div class="columns is-centered is-vcentered">
-            {% include 'courses/_appDescription_column.html' %}
-            {% include 'syllabi/_appDescription_column.html' %}
-            {% include 'worksheets/_appDescription_column.html' %}
+            {% for app_config in app_configs %}
+            <div class="column has-text-centered is-3">                                     
+                <figure class="container image is-96x96">                                   
+                    <img src="{% static app_config.icon_path %}">                                  
+                </figure>                                                                   
+                <p class="title">                                                           
+                    {{ app_config.name|title }}                                                             
+                </p>                                                                        
+                <p class="subtitle">                                                        
+                    {{ app_config.description }}                                                       
+                </p>                                                                        
+            </div> 
+            {% endfor %}
         </div>
     </div>
 </section>
