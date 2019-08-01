@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 from django.db import models
 
 """
@@ -22,24 +23,48 @@ class Course(models.Model):
     MIDDLESCHOOL = 'MS'
     HIGHSCHOOL = 'HS'    
 
-    GRADE_CHOICES = [
+    SCHOOL_CHOICES = [
         (MIDDLESCHOOL, 'Middle School'),
         (HIGHSCHOOL, 'High School'),
     ]
+    GRADE_CHOICES = [
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+    ]
 
 
-    course_name = models.CharField(
+    name = models.CharField(
         max_length=30
         )
-    course_school = models.CharField(
+    school = models.CharField(
         max_length=2,
+        choices=SCHOOL_CHOICES,
+        )
+    grade = models.IntegerField(
         choices=GRADE_CHOICES,
         )
-    course_grade = models.IntegerField(
+    letter_number = models.CharField(
         max_length=1,
-        # validator that only allows 1-3.
+        validators=[
+            # Match A-E (Middle School) or 1-8 (High School)
+            RegexValidator(
+                message='Middle School classes: A-E or High School classes: 1-8',
+                regex='[A-E]|[1-8]',
+            )
+        ],
+        verbose_name='Class Letter/Number',
         )
-    course_class = models.CharField(
-        max_length=1,
-        # validator that only allows A-E or 1-8
+    description = models.TextField(
+            blank=True,
+            max_length=200,
         )
+    image_source_url = models.CharField(
+        blank=True,
+        max_length=200,
+        )
+    image = models.ImageField(
+        blank=True,
+        upload_to='courses',
+        )
+    

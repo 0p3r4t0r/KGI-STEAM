@@ -12,3 +12,6 @@ __pycache__/
 # Virtual environments.
 virtualenv_*
 .virtualenv_*
+
+# Media Files
+*/media/*
