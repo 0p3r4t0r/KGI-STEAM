@@ -13,5 +13,6 @@ __pycache__/
 virtualenv_*
 .virtualenv_*
 
-# Media Files
+# Media and static files
+*/static/*
 */media/*

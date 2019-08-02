@@ -1,0 +1,20 @@
+<div class="column is-12-tablet is-6-desktop is-4-widescreen">
+    <article class="box">
+        <div class="media">
+            <aside class="media-left">
+                <img src="{{ MEDIA_PREFIX }}{{ course.image_path }}" width="80">
+            </aside>
+            <div class="media-content">
+                <p class="title is-5 is-spaced is-marginless">
+                    <a href="">{{ course.name }}</a>
+                </p>
+                <p class="subtitile is-marginless">
+                    {{course.school}}: {{course.grade}}-{{course.letter_number}}
+                </p>
+                <div class="content is-small">
+                    {{course.description}}
+                </div>
+            </div>
+        </div>
+    </article>
+</div>

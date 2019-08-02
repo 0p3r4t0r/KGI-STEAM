@@ -1,0 +1,8 @@
+{% extends "base/base.html" %}
+
+
+{% block body_content %}
+    {% for course in courses %}
+        {% include "courses/_course_box.html" %}
+    {% endfor %}
+{% endblock %}

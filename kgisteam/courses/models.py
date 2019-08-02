@@ -63,7 +63,7 @@ class Course(models.Model):
         blank=True,
         max_length=200,
         )
-    image = models.ImageField(
+    image_path = models.ImageField(
         blank=True,
         upload_to='courses',
         )
