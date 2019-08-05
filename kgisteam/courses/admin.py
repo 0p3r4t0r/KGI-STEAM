@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from courses.models import Course
 
@@ -8,15 +8,15 @@ from courses.models import Course
 class CourseAdmin(admin.ModelAdmin):
     """
     https://books.agiliq.com/projects/django-admin-cookbook/en/latest/imagefield.html
+    https://docs.djangoproject.com/en/2.2/ref/utils/#module-django.utils.html
     """    
     list_display = ('name', 'school', 'grade', 'letter_number')    
 
     readonly_fields = ["image_preview"]
 
     def image_preview(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
-            url = obj.headshot.url,
-            width=obj.headshot.width,
-            height=obj.headshot.height,
-            )
+        return format_html('<img src="{}" width="{}" height={} />',
+            obj.image_path.url,
+            200,
+            200,
         )

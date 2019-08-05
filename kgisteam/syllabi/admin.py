@@ -1,3 +1,13 @@
 from django.contrib import admin
 
-# Register your models here.
+from syllabi.models import Lesson, Syllabus
+
+
+@admin.register(Syllabus)
+class SyllabusAdmin(admin.ModelAdmin):
+    list_display = ('course',)
+
+
+@admin.register(Lesson)
+class LessonAdmin(admin.ModelAdmin):
+    pass

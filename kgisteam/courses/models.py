@@ -67,4 +67,11 @@ class Course(models.Model):
         blank=True,
         upload_to='courses',
         )
-    
+
+    def __str__(self):
+        return '{name} ({school}: {grade}-{letter_number})'.format(
+            name=self.name,
+            school=self.school,
+            grade=self.grade,
+            letter_number=self.letter_number
+        ) 
