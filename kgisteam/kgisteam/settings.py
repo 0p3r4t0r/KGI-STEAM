@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home.apps.HomeConfig',
-    'syllabi.apps.SyllabiConfig',
     'users.apps.UsersConfig',
     'utils.apps.UtilsConfig',
     'worksheets.apps.WorksheetsConfig',

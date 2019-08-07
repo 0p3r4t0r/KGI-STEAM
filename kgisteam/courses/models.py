@@ -1,4 +1,6 @@
-from django.core.validators import RegexValidator
+import datetime
+
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 """
@@ -33,7 +35,15 @@ class Course(models.Model):
         (3, '3'),
     ]
 
-
+    year = models.IntegerField(
+        default=2019,
+        validators=[
+            MinValueValidator(
+                2019,
+                message='No courses before 2019.',
+            ),
+        ]
+    )
     name = models.CharField(
         max_length=30
         )
@@ -69,9 +79,87 @@ class Course(models.Model):
         )
 
     def __str__(self):
-        return '{name} ({school}: {grade}-{letter_number})'.format(
+        return '{name} ({school}: {grade}-{letter_number}) {year}'.format(
             name=self.name,
             school=self.school,
             grade=self.grade,
-            letter_number=self.letter_number
-        ) 
+            letter_number=self.letter_number,
+            year=self.year,
+        )
+
+
+class Syllabus(models.Model):
+    course = models.OneToOneField(
+        Course,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    class Meta:
+        verbose_name_plural = "Syllabi"
+
+    def __str__(self):
+        return '{} syllabus'.format(self.course)
+
+
+class Lesson(models.Model):
+    url_max_length=200
+    url_text_max_length=30
+
+    syllabus = models.ForeignKey(
+        Syllabus,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    number = models.IntegerField(
+        null=True,
+    )
+    date = models.DateField()
+    quiz = models.CharField(
+        blank=True,
+        max_length=30,
+    )
+    topics = models.CharField(
+        blank=True,
+        max_length=60,
+    )
+    reading = models.CharField(
+        blank=True,
+        max_length=60,
+    )
+    homework = models.CharField(
+        blank=True,
+        max_length=60,
+    )
+    link1_URL = models.URLField(
+        blank=True,
+        max_length=url_max_length,
+    )
+    link1_text = models.CharField(
+        blank=True,
+        max_length=url_text_max_length,
+    )
+    link2_URL = models.URLField(
+        blank=True,
+        max_length=url_max_length,
+    )
+    link2_text = models.CharField(
+        blank=True,
+        max_length=url_text_max_length,
+    )
+    link3_URL = models.URLField(
+        blank=True,
+        max_length=url_max_length,
+    )
+    link3_text = models.CharField(
+        blank=True,
+        max_length=url_text_max_length,
+    )
+    link4_URL = models.URLField(
+        blank=True,
+        max_length=url_max_length,
+    )
+    link4_text = models.CharField(
+        blank=True,
+        max_length=url_text_max_length,
+    )
