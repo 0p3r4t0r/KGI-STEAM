@@ -78,6 +78,14 @@ class Course(models.Model):
         upload_to='courses',
         )
 
+
+    def nen_kumi(self):
+        return '{grade}-{letter_number}'.format(
+            grade=self.grade,
+            letter_number=self.letter_number,
+        )
+
+
     def __str__(self):
         return '{name} ({school}: {grade}-{letter_number}) {year}'.format(
             name=self.name,

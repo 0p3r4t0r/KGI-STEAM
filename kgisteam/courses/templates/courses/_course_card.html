@@ -1,5 +1,5 @@
-<a href="https://www.google.com">
-    <div class="card course_card">
+<div class="card course_card">
+    <a href="{% url 'courses-course' course.school course.name course.nen_kumi course.year %}">
         <div class="card-image">
             <figure class="image is-3by2">
                 <img src="{{ MEDIA_PREFIX }}{{ course.image_path }}">
@@ -13,10 +13,10 @@
                 <p class="subtitle">
                     {{ course.school }}: {{ course.grade }}-{{ course.letter_number }}
                 </p>
-                <p>
+                <p class="has-text-black">
                     {{ course.description }}
                 </p>
             </div>
         </div>
-    </div>
-</a>
+    </a>
+</div>
