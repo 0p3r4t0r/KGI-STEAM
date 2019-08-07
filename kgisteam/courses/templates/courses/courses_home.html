@@ -1,8 +1,16 @@
-{% extends "base/base.html" %}
+{% extends "kgisteam/base.html" %}
+{% load static %}
 
+{% block page_css %}
+    <link href="{% static 'courses/css/courses_home.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block body_content %}
-    {% for course in courses %}
-        {% include "courses/_course_box.html" %}
-    {% endfor %}
+    <div class="columns is-gapless is-multiline">
+        {% for course in courses %}
+        <div class="column is-one-quarter">
+            {% include "courses/_course_card.html" %}
+        </div>
+        {% endfor %}
+    </div>
 {% endblock %}

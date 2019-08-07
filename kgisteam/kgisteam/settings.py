@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home.apps.HomeConfig',
+    'info.apps.InfoConfig',
     'users.apps.UsersConfig',
     'utils.apps.UtilsConfig',
     'worksheets.apps.WorksheetsConfig',
@@ -59,7 +59,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # https://docs.djangoproject.com/en/2.2/howto/overriding-templates/
-        'DIRS': [ os.path.join(BASE_DIR, 'templates') ],
+        'DIRS': [ os.path.join(BASE_DIR, 'kgisteam/templates') ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,6 +125,9 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
+STATICFILES_DIRS = [
+    'kgisteam/static/',
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATIC_URL = '/static/'
 

@@ -10,17 +10,11 @@ courses_config = apps.get_app_config('courses')
 worksheets_config = apps.get_app_config('worksheets')
 
 
-def home(request):
-    """The home page."""
+def info_home(request):
+    """The info page."""
     context = {
         'app_configs': (courses_config, worksheets_config,),
         'steam_acronym': ('Keyless', 'Science', 'Technology', 'Engineering', 
                             'Art', 'Mathematics',),
     }
-    return render(request, 'home/home.html', context)
-
-
-def home_redirect(request):
-    """Redirects to the home page."""
-    context = {}
-    return redirect(request, reverse('home'), context)
+    return render(request, 'info/info_home.html', context)

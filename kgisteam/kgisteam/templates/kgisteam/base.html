@@ -1,5 +1,5 @@
 {% load static %}
-
+{% get_media_prefix as MEDIA_PREFIX %}
 
 <!DOCTYPE html>
 <html>
@@ -12,15 +12,15 @@
         <!-- Bulma CSS (minified): https://bulma.io/documentation/overview/start/ -->   
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" rel="stylesheet">
 
-        <!-- KGI STEAM base.css: kgisteam/home/static/home/base.css -->
-        <link href="{% static 'home/css/base.css' %}" rel="stylesheet">
+        <!-- KGI STEAM base.css: kgisteam/static/kgisteam/base.css -->
+        <link href="{% static 'kgisteam/base.css' %}" rel="stylesheet">
 
         <!-- Page CSS -->
         {% block page_css  %}{% endblock %}
     </head>
 
     <body>
-        {% include 'home/_navbar.html' %}
+        {% include 'kgisteam/_navbar.html' %}
         {% block body_content %}
         {% endblock %}
         {% block body_scripts %}

@@ -1,0 +1,22 @@
+<a href="https://www.google.com">
+    <div class="card course_card">
+        <div class="card-image">
+            <figure class="image is-3by2">
+                <img src="{{ MEDIA_PREFIX }}{{ course.image_path }}">
+            </figure>
+        </div>
+        <div class="card-content">
+            <div class="content">
+                <p class="title is-3">
+                    {{ course.name }}
+                </p>
+                <p class="subtitle">
+                    {{ course.school }}: {{ course.grade }}-{{ course.letter_number }}
+                </p>
+                <p>
+                    {{ course.description }}
+                </p>
+            </div>
+        </div>
+    </div>
+</a>
