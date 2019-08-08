@@ -133,4 +133,3 @@ STATIC_URL = '/static/'
 
 # Adding settings to the default: Settings are in alphabetical order.
 AUTH_USER_MODEL = 'users.CustomUser'
-

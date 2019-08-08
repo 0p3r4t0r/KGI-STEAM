@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from courses import views as courses_views
+from kgisteam import views as kgisteam_views
 
 
 urlpatterns = [
@@ -26,8 +27,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('courses/', include('courses.urls')),
     path('info/', include('info.urls')),
-] 
+]
 
+handler404 = kgisteam_views.error_404
 
 # https://docs.djangoproject.com/en/2.2/howto/static-files/#serving-files-uploaded-by-a-user-during-development
 if settings.DEBUG:

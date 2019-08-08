@@ -1,0 +1,56 @@
+// Syllabi
+
+$border-color: rgb(150,150,150);
+
+
+table {
+  width: 100vw;
+}
+
+tr.flex-table-row {
+  display: flex;
+  flex-flow: row wrap;
+  border: solid $border-color 2px;
+}
+
+th, td {
+  flex: 1 1 33%;
+  padding: 2.5px 5px 2.5px 5px;
+  border: solid $border-color 1px;
+
+  &.lesson-topics, &.lesson-links {
+    min-width: 100%;
+  }
+}
+
+
+@media only screen and (min-width : 450px) {
+  tr.flex-table-row {
+    flex: 1 1;
+    flex-flow: row nowrap;
+
+    &:nth-child(even) {
+      background-color: rgb(235,235,235);
+    }
+
+    &:hover {
+      background-color: rgb(102, 255, 153);
+    }
+
+  }
+
+  th, td {
+
+    &.lesson-number {
+      max-width: 3em;
+    }
+
+    &.lesson-date {
+      max-width: 10em;
+    }
+
+    &.lesson-topics, &.lesson-links {
+      min-width: unset;
+    }
+  }
+}

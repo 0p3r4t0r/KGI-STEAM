@@ -1,0 +1,43 @@
+table {
+  width: 100vw;
+}
+
+tr.flex-table-row {
+  display: flex;
+  flex-flow: row wrap;
+  border: solid #969696 2px;
+}
+
+th, td {
+  flex: 1 1 33%;
+  padding: 2.5px 5px 2.5px 5px;
+  border: solid #969696 1px;
+}
+th.lesson-topics, th.lesson-links, td.lesson-topics, td.lesson-links {
+  min-width: 100%;
+}
+
+@media only screen and (min-width: 450px) {
+  tr.flex-table-row {
+    flex: 1 1;
+    flex-flow: row nowrap;
+  }
+  tr.flex-table-row:nth-child(even) {
+    background-color: #ebebeb;
+  }
+  tr.flex-table-row:hover {
+    background-color: #66ff99;
+  }
+
+  th.lesson-number, td.lesson-number {
+    max-width: 3em;
+  }
+  th.lesson-date, td.lesson-date {
+    max-width: 10em;
+  }
+  th.lesson-topics, th.lesson-links, td.lesson-topics, td.lesson-links {
+    min-width: unset;
+  }
+}
+
+/*# sourceMappingURL=courses_course.css.map */

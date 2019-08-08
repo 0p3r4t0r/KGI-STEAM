@@ -1,0 +1,28 @@
+{% load static %}
+{% get_media_prefix as MEDIA_PREFIX %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta content="initial-scale=1, width=device-width" name="viewport">
+
+        <title>KGI STEAM</title>
+
+        <!-- Bulma CSS (minified): https://bulma.io/documentation/overview/start/ -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" rel="stylesheet">
+
+        <!-- KGI STEAM base.css: kgisteam/static/kgisteam/base.css -->
+        <link href="{% static 'kgisteam/base.css' %}" rel="stylesheet">
+
+        <!-- Page CSS -->
+        {% block page_css  %}{% endblock %}
+    </head>
+
+    <body>
+        {% block body_content %}
+        {% endblock %}
+        {% block body_scripts %}
+        {% endblock %}
+    </body>
+</html>

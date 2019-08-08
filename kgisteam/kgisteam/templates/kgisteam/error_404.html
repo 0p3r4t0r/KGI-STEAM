@@ -1,0 +1,30 @@
+{% extends "kgisteam/base_no_navbar.html" %}
+{% load static %}
+
+
+{% block body_content %}
+<section class="hero is-bold is-medium is-primary is-fullheight">
+    <div class="hero-body" style="padding: 10px 10px 0 10px">
+        <div class="container">
+            <div class="columns is-vcentered">
+                <div class="column">
+                    <h1 class="title">
+                        HTTP 404
+                    </h1>
+                    <h2 class="subtitle">
+                        The page you're looking for doesn't exist.
+                    </h2>
+                    <a class="button is-rounded" href="{% url 'home' %}">Take me back home.</a>
+                </div>
+                <div class="column">
+                    <div>
+                    <figure class="image">
+                        <img src="{% static 'kgisteam/icons/kgisteamLogo.svg' %}" id="logo-icon">
+                    </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

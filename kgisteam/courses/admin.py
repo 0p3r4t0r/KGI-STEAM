@@ -9,8 +9,8 @@ class CourseAdmin(admin.ModelAdmin):
     """
     https://books.agiliq.com/projects/django-admin-cookbook/en/latest/imagefield.html
     https://docs.djangoproject.com/en/2.2/ref/utils/#module-django.utils.html
-    """    
-    list_display = ('name', 'school', 'grade', 'letter_number', 'year')    
+    """
+    list_display = ('name', 'school', 'nen_kumi', 'year')    
 
     readonly_fields = ["image_preview"]
 

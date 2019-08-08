@@ -2,11 +2,20 @@ from django.urls import path
 
 from . import views
 
+courses_url = '<school>/<name>/<nen_kumi>/<int:year>'
 
 urlpatterns = [
     path('', views.courses_home, name='courses-home'),
-    path('<school>/<name>/<class>/<int:year>',
+    path('{}/syllabus'.format(courses_url),
         views.CourseView.as_view(template_name='courses/course.html'),
-        name='courses-course',
+        name='course-syllabi',
+    ),
+    path('{}/worksheets'.format(courses_url),
+        views.CourseView.as_view(template_name='courses/course.html'),
+        name='course-worksheets',
+    ),
+    path('{}/resources'.format(courses_url),
+        views.CourseView.as_view(template_name='courses/course.html'),
+        name='course-resources',
     ),
 ]

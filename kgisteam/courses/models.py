@@ -10,26 +10,26 @@ from django.db import models
 
 class Course(models.Model):
     """Store course information.
-    
+
     course_name --> You should be careful about support for Japanese.
     course_school --> Middle School or High School (MS or HS)
-    course_grade --> MS and HS: 1-3
+    course_nen --> MS and HS: 1-3
     course_class --> MS: A-E and HS: 1-8
 
 
     course_image --> an optional field to add and image for your course.
-    
+
     course_syllabus --> relation? separate app?
     course_worksheets --> relation? separate app?
     """
     MIDDLESCHOOL = 'MS'
-    HIGHSCHOOL = 'HS'    
+    HIGHSCHOOL = 'HS'
 
     SCHOOL_CHOICES = [
         (MIDDLESCHOOL, 'Middle School'),
         (HIGHSCHOOL, 'High School'),
     ]
-    GRADE_CHOICES = [
+    NEN_CHOICES = [
         (1, '1'),
         (2, '2'),
         (3, '3'),
@@ -51,10 +51,10 @@ class Course(models.Model):
         max_length=2,
         choices=SCHOOL_CHOICES,
         )
-    grade = models.IntegerField(
-        choices=GRADE_CHOICES,
+    nen = models.IntegerField(
+        choices=NEN_CHOICES,
         )
-    letter_number = models.CharField(
+    kumi = models.CharField(
         max_length=1,
         validators=[
             # Match A-E (Middle School) or 1-8 (High School)
@@ -80,18 +80,17 @@ class Course(models.Model):
 
 
     def nen_kumi(self):
-        return '{grade}-{letter_number}'.format(
-            grade=self.grade,
-            letter_number=self.letter_number,
+        return '{nen}-{kumi}'.format(
+            nen=self.nen,
+            kumi=self.kumi,
         )
 
 
     def __str__(self):
-        return '{name} ({school}: {grade}-{letter_number}) {year}'.format(
+        return '{name} ({school}: {nen_kumi}) {year}'.format(
             name=self.name,
             school=self.school,
-            grade=self.grade,
-            letter_number=self.letter_number,
+            nen_kumi=self.nen_kumi(),
             year=self.year,
         )
 
@@ -139,6 +138,14 @@ class Lesson(models.Model):
         blank=True,
         max_length=60,
     )
+    link0_URL = models.URLField(
+        blank=True,
+        max_length=url_max_length,
+    )
+    link0_text = models.CharField(
+        blank=True,
+        max_length=url_text_max_length,
+    )
     link1_URL = models.URLField(
         blank=True,
         max_length=url_max_length,
@@ -163,11 +170,25 @@ class Lesson(models.Model):
         blank=True,
         max_length=url_text_max_length,
     )
-    link4_URL = models.URLField(
-        blank=True,
-        max_length=url_max_length,
-    )
-    link4_text = models.CharField(
-        blank=True,
-        max_length=url_text_max_length,
-    )
+
+
+    def links(self):
+        links_dict = { key: value for key, value in self.__dict__.items()
+            if key.startswith('link')
+        }
+        links = []
+        # Calculate the maximum number of links a lesson can have.
+        max_links_num = int(len(links_dict)/2)
+        for i in range(0, max_links_num):
+            url = links_dict['link{}_URL'.format(i)]
+            text = links_dict['link{}_text'.format(i)]
+            if url and text:
+                links.append(
+                    (url, text)
+                )
+            elif url and not text:
+                links.append(
+                    (url, url)
+                )
+        print(len(links_dict)/2)
+        return links

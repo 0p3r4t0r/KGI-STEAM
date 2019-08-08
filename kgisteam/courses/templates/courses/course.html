@@ -1,5 +1,23 @@
 {% extends "kgisteam/base.html" %}
+{% load static %}
+
+{% block page_css %}
+    <link rel="stylesheet" href="{% static 'courses/css/courses_course.css' %}">
+{% endblock %}
 
 {% block body_content %}
-test
+    <div class="tabs">
+        <ul>
+            <li>
+                <a href="{% url 'course-syllabi' course.school course.name course.nen_kumi course.year %}">Syllabi</a>
+            </li>
+            <li>
+                <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year %}">Worksheets</a>
+            </li>
+            <li>
+                <a href="{% url 'course-resources' course.school course.name course.nen_kumi course.year %}">Resources</a>
+            </li>
+          </ul>
+    </div>
+    {% include "courses/_courses_syllabus.html" %}
 {% endblock %}
