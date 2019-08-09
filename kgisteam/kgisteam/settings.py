@@ -37,10 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.forms',
     'info.apps.InfoConfig',
+    'markdownx',
+    'taggit',
     'users.apps.UsersConfig',
     'utils.apps.UtilsConfig',
-    'worksheets.apps.WorksheetsConfig',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +61,10 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # https://docs.djangoproject.com/en/2.2/howto/overriding-templates/
-        'DIRS': [ os.path.join(BASE_DIR, 'kgisteam/templates') ],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'kgisteam/templates'),
+            os.path.join(BASE_DIR, 'templates'),
+         ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,3 +138,14 @@ STATIC_URL = '/static/'
 
 # Adding settings to the default: Settings are in alphabetical order.
 AUTH_USER_MODEL = 'users.CustomUser'
+
+# https://docs.djangoproject.com/en/2.2/ref/forms/renderers/#django.forms.renderers.TemplatesSetting
+'''
+Allows widget override for markdownx.
+docs: https://neutronx.github.io/django-markdownx/customization/
+custom template: templates/markdownx/widget2.html
+'''
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
+
+# django-taggit settings
+TAGGIT_CASE_INSENSITIVE = True

@@ -1,4 +1,7 @@
 import datetime
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
+from taggit.managers import TaggableManager
 
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
@@ -190,5 +193,47 @@ class Lesson(models.Model):
                 links.append(
                     (url, url)
                 )
-        print(len(links_dict)/2)
         return links
+
+
+class Worksheet(models.Model):
+    course = models.ForeignKey(
+        Course,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    title = models.CharField(
+        default=datetime.datetime.now,
+        max_length=50,
+        unique=True,
+    )
+    tags = TaggableManager(
+        blank=True,
+    )
+
+
+class Problem(models.Model):
+    """
+    https://neutronx.github.io/django-markdownx/
+    """
+    worksheet = models.ForeignKey(
+        Worksheet,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    question = MarkdownxField(
+        default='Your question here.',
+        max_length=500,
+    )
+    answer = models.FloatField()
+    solution = MarkdownxField(
+        default='Your solution here.',
+        max_length=1000,
+    )
+
+    @property
+    def solution_markdown(self):
+        """
+        https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
+        """
+        return markdownify(self.solution)

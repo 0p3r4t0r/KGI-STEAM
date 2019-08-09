@@ -1,0 +1,11 @@
+<div class="markdownx">
+    {% include 'django/forms/widgets/textarea.html' %}
+    <div class="markdownx-preview"></div>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async>
+    </script>
+    <script>
+        setInterval(function() {
+        MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+        }, 500);
+    </script>
+</div>

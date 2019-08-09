@@ -7,13 +7,12 @@ from django.urls import reverse
 
 # App metadata
 courses_config = apps.get_app_config('courses')
-worksheets_config = apps.get_app_config('worksheets')
 
 
 def info_home(request):
     """The info page."""
     context = {
-        'app_configs': (courses_config, worksheets_config,),
+        'app_configs': (courses_config),
         'steam_acronym': ('Keyless', 'Science', 'Technology', 'Engineering', 
                             'Art', 'Mathematics',),
     }

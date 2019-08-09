@@ -6,18 +6,19 @@
 {% endblock %}
 
 {% block body_content %}
-    <div class="tabs">
+    <div class="tabs is-marginless">
         <ul>
             <li>
                 <a href="{% url 'course-syllabi' course.school course.name course.nen_kumi course.year %}">Syllabi</a>
             </li>
             <li>
-                <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year %}">Worksheets</a>
+                <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet None %}">Worksheets</a>
             </li>
             <li>
                 <a href="{% url 'course-resources' course.school course.name course.nen_kumi course.year %}">Resources</a>
             </li>
           </ul>
     </div>
-    {% include "courses/_courses_syllabus.html" %}
+    {% block course_content %}
+    {% endblock %}
 {% endblock %}

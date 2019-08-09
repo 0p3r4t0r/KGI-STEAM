@@ -1,0 +1,90 @@
+{% extends "courses/course_base.html" %}
+
+{% block course_content %}
+<div class="columns">
+    <div class="column is-one-fifth-desktop">
+        <nav class="menu">
+            <p class="menu-label">
+                {{ course.name }} Worksheets
+            </p>
+            <ul class="menu-list">
+                {% for worksheet in worksheet_set %}
+                    {% if worksheet.title == view.kwargs.worksheet_title %}
+                    <li>
+                        <a class="is-active" href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet.title 'ordered' %}">
+                            {{ worksheet.title }}
+                        </a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet.title 'ordered' %}">
+                            {{ worksheet.title }}
+                        </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </nav>
+    </div>
+
+    <div class="column">
+        <ol>
+            {% for problem in problems %}
+            <li class="worksheet-problem">
+                {{ problem.question }}
+                <form action="{% url 'course-worksheets-check' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order problem.id %}" class="worksheet-problem-form" method="post">
+                    {% csrf_token %}
+                    {{ worksheet_form }}
+                    <input type="submit" value="Check">
+                </form>
+                {% if problem.id in correctly_answered %}
+                    Problem solved.
+                {% elif problem.id in incorrectly_answered %}
+                    Try again.
+                {% endif %}
+                <button class="_accordion button is-fullwidth is-small">show solution</button>
+                <div class="_accordion-content">
+                    {{ problem.solution_markdown|safe }}
+                </div>
+            </li>
+            {% endfor %}
+        </ol>
+        {% if worksheet %}
+        <a class="button" href="{% url 'course-worksheets-reset' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order %}" id="worksheet-reset">Reset</a>
+        <a class="button" href="{% url 'course-worksheets-reset-all' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order %}" id="worksheet-reset-all">Reset all</a>
+        <a class="button" href="{% url 'course-worksheets-problems-order' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order %}" id="shuffle_problems">
+        {% if view.kwargs.order == 'ordered' %}
+            Shuffle Problems
+        {% elif view.kwargs.order == 'random' %}
+            Unshuffle Problems
+        {% endif %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block body_scripts %}
+{% include "kgisteam/_mathjax.html" %}
+<script>
+    var acc = document.getElementsByClassName("_accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        /* Toggle between adding and removing the "active" class,
+        to highlight the button that controls the panel */
+        this.classList.toggle("active");
+
+        /* Toggle between hiding and showing the active panel */
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
+</script>
+{% endblock %}
