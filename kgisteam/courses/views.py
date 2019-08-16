@@ -1,8 +1,10 @@
+from collections import OrderedDict
+
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
 from courses.forms import WorksheetForm
-from courses.models import Course, Problem, Syllabus, Worksheet
+from courses.models import Course, Problem, Resource, Syllabus, Worksheet
 
 
 def courses_home(request):
@@ -55,6 +57,11 @@ class CourseView(TemplateView):
                 problems = worksheet.problem_set.all()
                 return problems
 
+    def get_resources(self, category):
+        course = self.get_course()
+        resources = set(Resource.objects.filter(category=category))
+        return resources
+
     def get_syllabus(self):
         # Find the course syllabus data.
         syllabus = Syllabus.objects.filter(
@@ -89,6 +96,14 @@ class CourseView(TemplateView):
         context['problems'] = self.get_problems()
         context['correctly_answered'] = self.answered_questions(1)
         context['incorrectly_answered'] = self.answered_questions(0)
+        # Resources
+        context['resources_IC'] = self.get_resources('IC')
+        context['resources_LL'] = self.get_resources('LL')
+        context['resources_FS'] = self.get_resources('FS')
+        context['category_resources'] = OrderedDict(
+            ((category, self.get_resources(abbr))
+            for (abbr, category) in Resource.CATEGORY_CHOICES)
+        )
         return context
 
 

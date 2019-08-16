@@ -1,0 +1,20 @@
+{% extends "courses/course_base.html" %}
+
+
+{% block course_content %}
+<div class="content">
+    {% for category, resources in category_resources.items %}
+        {% if resources %}
+        <p class="title is-marginless is-3">{{ category }}</p>
+        <hr/>
+        <ul>
+            {% for resource in resources %}
+            <li>
+                <a href="{{ resource.link_URL }}" target="_blank">{{ resource.link_text }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

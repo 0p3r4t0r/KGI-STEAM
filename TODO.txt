@@ -8,16 +8,17 @@ Design and implement the worksheet page.
     can randomize the number and the solutions and the checker will act accordingly.
 
 
-Design and implement the resoureces page.
-    - Create the resources database models.
-    - Create resources admin interface.
+Design and implement the resources page.
+    - Create the resources database models. -- done
+    - Create resources admin interface. -- done
 
 
 Making things pretty.
 
 Worksheets
+    - Allow students to randomize the order of the questions
+      on their worksheets. -- done
     - Collapsable the side menu.
     - Properly plan and refactor the answer check.
     - Ajax request to smooth things out?
-    - Allow students to randomize the numbers and the order of the questions
-      on their worksheets.
+    - Allow students to randomize the numbers in their sheets.

@@ -237,3 +237,43 @@ class Problem(models.Model):
         https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
         """
         return markdownify(self.solution)
+
+
+class Resource(models.Model):
+    url_max_length=200
+    url_text_max_length=30
+
+    IN_CLASS = 'IC'
+    LANGUAGE_LEARNING = 'LL'
+    FURTHER_STUDY = 'FS'
+
+    CATEGORY_CHOICES = [
+        (IN_CLASS, 'In Class'),
+        (LANGUAGE_LEARNING, 'Language Learning'),
+        (FURTHER_STUDY, 'Further Study'),
+    ]
+
+    category = models.CharField(
+        max_length=2,
+        choices=CATEGORY_CHOICES,
+        )
+    link_URL = models.URLField(
+        blank=True,
+        max_length=url_max_length,
+    )
+    link_text = models.CharField(
+        blank=True,
+        max_length=url_text_max_length,
+    )
+    description = models.TextField(
+        blank=True,
+        max_length=200,
+    )
+
+
+class CourseResource(Resource):
+    course = models.ForeignKey(
+        Course,
+        null=True,
+        on_delete=models.CASCADE,
+    )

@@ -34,7 +34,7 @@ urlpatterns = [
     ),
     # Resources
     path('{}/resources'.format(courses_url),
-        views.CourseView.as_view(template_name='courses/course_base.html'),
+        views.CourseView.as_view(template_name='courses/course_resources.html'),
         name='course-resources',
     ),
 ]

@@ -1,6 +1,6 @@
 # KGI STEAM
 
-The name is a combination of an abbreviation for  Keylessand the education
+The name is a combination of an abbreviation for Keyless and the education
 acronym [STEAM](https://en.wikipedia.org/wiki/STEAM_fields).
 
 
