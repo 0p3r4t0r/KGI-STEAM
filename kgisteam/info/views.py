@@ -13,7 +13,7 @@ def info_home(request):
     """The info page."""
     context = {
         'app_configs': (courses_config),
-        'steam_acronym': ('Keyless', 'Science', 'Technology', 'Engineering', 
+        'steam_acronym': ('Keyless Grading Interface', 'Science', 'Technology', 'Engineering', 
                             'Art', 'Mathematics',),
     }
     return render(request, 'info/info_home.html', context)
