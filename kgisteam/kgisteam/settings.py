@@ -10,7 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+
+from dotenv import load_dotenv
 import os
+
+
+"""
+Environmental variables:
+    Variables are stored in the .env_settings file.
+    Required variables are called with os.environ['ENV_VAL'].
+    Optional variables are called with os.getenv('ENV_VAL').
+"""
+load_dotenv(verbose=True)
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,7 +31,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'd$ar6tdt8_&l46x49cg8-l3q-qmj)g+$x_q^3$vq_0xg$flq6c'
+SECRET_KEY = os.environ['SECRET_KEY'] 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

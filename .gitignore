@@ -13,6 +13,11 @@ __pycache__/
 virtualenv_*
 .virtualenv_*
 
+# Environmental Variables
+.env*
+
 # Media and static files
-*/static/*
+/static/*
 */media/*
+*.css.map
+*.sass-cache
