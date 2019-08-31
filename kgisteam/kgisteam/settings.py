@@ -10,7 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+
+from dotenv import load_dotenv
 import os
+
+
+"""
+Environmental variables:
+    Variables are stored in the .env_settings file.
+    Required variables are called with os.environ['ENV_VAL'].
+    Optional variables are called with os.getenv('ENV_VAL').
+"""
+load_dotenv(verbose=True)
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,12 +31,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'd$ar6tdt8_&l46x49cg8-l3q-qmj)g+$x_q^3$vq_0xg$flq6c'
+SECRET_KEY = os.environ['SECRET_KEY'] 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') or False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ 
+    '127.0.0.1',
+    'www.kgisteam.com',
+]
 
 
 # Application definition
@@ -85,8 +100,14 @@ WSGI_APPLICATION = 'kgisteam.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.environ.get('MYSQL_ENGINE') or 'django.db.backends.sqlite3',
+        'NAME': os.environ.get('MYSQL_NAME') or os.path.join(BASE_DIR, 'db.sqlite3'),
+        'USER': os.environ.get('MYSQL_USER'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+        'HOST': os.environ.get('MYSQL_HOST'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -149,3 +170,10 @@ FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 # django-taggit settings
 TAGGIT_CASE_INSENSITIVE = True
+
+# security settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+X_FRAME_OPTIONS = 'DENY'
