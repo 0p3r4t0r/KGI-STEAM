@@ -1,23 +1,35 @@
 {% extends "kgisteam/base.html" %}
 {% load static %}
 
+
 {% block page_css %}
     <link rel="stylesheet" href="{% static 'courses/css/courses_course.css' %}">
 {% endblock %}
 
 {% block body_content %}
-    <div class="tabs is-marginless">
-        <ul>
-            <li>
-                <a href="{% url 'course-syllabi' course.school course.name course.nen_kumi course.year %}">Syllabi</a>
-            </li>
-            <li>
-                <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet None %}">Worksheets</a>
-            </li>
-            <li>
-                <a href="{% url 'course-resources' course.school course.name course.nen_kumi course.year %}">Resources</a>
-            </li>
-          </ul>
+    <div class="level is-marginless">
+        <div class="level-left">
+            <div class="level-item">
+                <div class="is-boxed tabs is-toggle">
+                    <ul>
+                        <li>
+                            <a href="{% url 'course-syllabi' course.school course.name course.nen_kumi course.year %}">Syllabi</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet None %}">Worksheets</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'course-resources' course.school course.name course.nen_kumi course.year %}">Resources</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="level-item">
+                <p id="course_mark">{{ course.school }}: {{ course.nen_kumi }} {{ course.name }}</p>
+            </div>
+        </div>
     </div>
     {% block course_content %}
     {% endblock %}

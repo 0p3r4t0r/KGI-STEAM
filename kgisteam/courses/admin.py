@@ -8,7 +8,8 @@ from courses.models import Course, CourseResource, Lesson, Problem, Resource, Sy
 
 
 class CourseResourceInline(admin.StackedInline):
-    model=CourseResource
+    extra = 0
+    model = CourseResource
 
 
 @admin.register(Course)
@@ -34,6 +35,7 @@ class LessonInline(admin.StackedInline):
     """
     https://docs.djangoproject.com/en/2.2/ref/contrib/admin/#inlinemodeladmin-objects
     """
+    extra = 0
     model=Lesson
 
 
@@ -44,7 +46,8 @@ class SyllabusAdmin(admin.ModelAdmin):
 
 
 class ProblemInline(admin.StackedInline):
-    model=Problem
+    extra = 0
+    model = Problem
 
 
 @admin.register(Worksheet)

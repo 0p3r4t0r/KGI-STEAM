@@ -56,6 +56,7 @@ class Course(models.Model):
         )
     nen = models.IntegerField(
         choices=NEN_CHOICES,
+        verbose_name='nen (year)'
         )
     kumi = models.CharField(
         max_length=1,
@@ -66,7 +67,7 @@ class Course(models.Model):
                 regex='[A-E]|[1-8]',
             )
         ],
-        verbose_name='Class Letter/Number',
+        verbose_name='kumi (class)',
         )
     description = models.TextField(
             blank=True,
