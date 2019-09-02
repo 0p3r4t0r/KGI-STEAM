@@ -11,6 +11,8 @@
             {% for resource in resources %}
             <li>
                 <a href="{{ resource.link_URL }}" target="_blank">{{ resource.link_text }}</a>
+                <br>
+                <p>{{ resource.description|linebreaks }}</p>
             </li>
             {% endfor %}
         </ul>

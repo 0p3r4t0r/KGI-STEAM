@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from math import trunc
 
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
@@ -115,7 +116,7 @@ def worksheets_check_answer(request, *args, **kwargs):
             id=problem_id,
         ).first()
         correct_answer = problem.answer
-        if user_answer == correct_answer:
+        if trunc(user_answer) == correct_answer:
             request.session['problem{}'.format(problem_id)] = 1
         else:
             request.session['problem{}'.format(problem_id)] = 0

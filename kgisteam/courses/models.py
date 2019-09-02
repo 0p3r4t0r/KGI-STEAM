@@ -233,6 +233,13 @@ class Problem(models.Model):
     )
 
     @property
+    def question_markdown(self):
+        """
+        https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
+        """
+        return markdownify(self.question)
+
+    @property
     def solution_markdown(self):
         """
         https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
@@ -270,6 +277,9 @@ class Resource(models.Model):
         blank=True,
         max_length=200,
     )
+
+    def __str__(self):
+        return '{}: {}'.format(self.category, self.link_text)
 
 
 class CourseResource(Resource):

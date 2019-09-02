@@ -1,5 +1,10 @@
 {% extends "courses/course_base.html" %}
 
+
+{% block page_head %}
+    {% include 'kgisteam/_mathjax.html' %}
+{% endblock %}
+
 {% block course_content %}
 <div class="columns">
     <div class="column is-one-fifth-desktop">
@@ -31,7 +36,7 @@
         <ol>
             {% for problem in problems %}
             <li class="worksheet-problem">
-                {{ problem.question }}
+                {{ problem.question_markdown|safe }}
                 <form action="{% url 'course-worksheets-check' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order problem.id %}" class="worksheet-problem-form" method="post">
                     {% csrf_token %}
                     {{ worksheet_form }}
@@ -66,7 +71,6 @@
 
 
 {% block body_scripts %}
-{% include "kgisteam/_mathjax.html" %}
 <script>
     var acc = document.getElementsByClassName("_accordion");
     var i;
@@ -81,8 +85,10 @@
         var panel = this.nextElementSibling;
         if (panel.style.display === "block") {
           panel.style.display = "none";
+          this.innerHTML="show solution";
         } else {
           panel.style.display = "block";
+          this.innerHTML="hide solution";
         }
       });
     }
