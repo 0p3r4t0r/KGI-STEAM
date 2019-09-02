@@ -115,7 +115,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': os.environ.get('MYSQL_ENGINE') or 'django.db.backends.sqlite3',
-            'NAME': os.environ.get('MYSQL_NAME') or os.path.join(BASE_DIR, 'db.sqlite3'),
+            'NAME': os.environ.get('MYSQL_NAME') or os.path.join(BASE_DIR, 'db_for_testing.sqlite3'),
             }
         }
 
@@ -179,9 +179,9 @@ FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 TAGGIT_CASE_INSENSITIVE = True
 
 # security settings
-SECURE_BROWSER_XSS_FILTER = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-X_FRAME_OPTIONS = 'DENY'
 if not os.getenv('LOCAL'):
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SESSION_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
+    X_FRAME_OPTIONS = 'DENY'
