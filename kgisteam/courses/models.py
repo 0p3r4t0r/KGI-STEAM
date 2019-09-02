@@ -226,25 +226,61 @@ class Problem(models.Model):
         default='Your question here.',
         max_length=500,
     )
-    answer = models.FloatField()
+    variable_names = models.CharField(
+        blank = True,
+        max_length=100,
+    )
+    variable_default_values = models.CharField(
+        blank = True,
+        max_length=100,
+    )
+    answer = models.CharField(
+        max_length=100,
+    )
     solution = MarkdownxField(
         default='Your solution here.',
         max_length=1000,
     )
 
     @property
+    def variables(self):
+        if self.variable_names and self.variable_default_values:
+            variables = zip(
+                self.variable_names.split(','),
+                self.variable_default_values.split(',')
+            )
+            variables = dict(variables)
+            variables = { key.strip(): float(value.strip())
+                for key, value in variables.items()
+            }
+            return variables
+
+    @property
     def question_markdown(self):
         """
         https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
         """
-        return markdownify(self.question)
+        if self.variables:
+            return markdownify(self.question).format(**self.variables)
+        else:
+            return markdownify(self.question)
+
+    @property
+    def calculated_answer(self):
+        if self.variables:
+            return eval(self.answer.format(**self.variables))
+        else:
+            return float(self.answer)
 
     @property
     def solution_markdown(self):
         """
         https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
         """
-        return markdownify(self.solution)
+        if self.variables:
+            return markdownify(self.solution).format(**self.variables)
+        else:
+            return markdownify(self.solution)
 
 
 class Resource(models.Model):

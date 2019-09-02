@@ -115,7 +115,7 @@ def worksheets_check_answer(request, *args, **kwargs):
         problem = Problem.objects.filter(
             id=problem_id,
         ).first()
-        correct_answer = problem.answer
+        correct_answer = problem.calculated_answer
         if trunc(user_answer) == correct_answer:
             request.session['problem{}'.format(problem_id)] = 1
         else:
