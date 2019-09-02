@@ -31,12 +31,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY'] 
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') or False
 
-ALLOWED_HOSTS = [ 
+ALLOWED_HOSTS = [
     '127.0.0.1',
     'www.kgisteam.com',
 ]
@@ -98,19 +98,26 @@ WSGI_APPLICATION = 'kgisteam.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': os.environ.get('MYSQL_ENGINE') or 'django.db.backends.sqlite3',
-        'NAME': os.environ.get('MYSQL_NAME') or os.path.join(BASE_DIR, 'db.sqlite3'),
-        'USER': os.environ.get('MYSQL_USER'),
-        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
-        'HOST': os.environ.get('MYSQL_HOST'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+if os.environ.get('MYSQL_ENGINE'):
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ.get('MYSQL_ENGINE'),
+            'NAME': os.environ.get('MYSQL_NAME'),
+            'USER': os.environ.get('MYSQL_USER'),
+            'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+            'HOST': os.environ.get('MYSQL_HOST'),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
     }
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ.get('MYSQL_ENGINE') or 'django.db.backends.sqlite3',
+            'NAME': os.environ.get('MYSQL_NAME') or os.path.join(BASE_DIR, 'db.sqlite3'),
+            }
+        }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -173,7 +180,8 @@ TAGGIT_CASE_INSENSITIVE = True
 
 # security settings
 SECURE_BROWSER_XSS_FILTER = True
-SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
+if not os.getenv('LOCAL'):
+    SECURE_SSL_REDIRECT = True

@@ -1,0 +1,2 @@
+# Requirements needed for the server, but not for a local run.
+mysqlclient>=1.4.4
