@@ -116,7 +116,7 @@ def worksheets_check_answer(request, *args, **kwargs):
             id=problem_id,
         ).first()
         correct_answer = problem.answer
-        if trunc(user_answer) == correct_answer:
+        if user_answer == correct_answer or round(user_answer, 1) == round(correct_answer, 1):
             request.session['problem{}'.format(problem_id)] = 1
         else:
             request.session['problem{}'.format(problem_id)] = 0
