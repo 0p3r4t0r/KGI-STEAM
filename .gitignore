@@ -19,3 +19,6 @@ kgisteam/static/
 */media/*
 *.css.map
 *.sass-cache
+
+# Database Backups
+db_backups/
