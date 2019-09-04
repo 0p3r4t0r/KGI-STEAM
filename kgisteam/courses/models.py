@@ -247,7 +247,9 @@ class Problem(models.Model):
     @property
     def calculated_answer(self):
         if self.variables:
-            return eval(self.answer.format(**self.variables))
+            template = Template(self.answer)
+            answer = eval(template.safe_substitute(**self.variables))
+            return answer
         else:
             return float(self.answer)
 
