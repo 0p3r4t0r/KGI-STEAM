@@ -2,6 +2,7 @@ import copy
 import datetime
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
+from string import Template
 from taggit.managers import TaggableManager
 
 from django.core.validators import MinValueValidator, RegexValidator
@@ -267,21 +268,28 @@ class Problem(models.Model):
     def question_markdown(self):
         """
         https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
+
+        Use a template to substitute variables.
+        https://docs.python.org/3/library/string.html#template-strings
         """
         if self.variables:
-            return markdownify(self.question).format(**self.variables)
+            template = Template(self.question)
+            question = template.safe_substitute(**self.variables)
+            return markdownify(question)
         else:
             return markdownify(self.question)
 
     @property
     def solution_markdown(self):
         """
-        https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
+        see the docstring for self.question_markdown
         """
         if self.variables:
             variables = copy.deepcopy(self.variables)
             variables['calculated_answer'] = self.calculated_answer
-            return markdownify(self.solution).format(**variables)
+            template = Template(self.solution)
+            solution = template.safe_substitute(**variables)
+            return markdownify(solution)
         else:
             return markdownify(self.solution)
 
