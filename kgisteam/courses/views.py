@@ -10,7 +10,7 @@ from courses.models import Course, Problem, Resource, Syllabus, Worksheet
 
 def courses_home(request):
     context = {
-        'courses': Course.objects.all(),
+        'courses': Course.objects.order_by('-school', 'nen', 'kumi'),
     }
     return render(request, 'courses/courses_home.html', context)
 
