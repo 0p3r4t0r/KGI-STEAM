@@ -59,7 +59,8 @@ class WorksheetAdmin(admin.ModelAdmin):
         models.TextField: {'widget': AdminMarkdownxWidget},
     }
     inlines = [ProblemInline,]
-    list_display = ('title', 'course')
+    filter_horizontal = ('course',)
+    list_display = ('title',)
 
 
 @admin.register(Resource)

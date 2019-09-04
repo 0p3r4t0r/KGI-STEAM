@@ -200,11 +200,7 @@ class Lesson(models.Model):
 
 
 class Worksheet(models.Model):
-    course = models.ForeignKey(
-        Course,
-        null=True,
-        on_delete=models.SET_NULL,
-    )
+    course = models.ManyToManyField(Course)
     title = models.CharField(
         default=datetime.datetime.now,
         max_length=50,
