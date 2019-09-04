@@ -110,7 +110,7 @@ class CourseView(TemplateView):
 
 def worksheets_check_answer(request, *args, **kwargs):
     if request.method == 'POST':
-        user_answer = float(request.POST['answer'])
+        user_answer = eval(request.POST['answer'])
         problem_id = kwargs.pop('problem_id')
         problem = Problem.objects.filter(
             id=problem_id,

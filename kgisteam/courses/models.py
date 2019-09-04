@@ -8,6 +8,8 @@ from taggit.managers import TaggableManager
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
+from courses.utils import sn_round
+
 """
 
 """
@@ -241,15 +243,6 @@ class Problem(models.Model):
     )
 
     @property
-    def calculated_answer(self):
-        if self.variables:
-            template = Template(self.answer)
-            answer = eval(template.safe_substitute(**self.variables))
-            return answer
-        else:
-            return float(self.answer)
-
-    @property
     def variables(self):
         if self.variable_names and self.variable_default_values:
             variables = zip(
@@ -261,6 +254,16 @@ class Problem(models.Model):
                 for key, value in variables.items()
             }
             return variables
+
+    @property
+    def calculated_answer(self):
+        if self.variables:
+            template = Template(self.answer)
+            answer = eval(template.safe_substitute(**self.variables))
+        else:
+            answer = eval(self.answer)
+        answer_rounded = sn_round(answer)
+        return answer_rounded
 
     @property
     def question_markdown(self):
