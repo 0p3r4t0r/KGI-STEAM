@@ -1,3 +1,4 @@
+import copy
 import datetime
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
@@ -243,6 +244,13 @@ class Problem(models.Model):
     )
 
     @property
+    def calculated_answer(self):
+        if self.variables:
+            return eval(self.answer.format(**self.variables))
+        else:
+            return float(self.answer)
+
+    @property
     def variables(self):
         if self.variable_names and self.variable_default_values:
             variables = zip(
@@ -266,19 +274,14 @@ class Problem(models.Model):
             return markdownify(self.question)
 
     @property
-    def calculated_answer(self):
-        if self.variables:
-            return eval(self.answer.format(**self.variables))
-        else:
-            return float(self.answer)
-
-    @property
     def solution_markdown(self):
         """
         https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
         """
         if self.variables:
-            return markdownify(self.solution).format(**self.variables)
+            variables = copy.deepcopy(self.variables)
+            variables['calculated_answer'] = self.calculated_answer
+            return markdownify(self.solution).format(**variables)
         else:
             return markdownify(self.solution)
 
