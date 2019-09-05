@@ -109,8 +109,8 @@ class CourseView(TemplateView):
 
 
 def worksheets_check_answer(request, *args, **kwargs):
+    problem_id = kwargs.pop('problem_id')
     if request.method == 'POST':
-        problem_id = kwargs.pop('problem_id')
         form = WorksheetProblemForm(request.POST)
         if form.is_valid():
             user_answer = form.cleaned_data['user_answer']
