@@ -4,7 +4,7 @@ from math import trunc
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
-from courses.forms import WorksheetForm
+from courses.forms import WorksheetProblemForm
 from courses.models import Course, Problem, Resource, Syllabus, Worksheet
 
 
@@ -83,7 +83,7 @@ class CourseView(TemplateView):
         worksheet_set = course.worksheet_set.all()
         return worksheet_set
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context['course'] = self.get_course()
         # Syllabus and lessons.
@@ -93,7 +93,7 @@ class CourseView(TemplateView):
         # Worksheets
         context['worksheet_set'] = self.get_worksheet_set()
         context['worksheet'] = self.get_worksheet()
-        context['worksheet_form'] = WorksheetForm()
+        context['worksheet_problem_form'] = WorksheetProblemForm()
         context['problems'] = self.get_problems()
         context['correctly_answered'] = self.answered_questions(1)
         context['incorrectly_answered'] = self.answered_questions(0)
@@ -110,17 +110,21 @@ class CourseView(TemplateView):
 
 def worksheets_check_answer(request, *args, **kwargs):
     if request.method == 'POST':
-        user_answer = eval(request.POST['answer'])
         problem_id = kwargs.pop('problem_id')
-        problem = Problem.objects.filter(
-            id=problem_id,
-        ).first()
-        correct_answer = problem.calculated_answer
-        if user_answer == correct_answer or round(user_answer, 1) == round(correct_answer, 1):
-            request.session['problem{}'.format(problem_id)] = 1
-        else:
-            request.session['problem{}'.format(problem_id)] = 0
+        form = WorksheetProblemForm(request.POST)
+        if form.is_valid():
+            user_answer = form.cleaned_data['user_answer']
+            problem = Problem.objects.filter(
+                id=problem_id,
+            ).first()
+            correct_answer = problem.calculated_answer
+            if user_answer == correct_answer or round(user_answer, 1) == round(correct_answer, 1):
+                request.session['problem{}'.format(problem_id)] = 1
+            else:
+                request.session['problem{}'.format(problem_id)] = 0
     return redirect('course-worksheets', *args, **kwargs)
+
+
 
 
 def worksheets_reset(request, *args, **kwargs):

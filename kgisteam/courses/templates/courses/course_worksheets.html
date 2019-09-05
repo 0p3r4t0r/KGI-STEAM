@@ -39,7 +39,7 @@
                 {{ problem.question_markdown|safe }}
                 <form action="{% url 'course-worksheets-check' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order problem.id %}" class="worksheet-problem-form" method="post">
                     {% csrf_token %}
-                    {{ worksheet_form }}
+                    {{ worksheet_problem_form }}
                     <input type="submit" value="Check">
                 </form>
                 {% if problem.id in correctly_answered %}

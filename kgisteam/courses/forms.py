@@ -1,19 +1,19 @@
 from django import forms
-from django.core.validators import DecimalValidator
 
 from courses.models import Problem
 from courses.models import Problem
+from courses.validators import validate_math_expression
 from courses.utils import sn_round
 
 
-class WorksheetForm(forms.Form):
-    problem_answer_field = Problem._meta.get_field('answer')
-    answer = forms.FloatField(
+class WorksheetProblemForm(forms.Form):
+    user_answer = forms.CharField(
         label='your answer',
+        validators=[validate_math_expression],
     )
 
-    def clean_answer(self):
+    def clean_user_answer(self):
         """https://docs.djangoproject.com/en/2.2/ref/forms/validation/"""
-        answer = eval(self.cleaned_data.answer)
-        answer_rounded = sn_round(answer)
-        return answer_rounded
+        user_answer = eval(self.cleaned_data['user_answer'])
+        user_answer_rounded = sn_round(user_answer)
+        return user_answer_rounded
