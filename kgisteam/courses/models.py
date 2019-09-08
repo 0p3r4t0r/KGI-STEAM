@@ -8,7 +8,7 @@ from taggit.managers import TaggableManager
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
-from courses.utils import sn_round
+from courses.utils import sn_round, sn_round_str
 
 """
 
@@ -250,7 +250,7 @@ class Problem(models.Model):
                 self.variable_default_values.split(',')
             )
             variables = dict(variables)
-            variables = { key.strip(): float(value.strip())
+            variables = { key.strip(): sn_round(float(value.strip()))
                 for key, value in variables.items()
             }
             return variables
@@ -275,7 +275,12 @@ class Problem(models.Model):
         """
         if self.variables:
             template = Template(self.question)
-            question = template.safe_substitute(**self.variables)
+            variables = { key: sn_round_str(value)
+                for key, value
+                in self.variables.items()
+            }
+            question = template.safe_substitute(**variables)
+            print(question)
             return markdownify(question)
         else:
             return markdownify(self.question)
