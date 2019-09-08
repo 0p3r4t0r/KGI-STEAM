@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 
 from courses.forms import WorksheetProblemForm
 from courses.models import Course, Problem, Resource, Syllabus, Worksheet
+from courses.utils import sn_round
 
 
 def courses_home(request):
@@ -118,7 +119,7 @@ def worksheets_check_answer(request, *args, **kwargs):
                 id=problem_id,
             ).first()
             correct_answer = problem.calculated_answer
-            if user_answer == correct_answer or round(user_answer, 1) == round(correct_answer, 1):
+            if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
                 request.session['problem{}'.format(problem_id)] = 1
             else:
                 request.session['problem{}'.format(problem_id)] = 0
