@@ -10,6 +10,10 @@ class WorksheetProblemForm(forms.Form):
     user_answer = forms.CharField(
         label='your answer',
         validators=[validate_math_expression],
+        widget=forms.TextInput(attrs={
+            'autocomplete': 'off',
+            }
+        )
     )
 
     def clean_user_answer(self):
