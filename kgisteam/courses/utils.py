@@ -4,9 +4,12 @@ def sn_round(number: float) -> float:
 
 def sn_round_str(number: float) -> str:
     """Round with scientific notation."""
-    rounded = '{:.2e}'.format(number)
-    value, order = rounded.split('e')
-    if order.startswith('+'):
-        order = order[1:].lstrip('0')
-    order = '{' + order + '}'
-    return '{value} \\times 10^{order}'.format(value=value, order=order)
+    if number < 0.00001 or number > 100000:
+        rounded = '{:.2e}'.format(number)
+        value, order = rounded.split('e')
+        if order.startswith('+'):
+            order = order[1:].lstrip('0')
+        order = '{' + order + '}'
+        return '{value} \\times 10^{order}'.format(value=value, order=order)
+    else:
+        return str(number)
