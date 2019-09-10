@@ -1,5 +1,6 @@
 import copy
 import datetime
+
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
 from string import Template
@@ -7,12 +8,10 @@ from taggit.managers import TaggableManager
 
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
+from django.utils.timezone import localtime, make_aware
 
 from courses.utils import sn_round, sn_round_str
-
-"""
-
-"""
+from kgisteam.settings import TIME_ZONE
 
 
 class Course(models.Model):
@@ -211,6 +210,22 @@ class Worksheet(models.Model):
     tags = TaggableManager(
         blank=True,
     )
+    solution_release_datetime = models.DateTimeField(
+        default=make_aware(datetime.datetime.today().replace(
+            hour=20, minute=0, second=0, microsecond=0,
+            )
+        )
+    )
+
+    @property
+    def solutions_released(self):
+        ''' Determine if solutions should be displayed whilst taking timezones
+        into account.
+        '''
+        if self.solution_release_datetime < make_aware(datetime.datetime.now()):
+            return  True
+        else:
+            return False
 
 
 class Problem(models.Model):
@@ -238,9 +253,10 @@ class Problem(models.Model):
         max_length=100,
     )
     solution = MarkdownxField(
-        default='Your solution here.',
+        default='The solution to this problem is not available yet.',
         max_length=1000,
     )
+
 
     @property
     def variables(self):
@@ -290,14 +306,25 @@ class Problem(models.Model):
         """
         see the docstring for self.question_markdown
         """
-        if self.variables:
-            variables = copy.deepcopy(self.variables)
-            variables['calculated_answer'] = self.calculated_answer
-            template = Template(self.solution)
-            solution = template.safe_substitute(**variables)
-            return markdownify(solution)
+        if self.worksheet.solutions_released:
+            if self.variables:
+                variables = copy.deepcopy(self.variables)
+                variables['calculated_answer'] = self.calculated_answer
+                template = Template(self.solution)
+                solution = template.safe_substitute(**variables)
+                return markdownify(solution)
+            else:
+                return markdownify(self.solution)
         else:
-            return markdownify(self.solution)
+                release_datetime_local = localtime(self.worksheet.solution_release_datetime)
+                release_date_str = release_datetime_local.strftime('%y-%m-%d')
+                release_time_str = release_datetime_local.strftime('%H:%I')
+                return markdownify(
+                    'Solutions will be released on {release_date}, at {release_time}.'.format(
+                        release_date=release_date_str,
+                        release_time=release_time_str,
+                    )
+                )
 
 
 class Resource(models.Model):
