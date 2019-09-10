@@ -34,7 +34,7 @@
 
     <div class="column">
         <ol>
-            {% for problem in problems %}
+            {% for problem in worksheet.problem_set.all %}
             <li class="worksheet-problem">
                 {{ problem.question_markdown|safe }}
                 <form action="{% url 'course-worksheets-check' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order problem.id %}" class="worksheet-problem-form" method="post">

@@ -9,7 +9,7 @@ import markdownx.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('courses', '0003_auto_20190904_1732'),
+        ('courses', '0003_ManyToMany_worksheets_20190904_1732'),
     ]
 
     operations = [

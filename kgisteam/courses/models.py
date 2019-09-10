@@ -201,6 +201,14 @@ class Lesson(models.Model):
 
 
 class Worksheet(models.Model):
+
+    def default_release_date():
+        return make_aware(datetime.datetime.today().replace(
+            hour=20, minute=0,
+            second=0, microsecond=0,
+            )
+        )
+
     course = models.ManyToManyField(Course)
     title = models.CharField(
         default=datetime.datetime.now,
@@ -211,11 +219,9 @@ class Worksheet(models.Model):
         blank=True,
     )
     solution_release_datetime = models.DateTimeField(
-        default=make_aware(datetime.datetime.today().replace(
-            hour=20, minute=0, second=0, microsecond=0,
-            )
+        default=default_release_date
         )
-    )
+
 
     @property
     def solutions_released(self):
@@ -318,7 +324,7 @@ class Problem(models.Model):
         else:
                 release_datetime_local = localtime(self.worksheet.solution_release_datetime)
                 release_date_str = release_datetime_local.strftime('%y-%m-%d')
-                release_time_str = release_datetime_local.strftime('%H:%I')
+                release_time_str = release_datetime_local.strftime('%H:%M')
                 return markdownify(
                     'Solutions will be released on {release_date}, at {release_time}.'.format(
                         release_date=release_date_str,
@@ -327,7 +333,11 @@ class Problem(models.Model):
                 )
 
 
-class Resource(models.Model):
+class ResourceBaseClass(models.Model):
+
+    class Meta:
+        abstract=True
+
     url_max_length=200
     url_text_max_length=30
 
@@ -344,6 +354,7 @@ class Resource(models.Model):
     category = models.CharField(
         max_length=2,
         choices=CATEGORY_CHOICES,
+        default=CATEGORY_CHOICES[0],
         )
     link_URL = models.URLField(
         blank=True,
@@ -362,7 +373,11 @@ class Resource(models.Model):
         return '{}: {}'.format(self.category, self.link_text)
 
 
-class CourseResource(Resource):
+class Resource(ResourceBaseClass):
+    pass
+
+
+class CourseResource(ResourceBaseClass):
     course = models.ForeignKey(
         Course,
         null=True,

@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
 from courses.forms import WorksheetProblemForm
-from courses.models import Course, Problem, Resource, Syllabus, Worksheet
+from courses.models import Course, CourseResource, Problem, Syllabus, Worksheet
 from courses.utils import sn_round
 
 
@@ -49,19 +49,12 @@ class CourseView(TemplateView):
         ).first()
         return course
 
-    def get_problems(self, order_by=None):
-        worksheet = self.get_worksheet()
-        if worksheet:
-            if self.kwargs['order'] == 'random':
-                problems = worksheet.problem_set.order_by('?')
-                return problems
-            else:
-                problems = worksheet.problem_set.all()
-                return problems
-
     def get_resources(self, category):
-        course = self.get_course()
-        resources = set(Resource.objects.filter(category=category))
+        resources = set(CourseResource.objects.filter(
+            category=category,
+            course=self.get_course(),
+            )
+        )
         return resources
 
     def get_syllabus(self):
@@ -95,7 +88,6 @@ class CourseView(TemplateView):
         context['worksheet_set'] = self.get_worksheet_set()
         context['worksheet'] = self.get_worksheet()
         context['worksheet_problem_form'] = WorksheetProblemForm()
-        context['problems'] = self.get_problems()
         context['correctly_answered'] = self.answered_questions(1)
         context['incorrectly_answered'] = self.answered_questions(0)
         # Resources
@@ -104,7 +96,7 @@ class CourseView(TemplateView):
         context['resources_FS'] = self.get_resources('FS')
         context['category_resources'] = OrderedDict(
             ((category, self.get_resources(abbr))
-            for (abbr, category) in Resource.CATEGORY_CHOICES)
+            for (abbr, category) in CourseResource.CATEGORY_CHOICES)
         )
         return context
 
