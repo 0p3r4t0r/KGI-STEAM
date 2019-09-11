@@ -16,7 +16,7 @@
                             <a href="{% url 'course-syllabi' course.school course.name course.nen_kumi course.year %}">Syllabi</a>
                         </li>
                         <li>
-                            <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet None %}">Worksheets</a>
+                            <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year None None %}">Worksheets</a>
                         </li>
                         <li>
                             <a href="{% url 'course-resources' course.school course.name course.nen_kumi course.year %}">Resources</a>

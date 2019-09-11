@@ -3,16 +3,16 @@
 
 {% block course_content %}
 <div class="content">
-    {% for category, resources in category_resources.items %}
+    {% for category, resources in resources.items %}
         {% if resources %}
         <p class="title is-marginless is-3">{{ category }}</p>
         <hr/>
         <ul>
-            {% for resource in resources %}
+            {% for SharedResource in resources %}
             <li>
-                <a href="{{ resource.link_URL }}" target="_blank">{{ resource.link_text }}</a>
+                <a href="{{ SharedResource.link_URL }}" target="_blank">{{ SharedResource.link_text }}</a>
                 <br>
-                <p>{{ resource.description|linebreaks }}</p>
+                <p>{{ SharedResource.description|linebreaks }}</p>
             </li>
             {% endfor %}
         </ul>

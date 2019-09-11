@@ -372,7 +372,7 @@ class ResourceBaseClass(models.Model):
         return '{}: {}'.format(self.category, self.link_text)
 
 
-class Resource(ResourceBaseClass):
+class SharedResource(ResourceBaseClass):
     pass
 
 

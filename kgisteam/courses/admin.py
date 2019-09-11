@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
-from courses.models import Course, CourseResource, Lesson, Problem, Resource, Syllabus, Worksheet
+from courses.models import Course, CourseResource, Lesson, Problem, SharedResource, Syllabus, Worksheet
 
 
 class CourseResourceInline(admin.StackedInline):
@@ -63,6 +63,6 @@ class WorksheetAdmin(admin.ModelAdmin):
     list_display = ('title',)
 
 
-@admin.register(Resource)
+@admin.register(SharedResource)
 class ResourceAdmin(admin.ModelAdmin):
     pass

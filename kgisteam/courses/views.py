@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
 from courses.forms import WorksheetProblemForm
-from courses.models import Course, CourseResource, Problem, Syllabus, Worksheet
+from courses.models import Course, CourseResource, Problem, SharedResource, ResourceBaseClass, Syllabus, Worksheet
 from courses.utils import sn_round
 
 
@@ -17,14 +17,29 @@ def courses_home(request):
 
 
 class CourseView(TemplateView):
+
     template_name = 'courses/course_base.html'
-    template404 = 'kgisteam/error_404.html'
+
+    @property
+    def active_problems(self):
+        if 'order' in self.kwargs.keys() and self.active_worksheet:
+            if self.kwargs['order'] == 'random':
+                return self.active_worksheet.problem_set.order_by('?')
+            else:
+                return self.active_worksheet.problem_set.all()
+
+    @property
+    def active_worksheet(self):
+        if 'worksheet_title' in self.kwargs.keys():
+            worksheet = self.course.worksheet_set.filter(
+                title=self.kwargs['worksheet_title']
+            ).first()
+            return worksheet
 
     def answered_questions(self, is_correct=1):
-        worksheet = self.get_worksheet()
-        if worksheet:
+        if self.active_worksheet:
             session = self.request.session
-            problems = worksheet.problem_set.all()
+            problems = self.active_worksheet.problem_set.all()
             correctly_answered = set()
             for problem in problems:
                 problem_key = 'problem{}'.format(problem.id)
@@ -34,12 +49,13 @@ class CourseView(TemplateView):
             return correctly_answered
 
     def get(self, request, *args, **kwargs):
-        if self.get_course():
+        if self.course:
             return render(request, self.template_name, self.get_context_data())
         else:
             return render(request, self.template404)
 
-    def get_course(self):
+    @property
+    def course(self):
         course = Course.objects.filter(
             school=self.kwargs['school'],
             name=self.kwargs['name'],
@@ -49,55 +65,39 @@ class CourseView(TemplateView):
         ).first()
         return course
 
-    def get_resources(self, category):
-        resources = set(CourseResource.objects.filter(
-            category=category,
-            course=self.get_course(),
+    @property
+    def resources(self):
+        category_choices = ResourceBaseClass.CATEGORY_CHOICES
+        shared_resources = SharedResource.objects.all()
+        course_resources = CourseResource.objects.filter(course=self.course)
+        resources = dict()
+        for category in category_choices:
+            resources[category[1]] = (
+                list(shared_resources.filter(category=category[0])) +
+                list(course_resources.filter(category=category[0]))
             )
-        )
         return resources
 
-    def get_syllabus(self):
+    @property
+    def syllabus(self):
         # Find the course syllabus data.
         syllabus = Syllabus.objects.filter(
-            course=self.get_course(),
+            course=self.course,
         ).first()
         return syllabus
 
-    def get_worksheet(self):
-        worksheet_set = self.get_worksheet_set()
-        if 'worksheet_title' in self.kwargs.keys():
-            worksheet = worksheet_set.filter(
-                title=self.kwargs['worksheet_title']
-            ).first()
-            return worksheet
-
-    def get_worksheet_set(self):
-        course = self.get_course()
-        worksheet_set = course.worksheet_set.all()
-        return worksheet_set
-
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['course'] = self.get_course()
-        # Syllabus and lessons.
-        syllabus = self.get_syllabus()
-        if syllabus:
-            context['lesson_set'] = syllabus.lesson_set.all()
-        # Worksheets
-        context['worksheet_set'] = self.get_worksheet_set()
-        context['worksheet'] = self.get_worksheet()
+        context['course'] = self.course
+        context['syllabus'] = self.syllabus
+        context['active_worksheet'] = self.active_worksheet
+        context['active_problems'] = self.active_problems
         context['worksheet_problem_form'] = WorksheetProblemForm()
         context['correctly_answered'] = self.answered_questions(1)
         context['incorrectly_answered'] = self.answered_questions(0)
         # Resources
-        context['resources_IC'] = self.get_resources('IC')
-        context['resources_LL'] = self.get_resources('LL')
-        context['resources_FS'] = self.get_resources('FS')
-        context['category_resources'] = OrderedDict(
-            ((category, self.get_resources(abbr))
-            for (abbr, category) in CourseResource.CATEGORY_CHOICES)
-        )
+        context['resources'] = self.resources
+        print(self.resources)
         return context
 
 
