@@ -7,7 +7,7 @@
 
 {% block course_content %}
 <div class="columns">
-    <div class="column is-one-fifth-desktop">
+    <div class="column is-one-fifth-desktop is-two-fifths-tablet">
         <nav class="menu">
             <p class="menu-label">
                 {{ course.name }} Worksheets
@@ -32,6 +32,7 @@
         </nav>
     </div>
 
+    {% if worksheet %}
     <div class="column">
         <ol>
             {% for problem in worksheet.problem_set.all %}
@@ -54,18 +55,25 @@
             </li>
             {% endfor %}
         </ol>
-        {% if worksheet %}
         <a class="button" href="{% url 'course-worksheets-reset' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order %}" id="worksheet-reset">Reset</a>
         <a class="button" href="{% url 'course-worksheets-reset-all' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order %}" id="worksheet-reset-all">Reset all</a>
         <a class="button" href="{% url 'course-worksheets-problems-order' course.school course.name course.nen_kumi course.year worksheet.title view.kwargs.order %}" id="shuffle_problems">
-        {% if view.kwargs.order == 'ordered' %}
-            Shuffle Problems
-        {% elif view.kwargs.order == 'random' %}
-            Unshuffle Problems
-        {% endif %}
+            {% if view.kwargs.order == 'ordered' %}
+                Shuffle Problems
+            {% elif view.kwargs.order == 'random' %}
+                Unshuffle Problems
+            {% endif %}
         </a>
-        {% endif %}
     </div>
+    {% else %}
+    <div class="column">
+        <div class="level is-vcentered">
+            <div class="level-item has-text-centered has-text-weight-light is-size-5">
+                <p>Please select a worksheet.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 

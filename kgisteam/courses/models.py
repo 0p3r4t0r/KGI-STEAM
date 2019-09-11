@@ -302,7 +302,6 @@ class Problem(models.Model):
                 in self.variables.items()
             }
             question = template.safe_substitute(**variables)
-            print(question)
             return markdownify(question)
         else:
             return markdownify(self.question)
