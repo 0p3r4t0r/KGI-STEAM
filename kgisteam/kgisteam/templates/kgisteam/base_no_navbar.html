@@ -1,6 +1,7 @@
 {% load static %}
 {% get_media_prefix as MEDIA_PREFIX %}
 
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -29,6 +30,8 @@
     </head>
 
     <body>
+        {% block navbar %}
+        {% endblock %}
         {% block body_content %}
         {% endblock %}
         {% block body_scripts %}

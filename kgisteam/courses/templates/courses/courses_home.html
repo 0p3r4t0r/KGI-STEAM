@@ -1,4 +1,4 @@
-{% extends "kgisteam/base.html" %}
+{% extends 'kgisteam/base.html' %}
 {% load static %}
 
 {% block page_css %}
@@ -9,7 +9,7 @@
     <div class="columns is-gapless is-multiline">
         {% for course in courses %}
         <div class="column is-one-quarter">
-            {% include "courses/_course_card.html" %}
+            {% include 'courses/_course_card.html' %}
         </div>
         {% endfor %}
     </div>
