@@ -1,5 +1,5 @@
 #course_mark {
-  margin-right: 1ex;
+  margin-right: 1em;
 }
 
 table.flex-table {
@@ -110,9 +110,15 @@ hr {
   display: block;
   height: 1px;
   border: 0;
-  border-top: 1px solid #ccc;
+  border-top: 3px solid #646464;
   margin: 0;
+  margin-bottom: 4px;
+  margin-top: -4px;
   padding: 0;
+}
+
+.resource-category-column, .resource-description-column, .resource-link-column {
+  margin: 0 1em;
 }
 
 /*# sourceMappingURL=courses_course.css.map */

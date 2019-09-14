@@ -2,21 +2,28 @@
 
 
 {% block course_content %}
-<div class="content">
     {% for category, resources in resources.items %}
         {% if resources %}
-        <p class="title is-marginless is-3">{{ category }}</p>
-        <hr/>
-        <ul>
-            {% for SharedResource in resources %}
-            <li>
-                <a href="{{ SharedResource.link_URL }}" target="_blank">{{ SharedResource.link_text }}</a>
-                <br>
-                <p>{{ SharedResource.description|linebreaks }}</p>
-            </li>
-            {% endfor %}
-        </ul>
+        <div class="columns">
+            <div class="column resource-category-column">
+                <p class="title is-marginless is-3">{{ category }}</p>
+                <hr/>
+                {% for resource in resources %}
+                <div class="columns">
+                    <div class="column has-text-centered is-one-third resource-link-column">
+                        <a  class="button has-text-weight-bold is-size-6 is-fullwidth is-link resource-link"
+                            href="{{ resource.link_URL }}" target="_blank">
+                            Go to {{ resource.link_text }} &#8667;
+                        </a>
+                    </div>
+                    <div class="column resource-description-column">
+                        <p>{{ resource.description|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         {% endif %}
+        </div>
     {% endfor %}
-</div>
 {% endblock %}
+//https://github.com/sandoche/Darkmode.js

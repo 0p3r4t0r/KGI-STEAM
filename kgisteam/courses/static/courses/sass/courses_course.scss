@@ -1,7 +1,4 @@
-// Base
-#course_mark {
-    margin-right: 1ex;
-}
+$content-margins: 1em;
 
 // https://www.sitepoint.com/managing-responsive-breakpoints-sass/
 $breakpoints: (
@@ -19,6 +16,11 @@ $breakpoints: (
     @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
         + "Please make sure it is defined in `$breakpoints` map.";
   }
+}
+
+// Base
+#course_mark {
+    margin-right: $content-margins;
 }
 
 // Syllabi
@@ -75,10 +77,8 @@ table.flex-table {
 }
 
 // Worksheets
-$worksheet-content-margins: 1em;
-
 .worksheet-buttons {
-  margin: $worksheet-content-margins;
+  margin: $content-margins;
 }
 
 #worksheet-course-name {
@@ -91,17 +91,17 @@ $worksheet-content-margins: 1em;
 }
 
 .worksheet-problem {
-  margin: $worksheet-content-margins;
+  margin: $content-margins;
 }
 
 @include respond-to('ws-medium') {
-    $worksheet-content-margins: 2em;
+    $content-margins: 2em;
     .worksheet-problem {
-      margin: $worksheet-content-margins;
+      margin: $content-margins;
     }
 
     .worksheet-buttons {
-      margin: $worksheet-content-margins;
+      margin: $content-margins;
     }
 }
 
@@ -147,7 +147,13 @@ hr {
   display: block;
   height: 1px;
   border: 0;
-  border-top: 1px solid #ccc;
+  border-top: 3px solid rgb(100, 100, 100);
   margin: 0;
+  margin-bottom: 4px;
+  margin-top: -4px;
   padding: 0;
+}
+
+.resource-category-column, .resource-description-column, .resource-link-column {
+  margin: 0 $content-margins;
 }
