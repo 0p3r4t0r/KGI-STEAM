@@ -2,47 +2,48 @@
   margin-right: 1ex;
 }
 
-table {
+table.flex-table {
   width: 100vw;
 }
-
-tr.flex-table-row {
-  display: flex;
-  flex-flow: row wrap;
+table.flex-table tr.flex-table-row {
   border: solid #969696 2px;
+  display: flex;
+  flex: 1, 1;
+  flex-flow: row nowrap;
 }
-
-th, td {
-  flex: 1 1 33%;
-  padding: 2.5px 5px 2.5px 5px;
+@media (max-width: 875px) {
+  table.flex-table tr.flex-table-row {
+    flex-flow: row wrap;
+  }
+}
+table.flex-table tr.flex-table-row:nth-child(even) {
+  background-color: #ebebeb;
+}
+table.flex-table tr.flex-table-row:hover {
+  background-color: #66ff99;
+}
+table.flex-table tr.flex-table-row th, table.flex-table tr.flex-table-row td {
   border: solid #969696 1px;
+  flex: 1 2 20%;
+  min-width: 0;
+  padding: 2.5px 5px 2.5px 5px;
 }
-th.lesson-topics, th.lesson-links, td.lesson-topics, td.lesson-links {
-  min-width: 100%;
+table.flex-table tr.flex-table-row th.lesson-number, table.flex-table tr.flex-table-row td.lesson-number {
+  max-width: 3em;
+}
+table.flex-table tr.flex-table-row th.lesson-date, table.flex-table tr.flex-table-row td.lesson-date {
+  max-width: 8em;
+}
+@media (max-width: 875px) {
+  table.flex-table tr.flex-table-row th, table.flex-table tr.flex-table-row td {
+    max-width: unset;
+    min-width: 50%;
+  }
+}
+table.flex-table tr.flex-table-row td {
+  word-wrap: break-word;
 }
 
-@media only screen and (min-width: 450px) {
-  tr.flex-table-row {
-    flex: 1 1;
-    flex-flow: row nowrap;
-  }
-  tr.flex-table-row:nth-child(even) {
-    background-color: #ebebeb;
-  }
-  tr.flex-table-row:hover {
-    background-color: #66ff99;
-  }
-
-  th.lesson-number, td.lesson-number {
-    max-width: 3em;
-  }
-  th.lesson-date, td.lesson-date {
-    max-width: 10em;
-  }
-  th.lesson-topics, th.lesson-links, td.lesson-topics, td.lesson-links {
-    min-width: unset;
-  }
-}
 .worksheet-problem {
   padding: 0.5em 0 1em 0;
 }

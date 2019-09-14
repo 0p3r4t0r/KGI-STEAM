@@ -2,40 +2,44 @@
 
 
 {% block course_content %}
-<table class="flex-table is-fullwidth">
-    <thead class="flex-table-head">
-        <tr class="flex-table-row">
-            <th class="has-text-centered lesson-number">#</th>
-            <th class="has-text-centered lesson-date">Date</th>
-            <th class="has-text-centered lesson-quiz">Quiz</th>
-            <th class="has-text-centered lesson-topics">Topic(s)</th>
-            <th class="has-text-centered lesson-pages">Reading</th>
-            <th class="has-text-centered lesson-homework">Homework</th>
-            <th class="has-text-centered lesson-links">Links</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for lesson in syllabus.lesson_set.all %}
-        <tr class="flex-table-row">
-            <td class="has-text-centered lesson-number">{{ lesson.number }}</td>
-            <td class="has-text-centered lesson-date">{{ lesson.date }}</td>
-            <td class="has-text-centered lesson-quiz">{{ lesson.quiz }}</td>
-            <td class="has-text-centered lesson-topics">{{ lesson.topics }}</td>
-            <td class="has-text-centered lesson-pages">{{ lesson.reading }}</td>
-            <td class="has-text-centered lesson-homework">{{ lesson.homework }}</td>
-            <td class="has-text-centered lesson-links">
-            {% for link in lesson.links %}
-                {% if link.0 and link.1 %}
-                    {% if forloop.last %}
-                    <a href="{{ link.0 }}" target="_blank">{{ link.1 }}</a>
-                    {% else %}
-                    <a href="{{ link.0 }}" target="_blank">{{ link.1 }}</a>,
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="columns">
+    <div class="column flex-table-container">
+        <table class="flex-table is-fullwidth">
+            <thead class="flex-table-head">
+                <tr class="flex-table-row">
+                    <th class="has-text-centered lesson-number">#</th>
+                    <th class="has-text-centered lesson-date">Date</th>
+                    <th class="has-text-centered lesson-quiz">Quiz</th>
+                    <th class="has-text-centered lesson-topics">Topic(s)</th>
+                    <th class="has-text-centered lesson-pages">Reading</th>
+                    <th class="has-text-centered lesson-homework">Homework</th>
+                    <th class="has-text-centered lesson-links">Links</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lesson in syllabus.lesson_set.all %}
+                <tr class="flex-table-row">
+                    <td class="has-text-centered lesson-number">{{ lesson.number }}</td>
+                    <td class="has-text-centered lesson-date">{{ lesson.date }}</td>
+                    <td class="has-text-centered lesson-quiz">{{ lesson.quiz }}</td>
+                    <td class="has-text-centered lesson-topics">{{ lesson.topics }}</td>
+                    <td class="has-text-centered lesson-pages">{{ lesson.reading }}</td>
+                    <td class="has-text-centered lesson-homework">{{ lesson.homework }}</td>
+                    <td class="has-text-centered lesson-links">
+                    {% for link in lesson.links %}
+                        {% if link.0 and link.1 %}
+                            {% if forloop.last %}
+                            <a href="{{ link.0 }}" target="_blank">{{ link.1 }}</a>
+                            {% else %}
+                            <a href="{{ link.0 }}" target="_blank">{{ link.1 }}</a>,
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
