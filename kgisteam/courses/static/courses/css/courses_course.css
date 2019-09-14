@@ -44,14 +44,32 @@ table.flex-table tr.flex-table-row td {
   word-wrap: break-word;
 }
 
-.worksheet-problem {
-  padding: 0.5em 0 1em 0;
+.worksheet-buttons {
+  margin: 1em;
+}
+
+#worksheet-course-name {
+  padding-left: 1em;
+  padding-top: 1em;
 }
 
 .worksheet-problem-form {
   padding: 1em 0 1em 0;
 }
 
+.worksheet-problem {
+  margin: 1em;
+}
+
+@media (max-width: 768px) {
+  .worksheet-problem {
+    margin: 2em;
+  }
+
+  .worksheet-buttons {
+    margin: 2em;
+  }
+}
 ._accordion {
   background-color: #eee;
   color: #444;
