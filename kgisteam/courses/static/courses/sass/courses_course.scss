@@ -1,26 +1,26 @@
-$content-margins: 1em;
+$content-spacer: 1em;
 
 // https://www.sitepoint.com/managing-responsive-breakpoints-sass/
 $breakpoints: (
-  'ws-medium': (max-width: 768px),
-  'syllabus-medium' : (max-width: 875px),
+    'ws-medium': (max-width: 768px),
+    'syllabus-medium' : (max-width: 875px),
 );
 
 @mixin respond-to($name) {
-  @if map-has-key($breakpoints, $name) {
-    @media #{inspect(map-get($breakpoints, $name))} {
-      @content
+    @if map-has-key($breakpoints, $name) {
+        @media #{inspect(map-get($breakpoints, $name))} {
+            @content
+        }
     }
-  }
-  @else {
-    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
-        + "Please make sure it is defined in `$breakpoints` map.";
-  }
+    @else {
+        @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+            + "Please make sure it is defined in `$breakpoints` map.";
+        }
 }
 
 // Base
 #course_mark {
-    margin-right: $content-margins;
+    padding-right: $content-spacer;
 }
 
 // Syllabi
@@ -28,57 +28,57 @@ $breakpoints: (
 $border-color: rgb(150,150,150);
 
 table.flex-table {
-  width: 100vw;
+    width: 100vw;
 
-  tr.flex-table-row {
-    border: solid $border-color 2px;
-    display: flex;
-    flex: 1, 1;
-    flex-flow: row nowrap;
+    tr.flex-table-row {
+        border: solid $border-color 2px;
+        display: flex;
+        flex: 1, 1;
+        flex-flow: row nowrap;
 
-    @include respond-to('syllabus-medium') {
-      flex-flow: row wrap;
+        @include respond-to('syllabus-medium') {
+            flex-flow: row wrap;
+        }
+
+        &:nth-child(even) {
+            background-color: rgb(235,235,235);
+        }
+
+        &:hover {
+            background-color: rgb(102, 255, 153);
+        }
+
+
+        th, td {
+            border: solid $border-color 1px;
+            flex: 1 2 20%;
+            // https://stackoverflow.com/questions/49225684/flexbox-break-long-text-until-sibling-fits-in-container
+            min-width: 0;
+            padding: 2.5px 5px 2.5px 5px;
+
+            &.lesson-number {
+                max-width: 3em;
+            }
+
+            &.lesson-date {
+                max-width: 8em;
+            }
+
+            @include respond-to('syllabus-medium') {
+                max-width: unset;
+                min-width: 50%;
+            }
+        }
+
+        td {
+          word-wrap: break-word;
+        }
     }
-
-    &:nth-child(even) {
-      background-color: rgb(235,235,235);
-    }
-
-    &:hover {
-      background-color: rgb(102, 255, 153);
-    }
-
-
-    th, td {
-      border: solid $border-color 1px;
-      flex: 1 2 20%;
-      // https://stackoverflow.com/questions/49225684/flexbox-break-long-text-until-sibling-fits-in-container
-      min-width: 0;
-      padding: 2.5px 5px 2.5px 5px;
-
-      &.lesson-number {
-        max-width: 3em;
-      }
-
-      &.lesson-date {
-        max-width: 8em;
-      }
-
-      @include respond-to('syllabus-medium') {
-        max-width: unset;
-        min-width: 50%;
-      }
-    }
-
-    td {
-      word-wrap: break-word;
-    }
-  }
 }
 
 // Worksheets
 .worksheet-buttons {
-  margin: $content-margins;
+    padding: $content-spacer;
 }
 
 #worksheet-course-name {
@@ -87,73 +87,73 @@ table.flex-table {
 }
 
 .worksheet-problem-form {
-  padding: 1em 0 1em 0;
+    padding: 1em 0 1em 0;
 }
 
 .worksheet-problem {
-  margin: $content-margins;
+    margin: $content-spacer;
 }
 
 @include respond-to('ws-medium') {
-    $content-margins: 2em;
+    $content-spacer: 2em;
     .worksheet-problem {
-      margin: $content-margins;
+        margin: $content-spacer;
     }
 
     .worksheet-buttons {
-      margin: $content-margins;
+        margin: $content-spacer;
     }
 }
 
 // Accordion
 ._accordion {
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  text-align: left;
-  border: none;
-  outline: none;
-  transition: 0.4s;
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 ._accordion-active, ._accordion:hover {
-  background-color: #ccc;
+    background-color: #ccc;
 }
 
 /* Style the accordion panel. Note: hidden by default */
 ._accordion-content {
-  padding: 0 18px;
-  background-color: white;
-  display: none;
-  overflow: hidden;
+    padding: 0 18px;
+    background-color: white;
+    display: none;
+    overflow: hidden;
 }
 
 /* Get rid of arrows on number inputs */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 input[type=number] {
-  -moz-appearance:textfield;
+    -moz-appearance:textfield;
 }
 
 // Resources
 hr {
-  display: block;
-  height: 1px;
-  border: 0;
-  border-top: 3px solid rgb(100, 100, 100);
-  margin: 0;
-  margin-bottom: 4px;
-  margin-top: -4px;
-  padding: 0;
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 3px solid rgb(100, 100, 100);
+    margin: 0;
+    margin-bottom: 4px;
+    margin-top: -4px;
+    padding: 0;
 }
 
 .resource-category-column, .resource-description-column, .resource-link-column {
-  margin: 0 $content-margins;
+    margin: 0 $content-spacer;
 }
