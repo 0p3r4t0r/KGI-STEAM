@@ -97,7 +97,6 @@ class CourseView(TemplateView):
         context['incorrectly_answered'] = self.answered_questions(0)
         # Resources
         context['resources'] = self.resources
-        print(self.resources)
         return context
 
 
