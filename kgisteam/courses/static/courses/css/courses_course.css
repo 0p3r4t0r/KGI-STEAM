@@ -1,5 +1,5 @@
 #course_mark {
-  margin-right: 1em;
+  padding-right: 1em;
 }
 
 table.flex-table {
@@ -45,7 +45,7 @@ table.flex-table tr.flex-table-row td {
 }
 
 .worksheet-buttons {
-  margin: 1em;
+  padding: 1em;
 }
 
 #worksheet-course-name {
