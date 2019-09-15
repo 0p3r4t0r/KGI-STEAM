@@ -1,8 +1,13 @@
 .course_card {
+  border: solid 3px black;
+  border-radius: 15px;
   margin: 20px 10px 20px 10px;
+  overflow: hidden;
 }
-
-.course_description {
+.course_card .card-image {
+  background-color: black;
+}
+.course_card .course_description {
   height: 70px;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -10,8 +15,7 @@
   -ms-overflow-style: none;
   /* IE 10+ */
 }
-
-.course_description::-webkit-scrollbar {
+.course_card .course_description::-webkit-scrollbar {
   /* WebKit */
   width: 0;
   height: 0;
