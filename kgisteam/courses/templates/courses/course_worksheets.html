@@ -1,5 +1,5 @@
 {% extends 'courses/course_base.html' %}
-
+{% load static %}
 
 {% block page_head %}
     {% include 'kgisteam/_mathjax.html' %}
@@ -48,8 +48,8 @@
                 {% elif problem.id in incorrectly_answered %}
                     Try again.
                 {% endif %}
-                <button class="_accordion button is-fullwidth is-small">show solution</button>
-                <div class="_accordion-content">
+                <button class="show_solution_accordion button is-fullwidth is-small">show solution</button>
+                <div class="show_solution_accordion-content">
                     {{ problem.solution_markdown|safe }}
                 </div>
             </li>
@@ -81,26 +81,5 @@
 
 
 {% block body_scripts %}
-<script>
-    var acc = document.getElementsByClassName("_accordion");
-    var i;
-
-    for (i = 0; i < acc.length; i++) {
-      acc[i].addEventListener("click", function() {
-        /* Toggle between adding and removing the "active" class,
-        to highlight the button that controls the panel */
-        this.classList.toggle("active");
-
-        /* Toggle between hiding and showing the active panel */
-        var panel = this.nextElementSibling;
-        if (panel.style.display === "block") {
-          panel.style.display = "none";
-          this.innerHTML="show solution";
-        } else {
-          panel.style.display = "block";
-          this.innerHTML="hide solution";
-        }
-      });
-    }
-</script>
+<script src="{% static 'courses/js/show_solutions_accordion.js' %}"></script>
 {% endblock %}

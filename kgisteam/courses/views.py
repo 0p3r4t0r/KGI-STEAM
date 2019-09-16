@@ -21,40 +21,6 @@ class CourseView(TemplateView):
     template_name = 'courses/course_base.html'
 
     @property
-    def active_problems(self):
-        if 'order' in self.kwargs.keys() and self.active_worksheet:
-            if self.kwargs['order'] == 'random':
-                return self.active_worksheet.problem_set.order_by('?')
-            else:
-                return self.active_worksheet.problem_set.all()
-
-    @property
-    def active_worksheet(self):
-        if 'worksheet_title' in self.kwargs.keys():
-            worksheet = self.course.worksheet_set.filter(
-                title=self.kwargs['worksheet_title']
-            ).first()
-            return worksheet
-
-    def answered_questions(self, is_correct=1):
-        if self.active_worksheet:
-            session = self.request.session
-            problems = self.active_worksheet.problem_set.all()
-            correctly_answered = set()
-            for problem in problems:
-                problem_key = 'problem{}'.format(problem.id)
-                if problem_key in session.keys():
-                    if session[problem_key] == is_correct:
-                        correctly_answered.add(problem.id)
-            return correctly_answered
-
-    def get(self, request, *args, **kwargs):
-        if self.course:
-            return render(request, self.template_name, self.get_context_data())
-        else:
-            return render(request, self.template404)
-
-    @property
     def course(self):
         course = Course.objects.filter(
             school=self.kwargs['school'],
@@ -64,6 +30,30 @@ class CourseView(TemplateView):
             year=self.kwargs['year'],
         ).first()
         return course
+
+    @property
+    def syllabus(self):
+        # Find the course syllabus data.
+        syllabus = Syllabus.objects.filter(
+            course=self.course,
+        ).first()
+        return syllabus
+
+    @property
+    def active_worksheet(self):
+        if 'worksheet_title' in self.kwargs.keys():
+            worksheet = self.course.worksheet_set.filter(
+                title=self.kwargs['worksheet_title']
+            ).first()
+            return worksheet
+
+    @property
+    def active_problems(self):
+        if 'order' in self.kwargs.keys() and self.active_worksheet:
+            if self.kwargs['order'] == 'random':
+                return self.active_worksheet.problem_set.order_by('?')
+            else:
+                return self.active_worksheet.problem_set.all()
 
     @property
     def resources(self):
@@ -78,13 +68,11 @@ class CourseView(TemplateView):
             )
         return resources
 
-    @property
-    def syllabus(self):
-        # Find the course syllabus data.
-        syllabus = Syllabus.objects.filter(
-            course=self.course,
-        ).first()
-        return syllabus
+    def get(self, request, *args, **kwargs):
+        if self.course:
+            return render(request, self.template_name, self.get_context_data())
+        else:
+            return render(request, self.template404)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -98,6 +86,18 @@ class CourseView(TemplateView):
         # Resources
         context['resources'] = self.resources
         return context
+
+    def answered_questions(self, is_correct=1):
+        if self.active_worksheet:
+            session = self.request.session
+            problems = self.active_worksheet.problem_set.all()
+            correctly_answered = set()
+            for problem in problems:
+                problem_key = 'problem{}'.format(problem.id)
+                if problem_key in session.keys():
+                    if session[problem_key] == is_correct:
+                        correctly_answered.add(problem.id)
+            return correctly_answered
 
 
 def worksheets_check_answer(request, *args, **kwargs):
@@ -115,8 +115,6 @@ def worksheets_check_answer(request, *args, **kwargs):
             else:
                 request.session['problem{}'.format(problem_id)] = 0
     return redirect('course-worksheets', *args, **kwargs)
-
-
 
 
 def worksheets_reset(request, *args, **kwargs):

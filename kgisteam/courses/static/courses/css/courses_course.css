@@ -70,7 +70,7 @@ table.flex-table tr.flex-table-row td {
     margin: 2em;
   }
 }
-._accordion {
+.show_solution_accordion {
   background-color: #eee;
   color: #444;
   cursor: pointer;
@@ -83,12 +83,12 @@ table.flex-table tr.flex-table-row td {
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-._accordion-active, ._accordion:hover {
+.show_solution_accordion:hover {
   background-color: #ccc;
 }
 
 /* Style the accordion panel. Note: hidden by default */
-._accordion-content {
+.show_solution_accordion-content {
   padding: 0 18px;
   background-color: white;
   display: none;
