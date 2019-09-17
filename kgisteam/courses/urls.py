@@ -13,7 +13,7 @@ urlpatterns = [
     ),
     # Worksheets
     path('{}/worksheets/<worksheet_title>/<order>'.format(courses_url),
-        views.CourseView.as_view(template_name='courses/course_worksheets.html'),
+        views.worksheets,
         name='course-worksheets',
     ),
     path('{}/worksheets/<worksheet_title>/<order>/check/<problem_id>'.format(courses_url),

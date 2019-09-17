@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from copy import deepcopy
 from math import trunc
 
 from django.shortcuts import redirect, render
@@ -101,67 +102,20 @@ class CourseView(TemplateView):
         return context
 
 
-def worksheets_check_answer(request, *args, **kwargs):
-    problem_id = kwargs.pop('problem_id')
-    if request.method == 'POST':
-        form = WorksheetProblemForm(request.POST)
-        if form.is_valid():
-            user_answer = form.cleaned_data['user_answer']
-            problem = Problem.objects.filter(
-                id=problem_id,
-            ).first()
-            correct_answer = problem.calculated_answer
-            if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
-                request.session['problem{}'.format(problem_id)] = 1
-            else:
-                request.session['problem{}'.format(problem_id)] = 0
-    return redirect('course-worksheets', *args, **kwargs)
-
-
-
-
-def worksheets_reset(request, *args, **kwargs):
-    course = Course.objects.filter(
-        school=kwargs['school'],
-        name=kwargs['name'],
-        nen=kwargs['nen_kumi'][0],
-        kumi=kwargs['nen_kumi'][2],
-        year=kwargs['year'],
-    ).first()
-    worksheet = Worksheet.objects.filter(
-        course=course,
-        title=kwargs['worksheet_title'],
-    ).first()
-    worksheet_problem_keys = [ 'problem{}'.format(problem.id) for problem in worksheet.problem_set.all() ]
-    delete = [ key for key in request.session.keys()
-                if key.startswith('problem') and
-                key in worksheet_problem_keys
-    ]
-    for key in delete: del request.session[key]
-    return redirect('course-worksheets', *args, **kwargs)
-
-
-def worksheets_reset_all(request, *args, **kwargs):
-    delete = [ key for key in request.session.keys()
-                if key.startswith('problem')
-    ]
-    for key in delete: del request.session[key]
-    return redirect('course-worksheets', *args, **kwargs)
-
-
-def worksheets_problems_order(request, *args, **kwargs):
-    if kwargs['order'] == 'random':
-        kwargs['order'] = 'ordered'
-        return redirect('course-worksheets', *args, **kwargs)
-    else:
-        kwargs['order'] = 'random'
-        return redirect('course-worksheets', *args, **kwargs)
-
-
+# Roughly refactored
 def course_from_kwargs(kwargs):
-    nen_kumi = kwargs.pop('nen_kumi')
-    kwargs['nen'], kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
-    return Course.objects.filter(**kwargs).first()
+    """make this a decorator"""
+    filter_kwargs = deepcopy(kwargs)
+    # Split nen-kumi into nen and kumi
+    nen_kumi = kwargs['nen_kumi']
+    filter_kwargs['nen'], filter_kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
+    # Remove anything in kwargs that does not correspond to a field in Course.
+    filter_kwargs = {
+        key: value for key, value in kwargs.items()
+        if key in (field.name for field in Course._meta.fields)
+    }
+    return Course.objects.filter(**filter_kwargs).first()
+
 
 def syllabus(request, *args, **kwargs):
     course = course_from_kwargs(kwargs)
@@ -172,6 +126,7 @@ def syllabus(request, *args, **kwargs):
     }
     return render(request, 'courses/course_syllabus.html', context)
 
+
 def resources(request, *args, **kwargs):
     course = course = course_from_kwargs(kwargs)
     context = {
@@ -179,3 +134,80 @@ def resources(request, *args, **kwargs):
         'resources': course.resources,
     }
     return render(request, 'courses/course_resources.html', context)
+
+
+def worksheets(request, *args, **kwargs):
+    course = course_from_kwargs(kwargs)
+    active_worksheet = course.worksheet_set.filter(
+        title=kwargs['worksheet_title']
+    ).first()
+    context = {
+        'course': course,
+    }
+    if active_worksheet:
+        active_problems = active_worksheet.problem_set.all()
+        context['active_worksheet'] = active_worksheet
+        context['active_problems'] = active_problems
+        context['worksheet_problem_form'] = WorksheetProblemForm()
+        context['problem_order'] = kwargs['order']
+        if 'checked_problems' in request.session.keys():
+            context['checked_problems'] = request.session['checked_problems']
+    return render(request, 'courses/course_worksheets.html', context)
+
+
+def worksheets_check_answer(request, *args, **kwargs):
+    """https://docs.djangoproject.com/en/2.2/topics/http/sessions/#when-sessions-are-saved
+    """
+    problem_id = kwargs.pop('problem_id')
+    if request.method == 'POST':
+        form = WorksheetProblemForm(request.POST)
+        if form.is_valid():
+            user_answer = form.cleaned_data['user_answer']
+            problem = Problem.objects.filter(id=problem_id).first()
+            correct_answer = problem.calculated_answer
+            checked_problems = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
+            if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
+                if problem_id not in checked_problems['right']:
+                    checked_problems['right'].append(problem_id)
+                if problem_id in checked_problems['wrong']:
+                    checked_problems['wrong'].remove(problem_id)
+            else:
+                if problem_id not in checked_problems['wrong']:
+                    checked_problems['wrong'].append(problem_id)
+                if problem_id in checked_problems['right']:
+                    checked_problems['right'].remove(problem_id)
+            # Tell Django we updated the session.
+            request.session.modified = True
+    return redirect('course-worksheets', *args, **kwargs)
+
+    
+def worksheets_reset(request, *args, **kwargs):
+    course = course_from_kwargs(kwargs)
+    worksheet = Worksheet.objects.filter(
+        course=course,
+        title=kwargs['worksheet_title'],
+    ).first()
+    worksheet_problem_ids = [ str(problem.id) for problem in worksheet.problem_set.all() ]
+    if 'checked_problems' in request.session.keys():
+        checked_problems = request.session['checked_problems']
+        for value in checked_problems.values():
+            for problem_id in worksheet_problem_ids:
+                if problem_id in value:
+                    value.remove(problem_id)
+        request.session.modified = True
+    return redirect('course-worksheets', *args, **kwargs)
+
+
+def worksheets_reset_all(request, *args, **kwargs):
+    if 'checked_problems' in request.session.keys():
+        del request.session['checked_problems']
+    return redirect('course-worksheets', *args, **kwargs)
+
+
+def worksheets_problems_order(request, *args, **kwargs):
+    if kwargs['order'] == 'random':
+        kwargs['order'] = 'ordered'
+        return redirect('course-worksheets', *args, **kwargs)
+    else:
+        kwargs['order'] = 'random'
+        return redirect('course-worksheets', *args, **kwargs)
