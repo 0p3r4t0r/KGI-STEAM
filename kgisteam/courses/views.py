@@ -5,7 +5,8 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
 from courses.forms import WorksheetProblemForm
-from courses.models import Course, CourseResource, Problem, SharedResource, ResourceBaseClass, Syllabus, Worksheet
+from courses.models import CATEGORY_CHOICES
+from courses.models import Course, CourseResource, Problem, SharedResource, Syllabus, Worksheet
 from courses.utils import sn_round
 
 
@@ -67,7 +68,7 @@ class CourseView(TemplateView):
 
     @property
     def resources(self):
-        category_choices = ResourceBaseClass.CATEGORY_CHOICES
+        category_choices = CATEGORY_CHOICES
         shared_resources = SharedResource.objects.all()
         course_resources = CourseResource.objects.filter(course=self.course)
         resources = dict()
@@ -155,3 +156,26 @@ def worksheets_problems_order(request, *args, **kwargs):
     else:
         kwargs['order'] = 'random'
         return redirect('course-worksheets', *args, **kwargs)
+
+
+def course_from_kwargs(kwargs):
+    nen_kumi = kwargs.pop('nen_kumi')
+    kwargs['nen'], kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
+    return Course.objects.filter(**kwargs).first()
+
+def syllabus(request, *args, **kwargs):
+    course = course_from_kwargs(kwargs)
+    syllabus = Syllabus.objects.filter(course=course).first()
+    context = {
+        'course': course,
+        'syllabus': syllabus,
+    }
+    return render(request, 'courses/course_syllabus.html', context)
+
+def resources(request, *args, **kwargs):
+    course = course = course_from_kwargs(kwargs)
+    context = {
+        'course': course,
+        'resources': course.resources,
+    }
+    return render(request, 'courses/course_resources.html', context)

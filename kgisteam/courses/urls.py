@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.courses_home, name='courses-home'),
     # Syllabi
     path('{}/syllabus'.format(courses_url),
-        views.CourseView.as_view(template_name='courses/course_syllabus.html'),
+        views.syllabus,
         name='course-syllabi',
     ),
     # Worksheets
@@ -34,7 +34,7 @@ urlpatterns = [
     ),
     # Resources
     path('{}/resources'.format(courses_url),
-        views.CourseView.as_view(template_name='courses/course_resources.html'),
+        views.resources,
         name='course-resources',
     ),
 ]

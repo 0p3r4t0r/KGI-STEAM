@@ -65,4 +65,4 @@ class WorksheetAdmin(admin.ModelAdmin):
 
 @admin.register(SharedResource)
 class ResourceAdmin(admin.ModelAdmin):
-    pass
+    filter_horizontal = ('courses',)
