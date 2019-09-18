@@ -38,15 +38,17 @@
             {% for problem in active_problems %}
             <li class="worksheet-problem">
                 {{ problem.question_markdown|safe }}
-                <form action="{% url 'course-worksheets-check' course.school course.name course.nen_kumi course.year active_worksheet.title view.kwargs.order problem.id %}" class="worksheet-problem-form" method="post">
+                <form action="{% url 'course-worksheets-check' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order problem.id %}" class="worksheet-problem-form" method="post">
                     {% csrf_token %}
                     {{ worksheet_problem_form }}
                     <input type="submit" value="Check">
                 </form>
-                {% if problem.id in correctly_answered %}
-                    Problem solved.
-                {% elif problem.id in incorrectly_answered %}
-                    Try again.
+                {% if checked_problems %}
+                    {% if problem.id|stringformat:"i" in checked_problems.right %}
+                        Problem solved.
+                    {% elif problem.id|stringformat:"i" in checked_problems.wrong %}
+                        Try again.
+                    {% endif %}
                 {% endif %}
                 <button class="show_solution_accordion button is-fullwidth is-small">show solution</button>
                 <div class="show_solution_accordion-content">
@@ -56,15 +58,8 @@
             {% endfor %}
         </ol>
         <div class="worksheet-buttons">
-            <a class="button" href="{% url 'course-worksheets-reset' course.school course.name course.nen_kumi course.year active_worksheet.title view.kwargs.order %}" id="worksheet-reset">Reset</a>
-            <a class="button" href="{% url 'course-worksheets-reset-all' course.school course.name course.nen_kumi course.year active_worksheet.title view.kwargs.order %}" id="worksheet-reset-all">Reset all</a>
-            <a class="button" href="{% url 'course-worksheets-problems-order' course.school course.name course.nen_kumi course.year active_worksheet.title view.kwargs.order %}" id="shuffle_problems">
-                {% if view.kwargs.order == 'ordered' %}
-                    Shuffle Problems
-                {% elif view.kwargs.order == 'random' %}
-                    Unshuffle Problems
-                {% endif %}
-            </a>
+            <a class="button" href="{% url 'course-worksheets-reset' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order %}" id="worksheet-reset">Reset</a>
+            <a class="button" href="{% url 'course-worksheets-reset-all' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order %}" id="worksheet-reset-all">Reset all</a>
         </div>
     </div>
     {% else %}

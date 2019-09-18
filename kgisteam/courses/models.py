@@ -14,6 +14,17 @@ from courses.utils import sn_round, sn_round_str
 from kgisteam.settings import TIME_ZONE
 
 
+IN_CLASS = 'IC'
+LANGUAGE_LEARNING = 'LL'
+FURTHER_STUDY = 'FS'
+
+CATEGORY_CHOICES = [
+    (IN_CLASS, 'In Class'),
+    (LANGUAGE_LEARNING, 'Language Learning'),
+    (FURTHER_STUDY, 'Further Study'),
+]
+
+
 class Course(models.Model):
     """Store course information.
 
@@ -85,19 +96,30 @@ class Course(models.Model):
         upload_to='courses',
         )
 
-
+    @property
     def nen_kumi(self):
         return '{nen}-{kumi}'.format(
             nen=self.nen,
             kumi=self.kumi,
         )
 
+    @property
+    def resources(self):
+        shared_resources = self.sharedresource_set.all()
+        course_resources = self.courseresource_set.all()
+        resources = dict()
+        for category in CATEGORY_CHOICES:
+            resources[category[1]] = (
+                list(shared_resources.filter(category=category[0])) +
+                list(course_resources.filter(category=category[0]))
+            )
+        return resources
 
     def __str__(self):
         return '{name} ({school}: {nen_kumi}) {year}'.format(
             name=self.name,
             school=self.school,
-            nen_kumi=self.nen_kumi(),
+            nen_kumi=self.nen_kumi,
             year=self.year,
         )
 
@@ -340,16 +362,6 @@ class ResourceBaseClass(models.Model):
     url_max_length=200
     url_text_max_length=30
 
-    IN_CLASS = 'IC'
-    LANGUAGE_LEARNING = 'LL'
-    FURTHER_STUDY = 'FS'
-
-    CATEGORY_CHOICES = [
-        (IN_CLASS, 'In Class'),
-        (LANGUAGE_LEARNING, 'Language Learning'),
-        (FURTHER_STUDY, 'Further Study'),
-    ]
-
     category = models.CharField(
         max_length=2,
         choices=CATEGORY_CHOICES,
@@ -373,7 +385,7 @@ class ResourceBaseClass(models.Model):
 
 
 class SharedResource(ResourceBaseClass):
-    pass
+    courses = models.ManyToManyField(Course)
 
 
 class CourseResource(ResourceBaseClass):
