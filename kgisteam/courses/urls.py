@@ -8,12 +8,12 @@ urlpatterns = [
     path('', views.courses_home, name='courses-home'),
     # Syllabi
     path('{}/syllabus'.format(courses_url),
-        views.CourseView.as_view(template_name='courses/course_syllabus.html'),
+        views.syllabus,
         name='course-syllabi',
     ),
     # Worksheets
     path('{}/worksheets/<worksheet_title>/<order>'.format(courses_url),
-        views.CourseView.as_view(template_name='courses/course_worksheets.html'),
+        views.worksheets,
         name='course-worksheets',
     ),
     path('{}/worksheets/<worksheet_title>/<order>/check/<problem_id>'.format(courses_url),
@@ -28,13 +28,9 @@ urlpatterns = [
         views.worksheets_reset_all,
         name='course-worksheets-reset-all',
     ),
-    path('{}/worksheets/<worksheet_title>/<order>/shuffle'.format(courses_url),
-        views.worksheets_problems_order,
-        name='course-worksheets-problems-order',
-    ),
     # Resources
     path('{}/resources'.format(courses_url),
-        views.CourseView.as_view(template_name='courses/course_resources.html'),
+        views.resources,
         name='course-resources',
     ),
 ]
