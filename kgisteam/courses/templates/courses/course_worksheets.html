@@ -43,10 +43,12 @@
                     {{ worksheet_problem_form }}
                     <input type="submit" value="Check">
                 </form>
-                {% if problem.id|stringformat:"i" in checked_problems.right %}
-                    Problem solved.
-                {% elif problem.id|stringformat:"i" in checked_problems.wrong %}
-                    Try again.
+                {% if checked_problems %}
+                    {% if problem.id|stringformat:"i" in checked_problems.right %}
+                        Problem solved.
+                    {% elif problem.id|stringformat:"i" in checked_problems.wrong %}
+                        Try again.
+                    {% endif %}
                 {% endif %}
                 <button class="_accordion button is-fullwidth is-small">show solution</button>
                 <div class="_accordion-content">
@@ -58,14 +60,6 @@
         <div class="worksheet-buttons">
             <a class="button" href="{% url 'course-worksheets-reset' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order %}" id="worksheet-reset">Reset</a>
             <a class="button" href="{% url 'course-worksheets-reset-all' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order %}" id="worksheet-reset-all">Reset all</a>
-            <!-- Need to reimplement this feature.
-            <a class="button" href="{% url 'course-worksheets-problems-order' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order %}" id="shuffle_problems">
-                {% if problem_order == 'ordered' %}
-                    Shuffle Problems
-                {% elif problem_order == 'random' %}
-                    Unshuffle Problems
-                {% endif %}
-            </a>-->
         </div>
     </div>
     {% else %}

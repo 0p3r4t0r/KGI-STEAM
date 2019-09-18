@@ -28,10 +28,6 @@ urlpatterns = [
         views.worksheets_reset_all,
         name='course-worksheets-reset-all',
     ),
-    path('{}/worksheets/<worksheet_title>/<order>/shuffle'.format(courses_url),
-        views.worksheets_problems_order,
-        name='course-worksheets-problems-order',
-    ),
     # Resources
     path('{}/resources'.format(courses_url),
         views.resources,

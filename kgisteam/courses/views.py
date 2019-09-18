@@ -18,93 +18,8 @@ def courses_home(request):
     return render(request, 'courses/courses_home.html', context)
 
 
-class CourseView(TemplateView):
-
-    template_name = 'courses/course_base.html'
-
-    @property
-    def active_problems(self):
-        if 'order' in self.kwargs.keys() and self.active_worksheet:
-            if self.kwargs['order'] == 'random':
-                return self.active_worksheet.problem_set.order_by('?')
-            else:
-                return self.active_worksheet.problem_set.all()
-
-    @property
-    def active_worksheet(self):
-        if 'worksheet_title' in self.kwargs.keys():
-            worksheet = self.course.worksheet_set.filter(
-                title=self.kwargs['worksheet_title']
-            ).first()
-            return worksheet
-
-    def answered_questions(self, is_correct=1):
-        if self.active_worksheet:
-            session = self.request.session
-            problems = self.active_worksheet.problem_set.all()
-            correctly_answered = set()
-            for problem in problems:
-                problem_key = 'problem{}'.format(problem.id)
-                if problem_key in session.keys():
-                    if session[problem_key] == is_correct:
-                        correctly_answered.add(problem.id)
-            return correctly_answered
-
-    def get(self, request, *args, **kwargs):
-        if self.course:
-            return render(request, self.template_name, self.get_context_data())
-        else:
-            return render(request, self.template404)
-
-    @property
-    def course(self):
-        course = Course.objects.filter(
-            school=self.kwargs['school'],
-            name=self.kwargs['name'],
-            nen=self.kwargs['nen_kumi'][0],
-            kumi=self.kwargs['nen_kumi'][2],
-            year=self.kwargs['year'],
-        ).first()
-        return course
-
-    @property
-    def resources(self):
-        category_choices = CATEGORY_CHOICES
-        shared_resources = SharedResource.objects.all()
-        course_resources = CourseResource.objects.filter(course=self.course)
-        resources = dict()
-        for category in category_choices:
-            resources[category[1]] = (
-                list(shared_resources.filter(category=category[0])) +
-                list(course_resources.filter(category=category[0]))
-            )
-        return resources
-
-    @property
-    def syllabus(self):
-        # Find the course syllabus data.
-        syllabus = Syllabus.objects.filter(
-            course=self.course,
-        ).first()
-        return syllabus
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['course'] = self.course
-        context['syllabus'] = self.syllabus
-        context['active_worksheet'] = self.active_worksheet
-        context['active_problems'] = self.active_problems
-        context['worksheet_problem_form'] = WorksheetProblemForm()
-        context['correctly_answered'] = self.answered_questions(1)
-        context['incorrectly_answered'] = self.answered_questions(0)
-        # Resources
-        context['resources'] = self.resources
-        return context
-
-
 # Roughly refactored
 def course_from_kwargs(kwargs):
-    """make this a decorator"""
     filter_kwargs = deepcopy(kwargs)
     # Split nen-kumi into nen and kumi
     nen_kumi = kwargs['nen_kumi']
@@ -127,15 +42,7 @@ def syllabus(request, *args, **kwargs):
     return render(request, 'courses/course_syllabus.html', context)
 
 
-def resources(request, *args, **kwargs):
-    course = course = course_from_kwargs(kwargs)
-    context = {
-        'course': course,
-        'resources': course.resources,
-    }
-    return render(request, 'courses/course_resources.html', context)
-
-
+# Begin worksheet view functions----------------------------------------------->
 def worksheets(request, *args, **kwargs):
     course = course_from_kwargs(kwargs)
     active_worksheet = course.worksheet_set.filter(
@@ -145,13 +52,13 @@ def worksheets(request, *args, **kwargs):
         'course': course,
     }
     if active_worksheet:
+        #get problems and update context
         active_problems = active_worksheet.problem_set.all()
         context['active_worksheet'] = active_worksheet
         context['active_problems'] = active_problems
         context['worksheet_problem_form'] = WorksheetProblemForm()
         context['problem_order'] = kwargs['order']
-        if 'checked_problems' in request.session.keys():
-            context['checked_problems'] = request.session['checked_problems']
+        context['checked_problems'] = request.session.get('checked_problems')
     return render(request, 'courses/course_worksheets.html', context)
 
 
@@ -180,34 +87,38 @@ def worksheets_check_answer(request, *args, **kwargs):
             request.session.modified = True
     return redirect('course-worksheets', *args, **kwargs)
 
-    
+
 def worksheets_reset(request, *args, **kwargs):
-    course = course_from_kwargs(kwargs)
-    worksheet = Worksheet.objects.filter(
-        course=course,
-        title=kwargs['worksheet_title'],
-    ).first()
-    worksheet_problem_ids = [ str(problem.id) for problem in worksheet.problem_set.all() ]
-    if 'checked_problems' in request.session.keys():
-        checked_problems = request.session['checked_problems']
+    checked_problems = request.session.get('checked_problems')
+    if checked_problems:
+        # Get course and worksheet info
+        course = course_from_kwargs(kwargs)
+        worksheet = Worksheet.objects.filter(
+            course=course,
+            title=kwargs['worksheet_title'],
+        ).first()
+        # Clear worksheet problems from checked_problems
+        worksheet_problem_ids = ( str(problem.id) for problem in worksheet.problem_set.all() )
         for value in checked_problems.values():
             for problem_id in worksheet_problem_ids:
                 if problem_id in value:
                     value.remove(problem_id)
+        # Tell django we updated the session
         request.session.modified = True
     return redirect('course-worksheets', *args, **kwargs)
 
 
 def worksheets_reset_all(request, *args, **kwargs):
-    if 'checked_problems' in request.session.keys():
+    if request.session.get('checked_problems'):
         del request.session['checked_problems']
     return redirect('course-worksheets', *args, **kwargs)
+# END worksheet view functions ------------------------------------------------>
 
 
-def worksheets_problems_order(request, *args, **kwargs):
-    if kwargs['order'] == 'random':
-        kwargs['order'] = 'ordered'
-        return redirect('course-worksheets', *args, **kwargs)
-    else:
-        kwargs['order'] = 'random'
-        return redirect('course-worksheets', *args, **kwargs)
+def resources(request, *args, **kwargs):
+    course = course = course_from_kwargs(kwargs)
+    context = {
+        'course': course,
+        'resources': course.resources,
+    }
+    return render(request, 'courses/course_resources.html', context)
