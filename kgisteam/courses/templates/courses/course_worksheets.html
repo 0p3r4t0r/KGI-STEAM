@@ -36,25 +36,20 @@
     <div class="column">
         <ol>
             {% for problem in active_problems %}
-            <li class="worksheet-problem" id="pk{{ problem.id }}">
-                {{ problem.question_markdown|safe }}
-                <form action="{% url 'course-worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
-                    {% csrf_token %}
-                    {{ worksheet_problem_form }}
-                    <input type="submit" value="Check">
-                </form>
-                {% if checked_problems %}
-                    {% if problem.id|stringformat:"i" in checked_problems.right %}
-                        Problem solved.
-                    {% elif problem.id|stringformat:"i" in checked_problems.wrong %}
-                        Try again.
-                    {% endif %}
-                {% endif %}
-                <button class="show_solution_accordion button is-fullwidth is-small">show solution</button>
-                <div class="show_solution_accordion-content">
-                    {{ problem.solution_markdown|safe }}
-                </div>
-            </li>
+            <div class="worksheet-problem-container" id="pk{{ problem.id }}">
+                <li class="worksheet-problem">
+                    {{ problem.question_markdown|safe }}
+                    <form action="{% url 'course-worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
+                        {% csrf_token %}
+                        {{ worksheet_problem_form }}
+                        <input type="submit" value="Check">
+                    </form>
+                    <button class="show_solution_accordion button is-fullwidth is-small">show solution</button>
+                    <div class="show_solution_accordion-content">
+                        {{ problem.solution_markdown|safe }}
+                    </div>
+                </li>
+            </div>
             {% endfor %}
         </ol>
         <div class="worksheet-buttons">
@@ -76,6 +71,42 @@
 
 
 {% block body_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", loadCheckedResults);
+
+function loadCheckedResults() {
+    // send request
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "{% url 'course-worksheets-check-results' %}");
+    xhr.send();
+    // recieve response
+    xhr.onreadystatechange = function () {
+        var DONE = 4; // readyState 4 means the request is done.
+        var OK = 200; // status 200 is a successful return.
+        if (xhr.readyState === DONE) {
+            if (xhr.status === OK) {
+                updatePage(xhr);
+            } else {
+                console.log('Error: ' + xhr.status); // An error occurred during the request.
+            }
+        }
+    }// end of nameless function
+}// end of function loadCheckedResults
+
+function updatePage(xhr) {
+    response = JSON.parse(xhr.responseText);
+    problems = document.getElementsByClassName('worksheet-problem-container');
+    for (let problem of problems) {
+        if (response.right.includes(problem.id)) {
+            problem.classList.add("checked_right");
+            problem.classList.remove("checked_wrong");
+        } else if (response.wrong.includes(problem.id)) {
+            problem.classList.add("checked_wrong");
+            problem.classList.remove("checked_right");
+        }
+    }
+}// end of function updatePate
+</script>
 <script src="{% static 'courses/js/show_solutions_accordion.js' %}"></script>
 <script src="{% static 'courses/js/worksheet_problem_form_ajax.js' %}"></script>
 {% endblock %}

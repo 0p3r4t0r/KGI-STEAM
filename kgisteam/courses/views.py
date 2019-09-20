@@ -69,7 +69,8 @@ def worksheets_check_answer(request, *args, **kwargs) -> 'JsonResponse':
     problem_id = kwargs['problem_id']
     form = WorksheetProblemForm(request.POST)
     json = {
-        'result': 'invalid form'
+        'result': 'invalid form',
+        'id': 'pk{}'.format(problem_id),
     }
     if form.is_valid():
         user_answer = form.cleaned_data['user_answer']
@@ -78,17 +79,22 @@ def worksheets_check_answer(request, *args, **kwargs) -> 'JsonResponse':
         checked_problems = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
         if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
             if problem_id not in checked_problems['right']:
-                checked_problems['right'].append(problem_id)
+                checked_problems['right'].append('pk{}'.format(problem_id))
             if problem_id in checked_problems['wrong']:
-                checked_problems['wrong'].remove(problem_id)
+                checked_problems['wrong'].remove('pk{}'.format(problem_id))
             json['result'] = 'right'
         else:
             if problem_id not in checked_problems['wrong']:
-                checked_problems['wrong'].append(problem_id)
+                checked_problems['wrong'].append('pk{}'.format(problem_id))
             if problem_id in checked_problems['right']:
-                checked_problems['right'].remove(problem_id)
+                checked_problems['right'].remove('pk{}'.format(problem_id))
             json['result'] = 'wrong'
         request.session.modified = True
+    return JsonResponse(json)
+
+
+def worksheets_check_answer_results(request, *args, **kwargs) -> 'JsonResponse':
+    json = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
     return JsonResponse(json)
 
 
@@ -102,11 +108,9 @@ def worksheets_reset(request, *args, **kwargs):
             title=kwargs['worksheet_title'],
         ).first()
         # Clear worksheet problems from checked_problems
-        worksheet_problem_ids = ( str(problem.id) for problem in worksheet.problem_set.all() )
-        for value in checked_problems.values():
-            for problem_id in worksheet_problem_ids:
-                if problem_id in value:
-                    value.remove(problem_id)
+        worksheet_problem_ids = [ 'pk{}'.format(problem.id) for problem in worksheet.problem_set.all() ]
+        checked_problems['right'] = [ id for id in checked_problems['right'] if id not in worksheet_problem_ids ]
+        checked_problems['wrong'] = [ id for id in checked_problems['wrong'] if id not in worksheet_problem_ids ]
         # Tell django we updated the session
         request.session.modified = True
     return redirect('course-worksheets', *args, **kwargs)

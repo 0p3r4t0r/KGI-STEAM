@@ -27,8 +27,8 @@ function checkAnswer(form) {
     var userAnswerValue = form.elements["user_answer"];
     // Create and send the request
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', form.action);
-    var csrftoken = getCookie('csrftoken');
+    xhr.open("POST", form.action);
+    var csrftoken = getCookie("csrftoken");
     xhr.setRequestHeader("X-CSRFToken", csrftoken);
     var formData = new FormData(form);
     xhr.send(formData);
@@ -38,8 +38,7 @@ function checkAnswer(form) {
         var OK = 200; // status 200 is a successful return.
         if (xhr.readyState === DONE) {
             if (xhr.status === OK) {
-                console.log(xhr.responseText)
-                updatePage();
+                updatePage(xhr);
             } else {
                 console.log('Error: ' + xhr.status); // An error occurred during the request.
             }
@@ -47,7 +46,16 @@ function checkAnswer(form) {
     };
 
     // Update the page
-    function updatePage() {
+    function updatePage(xhr) {
+        response = JSON.parse(xhr.responseText);
+        problem = document.getElementById(response.id);
+        if ( response.result == "right" ) {
+            problem.classList.add("checked_right");
+            problem.classList.remove("checked_wrong");
+        } else if (response.result == "wrong") {
+            problem.classList.add("checked_wrong");
+            problem.classList.remove("checked_right");
+        }
         console.log('updated');
     }
 };

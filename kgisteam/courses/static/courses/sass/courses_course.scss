@@ -90,6 +90,16 @@ table.flex-table {
     padding: 1em 0 1em 0;
 }
 
+.worksheet-problem-container {
+    &.checked_right {
+        background-color: lightgreen;
+    }
+
+    &.checked_wrong {
+        background-color: pink;
+    }
+}
+
 .worksheet-problem {
     margin: $content-spacer;
 }
