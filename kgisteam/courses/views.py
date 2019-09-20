@@ -2,6 +2,7 @@ from collections import OrderedDict
 from copy import deepcopy
 from math import trunc
 
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
@@ -69,13 +70,12 @@ def worksheets_check_answer(request, *args, **kwargs):
     """
     problem_id = kwargs['problem_id']
     form = WorksheetProblemForm(request.POST)
-    print('\n\n\n\n\n\n\n\n')
-    print(form.data)
-    print(request.POST)
-    print('\n\n\n\n\n\n\n\n')
+    problem = Problem.objects.filter(id=problem_id).first()
+    context = {
+        'problem': problem,
+    }
     if form.is_valid():
         user_answer = form.cleaned_data['user_answer']
-        problem = Problem.objects.filter(id=problem_id).first()
         correct_answer = problem.calculated_answer
         checked_problems = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
         if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
@@ -90,10 +90,7 @@ def worksheets_check_answer(request, *args, **kwargs):
                 checked_problems['right'].remove(problem_id)
         # Tell Django we updated the session.
         request.session.modified = True
-        context = {
-            'problem': problem,
-        }
-    return render(request, 'courses/course_worksheets_problem.html')
+    return render(request, 'courses/course_worksheets_problem.html', context)
 
 
 def worksheets_reset(request, *args, **kwargs):
