@@ -1,11 +1,9 @@
-from collections import OrderedDict
 from copy import deepcopy
 from math import trunc
 
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
-
 
 from courses.forms import WorksheetProblemForm
 from courses.models import CATEGORY_CHOICES
@@ -65,17 +63,17 @@ def worksheets(request, *args, **kwargs):
 
 
 @require_POST
-def worksheets_check_answer(request, *args, **kwargs):
+def worksheets_check_answer(request, *args, **kwargs) -> 'JsonResponse':
     """https://docs.djangoproject.com/en/2.2/topics/http/sessions/#when-sessions-are-saved
     """
     problem_id = kwargs['problem_id']
     form = WorksheetProblemForm(request.POST)
-    problem = Problem.objects.filter(id=problem_id).first()
-    context = {
-        'problem': problem,
+    json = {
+        'result': 'invalid form'
     }
     if form.is_valid():
         user_answer = form.cleaned_data['user_answer']
+        problem = Problem.objects.filter(id=problem_id).first()
         correct_answer = problem.calculated_answer
         checked_problems = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
         if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
@@ -83,14 +81,15 @@ def worksheets_check_answer(request, *args, **kwargs):
                 checked_problems['right'].append(problem_id)
             if problem_id in checked_problems['wrong']:
                 checked_problems['wrong'].remove(problem_id)
+            json['result'] = 'right'
         else:
             if problem_id not in checked_problems['wrong']:
                 checked_problems['wrong'].append(problem_id)
             if problem_id in checked_problems['right']:
                 checked_problems['right'].remove(problem_id)
-        # Tell Django we updated the session.
+            json['result'] = 'wrong'
         request.session.modified = True
-    return render(request, 'courses/course_worksheets_problem.html', context)
+    return JsonResponse(json)
 
 
 def worksheets_reset(request, *args, **kwargs):

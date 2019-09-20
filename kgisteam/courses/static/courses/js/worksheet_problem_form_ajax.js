@@ -31,9 +31,6 @@ function checkAnswer(form) {
     var csrftoken = getCookie('csrftoken');
     xhr.setRequestHeader("X-CSRFToken", csrftoken);
     var formData = new FormData(form);
-    for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]);
-    };
     xhr.send(formData);
     // Recieve the response
     xhr.onreadystatechange = function () {
@@ -41,10 +38,16 @@ function checkAnswer(form) {
         var OK = 200; // status 200 is a successful return.
         if (xhr.readyState === DONE) {
             if (xhr.status === OK) {
-                console.log(xhr.responseText); // 'This is the returned text.'
+                console.log(xhr.responseText)
+                updatePage();
             } else {
                 console.log('Error: ' + xhr.status); // An error occurred during the request.
             }
         }
     };
+
+    // Update the page
+    function updatePage() {
+        console.log('updated');
+    }
 };

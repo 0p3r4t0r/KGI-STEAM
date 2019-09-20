@@ -36,7 +36,25 @@
     <div class="column">
         <ol>
             {% for problem in active_problems %}
-            {% include 'courses/course_worksheets_problem.html' %}
+            <li class="worksheet-problem" id="pk{{ problem.id }}">
+                {{ problem.question_markdown|safe }}
+                <form action="{% url 'course-worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
+                    {% csrf_token %}
+                    {{ worksheet_problem_form }}
+                    <input type="submit" value="Check">
+                </form>
+                {% if checked_problems %}
+                    {% if problem.id|stringformat:"i" in checked_problems.right %}
+                        Problem solved.
+                    {% elif problem.id|stringformat:"i" in checked_problems.wrong %}
+                        Try again.
+                    {% endif %}
+                {% endif %}
+                <button class="show_solution_accordion button is-fullwidth is-small">show solution</button>
+                <div class="show_solution_accordion-content">
+                    {{ problem.solution_markdown|safe }}
+                </div>
+            </li>
             {% endfor %}
         </ol>
         <div class="worksheet-buttons">
