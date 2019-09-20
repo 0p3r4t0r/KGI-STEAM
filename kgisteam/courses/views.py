@@ -3,7 +3,8 @@ from copy import deepcopy
 from math import trunc
 
 from django.shortcuts import redirect, render
-from django.views.generic import TemplateView
+from django.views.decorators.http import require_POST
+
 
 from courses.forms import WorksheetProblemForm
 from courses.models import CATEGORY_CHOICES
@@ -62,30 +63,37 @@ def worksheets(request, *args, **kwargs):
     return render(request, 'courses/course_worksheets.html', context)
 
 
+@require_POST
 def worksheets_check_answer(request, *args, **kwargs):
     """https://docs.djangoproject.com/en/2.2/topics/http/sessions/#when-sessions-are-saved
     """
-    problem_id = kwargs.pop('problem_id')
-    if request.method == 'POST':
-        form = WorksheetProblemForm(request.POST)
-        if form.is_valid():
-            user_answer = form.cleaned_data['user_answer']
-            problem = Problem.objects.filter(id=problem_id).first()
-            correct_answer = problem.calculated_answer
-            checked_problems = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
-            if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
-                if problem_id not in checked_problems['right']:
-                    checked_problems['right'].append(problem_id)
-                if problem_id in checked_problems['wrong']:
-                    checked_problems['wrong'].remove(problem_id)
-            else:
-                if problem_id not in checked_problems['wrong']:
-                    checked_problems['wrong'].append(problem_id)
-                if problem_id in checked_problems['right']:
-                    checked_problems['right'].remove(problem_id)
-            # Tell Django we updated the session.
-            request.session.modified = True
-    return redirect('course-worksheets', *args, **kwargs)
+    problem_id = kwargs['problem_id']
+    form = WorksheetProblemForm(request.POST)
+    print('\n\n\n\n\n\n\n\n')
+    print(form.data)
+    print(request.POST)
+    print('\n\n\n\n\n\n\n\n')
+    if form.is_valid():
+        user_answer = form.cleaned_data['user_answer']
+        problem = Problem.objects.filter(id=problem_id).first()
+        correct_answer = problem.calculated_answer
+        checked_problems = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
+        if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
+            if problem_id not in checked_problems['right']:
+                checked_problems['right'].append(problem_id)
+            if problem_id in checked_problems['wrong']:
+                checked_problems['wrong'].remove(problem_id)
+        else:
+            if problem_id not in checked_problems['wrong']:
+                checked_problems['wrong'].append(problem_id)
+            if problem_id in checked_problems['right']:
+                checked_problems['right'].remove(problem_id)
+        # Tell Django we updated the session.
+        request.session.modified = True
+        context = {
+            'problem': problem,
+        }
+    return render(request, 'courses/course_worksheets_problem.html')
 
 
 def worksheets_reset(request, *args, **kwargs):

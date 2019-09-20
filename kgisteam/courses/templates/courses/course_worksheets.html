@@ -36,25 +36,7 @@
     <div class="column">
         <ol>
             {% for problem in active_problems %}
-            <li class="worksheet-problem">
-                {{ problem.question_markdown|safe }}
-                <form action="{% url 'course-worksheets-check' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order problem.id %}" class="worksheet-problem-form" method="post">
-                    {% csrf_token %}
-                    {{ worksheet_problem_form }}
-                    <input type="submit" value="Check">
-                </form>
-                {% if checked_problems %}
-                    {% if problem.id|stringformat:"i" in checked_problems.right %}
-                        Problem solved.
-                    {% elif problem.id|stringformat:"i" in checked_problems.wrong %}
-                        Try again.
-                    {% endif %}
-                {% endif %}
-                <button class="show_solution_accordion button is-fullwidth is-small">show solution</button>
-                <div class="show_solution_accordion-content">
-                    {{ problem.solution_markdown|safe }}
-                </div>
-            </li>
+            {% include 'courses/course_worksheets_problem.html' %}
             {% endfor %}
         </ol>
         <div class="worksheet-buttons">
@@ -77,4 +59,5 @@
 
 {% block body_scripts %}
 <script src="{% static 'courses/js/show_solutions_accordion.js' %}"></script>
+<script src="{% static 'courses/js/worksheet_problem_form_ajax.js' %}"></script>
 {% endblock %}

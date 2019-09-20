@@ -16,7 +16,7 @@ urlpatterns = [
         views.worksheets,
         name='course-worksheets',
     ),
-    path('{}/worksheets/<worksheet_title>/<order>/check/<problem_id>'.format(courses_url),
+    path('worksheets/check/<problem_id>',
         views.worksheets_check_answer,
         name='course-worksheets-check',
     ),
