@@ -260,6 +260,7 @@ class Problem(models.Model):
     """
     https://neutronx.github.io/django-markdownx/
     """
+
     worksheet = models.ForeignKey(
         Worksheet,
         null=True,
@@ -285,6 +286,9 @@ class Problem(models.Model):
         max_length=1000,
     )
 
+    @property
+    def html_id(self):
+        return 'problem-pk{}'.format(self.pk)
 
     @property
     def variables(self):
@@ -308,6 +312,12 @@ class Problem(models.Model):
             answer = eval(self.answer)
         answer_rounded = sn_round(answer)
         return answer_rounded
+
+    def check_user_answer(self, user_answer):
+        if user_answer == self.calculated_answer or sn_round(user_answer) == self.calculated_answer:
+            return True
+        else:
+            return False
 
     @property
     def question_markdown(self):

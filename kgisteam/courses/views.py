@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from courses.forms import WorksheetProblemForm
 from courses.models import CATEGORY_CHOICES
 from courses.models import Course, CourseResource, Problem, SharedResource, Syllabus, Worksheet
-from courses.utils import sn_round
+from courses.utils import get_checked_problems, updated_checked_problems, sn_round, spaced_print
 
 
 def courses_home(request):
@@ -54,71 +54,77 @@ def worksheets(request, *args, **kwargs):
     if active_worksheet:
         #get problems and update context
         active_problems = active_worksheet.problem_set.all()
+        request.session['active_problem_pks'] = [ problem.pk for problem in active_problems ]
         context['active_worksheet'] = active_worksheet
         context['active_problems'] = active_problems
         context['worksheet_problem_form'] = WorksheetProblemForm()
         context['problem_order'] = kwargs['order']
-        context['checked_problems'] = request.session.get('checked_problems')
     return render(request, 'courses/course_worksheets.html', context)
 
 
 @require_POST
 def worksheets_check_answer(request, *args, **kwargs) -> 'JsonResponse':
-    """https://docs.djangoproject.com/en/2.2/topics/http/sessions/#when-sessions-are-saved
+    """Update the session with user progress.
+
+    Session keys
+        checked_problems_correct: session key
+            the primary keys of correctly answered problems.
+        checked_problems_incorrect: session key
+            the primary keys of incorrectly answered problems.
+
+        Motivation
+
+        The session dictionary should not be deep (`djdocs-when-sessions-are-saved`_).
+
+    .. _djdocs-when-session-are-saved: https://docs.djangoproject.com/en/2.2/topics/http/sessions/#when-sessions-are-saved
     """
-    problem_id = kwargs['problem_id']
-    form = WorksheetProblemForm(request.POST)
-    json = {
+    problem = Problem.objects.filter(pk=kwargs['problem_id']).first()
+    # Default response
+    json_response = {
+        'primary-key': problem.pk,
+        'HTML_id': problem.html_id,
         'result': 'invalid form',
-        'id': 'pk{}'.format(problem_id),
     }
+    # split returning the result and updating the session.
+    form = WorksheetProblemForm(request.POST)
     if form.is_valid():
-        user_answer = form.cleaned_data['user_answer']
-        problem = Problem.objects.filter(id=problem_id).first()
-        correct_answer = problem.calculated_answer
-        checked_problems = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
-        if user_answer == correct_answer or sn_round(user_answer) == sn_round(correct_answer):
-            if problem_id not in checked_problems['right']:
-                checked_problems['right'].append('pk{}'.format(problem_id))
-            if problem_id in checked_problems['wrong']:
-                checked_problems['wrong'].remove('pk{}'.format(problem_id))
-            json['result'] = 'right'
+        # Update json_response
+        if problem.check_user_answer(form.cleaned_data['user_answer']):
+            json_response['result'] = 'correct'
         else:
-            if problem_id not in checked_problems['wrong']:
-                checked_problems['wrong'].append('pk{}'.format(problem_id))
-            if problem_id in checked_problems['right']:
-                checked_problems['right'].remove('pk{}'.format(problem_id))
-            json['result'] = 'wrong'
-        request.session.modified = True
-    return JsonResponse(json)
+            json_response['result'] = 'incorrect'
+        # Update session
+        request.session['checked_problems_incorrect'] = updated_checked_problems(json_response, request.session)[0]
+        request.session['checked_problems_correct'] = updated_checked_problems(json_response, request.session)[1]
+    return JsonResponse(json_response)
 
 
 def worksheets_check_answer_results(request, *args, **kwargs) -> 'JsonResponse':
-    json = request.session.setdefault('checked_problems', dict(right=list(), wrong=list()))
-    return JsonResponse(json)
+    json_response = {
+        'checked_problems_correct': get_checked_problems('correct', session=request.session),
+        'checked_problems_incorrect': get_checked_problems('incorrect', session=request.session),
+    }
+    spaced_print(json_response)
+    return JsonResponse(json_response)
 
 
 def worksheets_reset(request, *args, **kwargs):
-    checked_problems = request.session.get('checked_problems')
-    if checked_problems:
-        # Get course and worksheet info
-        course = course_from_kwargs(kwargs)
-        worksheet = Worksheet.objects.filter(
-            course=course,
-            title=kwargs['worksheet_title'],
-        ).first()
-        # Clear worksheet problems from checked_problems
-        worksheet_problem_ids = [ 'pk{}'.format(problem.id) for problem in worksheet.problem_set.all() ]
-        checked_problems['right'] = [ id for id in checked_problems['right'] if id not in worksheet_problem_ids ]
-        checked_problems['wrong'] = [ id for id in checked_problems['wrong'] if id not in worksheet_problem_ids ]
-        # Tell django we updated the session
-        request.session.modified = True
+    checked_problems = get_checked_problems('both', request.session)
+    if any(map(len, checked_problems)):
+        problem_pks = request.session['active_problem_pks']
+        for pk in problem_pks:
+            if pk in checked_problems[0]: checked_problems[0].remove(pk)
+            if pk in checked_problems[1]: checked_problems[1].remove(pk)
+        request.session['checked_problems_wrong'] = checked_problems[0]
+        request.session['checked_problems_right'] = checked_problems[1] 
     return redirect('course-worksheets', *args, **kwargs)
 
 
 def worksheets_reset_all(request, *args, **kwargs):
-    if request.session.get('checked_problems'):
-        del request.session['checked_problems']
+    if request.session.get('checked_problems_correct'):
+        del request.session['checked_problems_correct']
+    if request.session.get('checked_problems_incorrect'):
+        del request.session['checked_problems_incorrect']
     return redirect('course-worksheets', *args, **kwargs)
 # END worksheet view functions ------------------------------------------------>
 

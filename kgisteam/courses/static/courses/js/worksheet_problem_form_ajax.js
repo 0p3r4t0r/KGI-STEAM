@@ -48,14 +48,15 @@ function checkAnswer(form) {
     // Update the page
     function updatePage(xhr) {
         response = JSON.parse(xhr.responseText);
-        problem = document.getElementById(response.id);
-        if ( response.result == "right" ) {
+        console.log(response);
+        problem = document.getElementById(response.HTML_id);
+        problemID = Number(problem.id.slice(-1))
+        if (response.result == 'correct') {
             problem.classList.add("checked_right");
             problem.classList.remove("checked_wrong");
-        } else if (response.result == "wrong") {
+        } else if (response.result == 'incorrect') {
             problem.classList.add("checked_wrong");
             problem.classList.remove("checked_right");
         }
-        console.log('updated');
     }
 };

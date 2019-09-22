@@ -36,7 +36,7 @@
     <div class="column">
         <ol>
             {% for problem in active_problems %}
-            <div class="worksheet-problem-container" id="pk{{ problem.id }}">
+            <div class="worksheet-problem-container" id="{{ problem.html_id }}">
                 <li class="worksheet-problem">
                     {{ problem.question_markdown|safe }}
                     <form action="{% url 'course-worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
@@ -97,10 +97,11 @@ function updatePage(xhr) {
     response = JSON.parse(xhr.responseText);
     problems = document.getElementsByClassName('worksheet-problem-container');
     for (let problem of problems) {
-        if (response.right.includes(problem.id)) {
+        problemID = Number(problem.id.slice(-1))
+        if (response.checked_problems_correct.includes(problemID)) {
             problem.classList.add("checked_right");
             problem.classList.remove("checked_wrong");
-        } else if (response.wrong.includes(problem.id)) {
+        } else if (response.checked_problems_incorrect.includes(problemID)) {
             problem.classList.add("checked_wrong");
             problem.classList.remove("checked_right");
         }
