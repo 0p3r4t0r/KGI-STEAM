@@ -7,8 +7,9 @@ from django.views.decorators.http import require_POST
 
 from courses.forms import WorksheetProblemForm
 from courses.models import CATEGORY_CHOICES
-from courses.models import Course, CourseResource, Problem, SharedResource, Syllabus, Worksheet
-from courses.utils import get_checked_problems, updated_checked_problems, sn_round, spaced_print
+from courses.models import CourseResource, Problem, SharedResource, Syllabus, Worksheet
+from courses.utils import sn_round, spaced_print
+from courses.viewaids import course_from_kwargs, get_checked_problems, updated_checked_problems
 
 
 def courses_home(request):
@@ -16,20 +17,6 @@ def courses_home(request):
         'courses': Course.objects.order_by('-school', 'nen', 'kumi'),
     }
     return render(request, 'courses/courses_home.html', context)
-
-
-# Roughly refactored
-def course_from_kwargs(kwargs):
-    filter_kwargs = deepcopy(kwargs)
-    # Split nen-kumi into nen and kumi
-    nen_kumi = kwargs['nen_kumi']
-    filter_kwargs['nen'], filter_kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
-    # Remove anything in kwargs that does not correspond to a field in Course.
-    filter_kwargs = {
-        key: value for key, value in kwargs.items()
-        if key in (field.name for field in Course._meta.fields)
-    }
-    return Course.objects.filter(**filter_kwargs).first()
 
 
 def syllabus(request, *args, **kwargs):
@@ -67,13 +54,12 @@ def worksheets_check_answer(request, *args, **kwargs) -> 'JsonResponse':
     """Update the session with user progress.
 
     Session keys
-        checked_problems_correct: session key
-            the primary keys of correctly answered problems.
         checked_problems_incorrect: session key
             the primary keys of incorrectly answered problems.
+        checked_problems_correct: session key
+            the primary keys of correctly answered problems.
 
         Motivation
-
         The session dictionary should not be deep (`djdocs-when-sessions-are-saved`_).
 
     .. _djdocs-when-session-are-saved: https://docs.djangoproject.com/en/2.2/topics/http/sessions/#when-sessions-are-saved
@@ -104,7 +90,6 @@ def worksheets_check_answer_results(request, *args, **kwargs) -> 'JsonResponse':
         'checked_problems_correct': get_checked_problems('correct', session=request.session),
         'checked_problems_incorrect': get_checked_problems('incorrect', session=request.session),
     }
-    spaced_print(json_response)
     return JsonResponse(json_response)
 
 
@@ -116,7 +101,7 @@ def worksheets_reset(request, *args, **kwargs):
             if pk in checked_problems[0]: checked_problems[0].remove(pk)
             if pk in checked_problems[1]: checked_problems[1].remove(pk)
         request.session['checked_problems_wrong'] = checked_problems[0]
-        request.session['checked_problems_right'] = checked_problems[1] 
+        request.session['checked_problems_right'] = checked_problems[1]
     return redirect('course-worksheets', *args, **kwargs)
 
 

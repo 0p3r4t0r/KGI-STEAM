@@ -24,7 +24,6 @@ $breakpoints: (
 }
 
 // Syllabi
-
 $border-color: rgb(150,150,150);
 
 table.flex-table {
@@ -91,11 +90,11 @@ table.flex-table {
 }
 
 .worksheet-problem-container {
-    &.checked_right {
+    &.checked_correct {
         background-color: lightgreen;
     }
 
-    &.checked_wrong {
+    &.checked_incorrect {
         background-color: pink;
     }
 }
