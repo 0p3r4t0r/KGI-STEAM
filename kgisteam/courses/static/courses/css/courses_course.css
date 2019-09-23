@@ -57,10 +57,10 @@ table.flex-table tr.flex-table-row td {
   padding: 1em 0 1em 0;
 }
 
-.worksheet-problem-container.checked_right {
+.worksheet-problem-container.checked_correct {
   background-color: lightgreen;
 }
-.worksheet-problem-container.checked_wrong {
+.worksheet-problem-container.checked_incorrect {
   background-color: pink;
 }
 

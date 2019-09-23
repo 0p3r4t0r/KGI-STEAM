@@ -52,11 +52,11 @@ function checkAnswer(form) {
         problem = document.getElementById(response.HTML_id);
         problemID = Number(problem.id.slice(-1))
         if (response.result == 'correct') {
-            problem.classList.add("checked_right");
-            problem.classList.remove("checked_wrong");
+            problem.classList.add("checked_correct");
+            problem.classList.remove("checked_incorrect");
         } else if (response.result == 'incorrect') {
-            problem.classList.add("checked_wrong");
-            problem.classList.remove("checked_right");
+            problem.classList.add("checked_incorrect");
+            problem.classList.remove("checked_correct");
         }
     }
 };
