@@ -99,11 +99,11 @@ function updatePage(xhr) {
     for (let problem of problems) {
         problemID = Number(problem.id.slice(-1))
         if (response.checked_problems_correct.includes(problemID)) {
-            problem.classList.add("checked_right");
-            problem.classList.remove("checked_wrong");
+            problem.classList.add("checked_correct");
+            problem.classList.remove("checked_incorrect");
         } else if (response.checked_problems_incorrect.includes(problemID)) {
-            problem.classList.add("checked_wrong");
-            problem.classList.remove("checked_right");
+            problem.classList.add("checked_correct");
+            problem.classList.remove("checked_incorrect");
         }
     }
 }// end of function updatePate
