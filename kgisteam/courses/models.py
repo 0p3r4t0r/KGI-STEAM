@@ -10,10 +10,10 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.utils.timezone import localtime, make_aware
 
-from courses.utils import sn_round, sn_round_str
+from courses.maths import sn_round, sn_round_str
 from kgisteam.settings import TIME_ZONE
 
-from courses.utils import sin, cos, tan
+from courses.maths import sin, cos, tan
 
 
 IN_CLASS = 'IC'
