@@ -98,10 +98,10 @@ function updatePage(xhr) {
     problems = document.getElementsByClassName('worksheet-problem-container');
     for (let problem of problems) {
         problemID = Number(problem.id.slice(-1))
-        if (response.checked_problems_correct.includes(problemID)) {
+        if (response.checked_problems_correct && response.checked_problems_correct.includes(problemID)) {
             problem.classList.add("checked_correct");
             problem.classList.remove("checked_incorrect");
-        } else if (response.checked_problems_incorrect.includes(problemID)) {
+        } else if (response.checked_problems_correct && response.checked_problems_incorrect.includes(problemID)) {
             problem.classList.add("checked_correct");
             problem.classList.remove("checked_incorrect");
         }
