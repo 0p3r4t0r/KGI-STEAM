@@ -1,4 +1,5 @@
 from django.forms import ValidationError
+from courses.utils import sin, cos, tan
 
 
 def validate_math_expression(math_expression: str):

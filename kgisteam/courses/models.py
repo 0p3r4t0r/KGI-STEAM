@@ -13,6 +13,8 @@ from django.utils.timezone import localtime, make_aware
 from courses.utils import sn_round, sn_round_str
 from kgisteam.settings import TIME_ZONE
 
+from courses.utils import sin, cos, tan
+
 
 IN_CLASS = 'IC'
 LANGUAGE_LEARNING = 'LL'

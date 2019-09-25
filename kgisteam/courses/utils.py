@@ -1,3 +1,17 @@
+from math import radians
+from math import sin as sin_rads
+from math import cos as cos_rads
+from math import tan as tan_rads
+
+def sin(theta):
+    return sin_rads(radians(theta))
+
+def cos(theta):
+    return cos_rads(radians(theta))
+
+def tan(theta):
+    return tan_rads(radians(theta))
+
 def sn_round(number: float) -> float:
     """Round with scientific notation."""
     return eval('{:.2e}'.format(number))

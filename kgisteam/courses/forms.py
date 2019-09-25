@@ -3,7 +3,7 @@ from django import forms
 from courses.models import Problem
 from courses.models import Problem
 from courses.validators import validate_math_expression
-from courses.utils import sn_round
+from courses.utils import sn_round, sin, cos, tan
 
 
 class WorksheetProblemForm(forms.Form):
