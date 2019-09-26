@@ -1,13 +1,8 @@
 from django import forms
 
 from courses.models import Problem
-from courses.models import Problem
 from courses.validators import validate_math_expression
 from courses.maths import sn_round, evaluate_answer
-
-
-class ProblemAdminForm(forms.ModelForm):
-    pass
 
 
 class WorksheetProblemForm(forms.Form):
