@@ -11,16 +11,16 @@ def course_from_kwargs(kwargs: dict) -> "<class 'courses.models.Course'>":
     are stored in separate fields. In the urls, however, they have been combined
     for readability into the string 'nen-kumi'.
     """
-    filter_kwargs = deepcopy(kwargs)
     # Split nen-kumi into nen and kumi
     nen_kumi = kwargs['nen_kumi']
-    filter_kwargs['nen'], filter_kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
-    # Remove anything in kwargs that does not correspond to a field in Course.
-    filter_kwargs = {
+    filtered_kwargs = {
         key: value for key, value in kwargs.items()
         if key in (field.name for field in Course._meta.fields)
     }
-    return Course.objects.filter(**filter_kwargs).first()
+    filtered_kwargs['nen'], filtered_kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
+    # Remove anything in kwargs that does not correspond to a field in Course.
+    print(filtered_kwargs)
+    return Course.objects.filter(**filtered_kwargs).first()
 
 def get_checked_problems(result: str, session: 'SessionStore') -> tuple:
     """Get the primary keys of attempted problems from the session.
