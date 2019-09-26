@@ -10,10 +10,10 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.utils.timezone import localtime, make_aware
 
-from courses.maths import sn_round, sn_round_str
+from courses.maths import evaluate_answer, sn_round, sn_round_str
 from kgisteam.settings import TIME_ZONE
 
-from courses.maths import sin, cos, tan
+from courses.tests import spaced_print
 
 
 IN_CLASS = 'IC'
@@ -283,10 +283,33 @@ class Problem(models.Model):
     answer = models.CharField(
         max_length=100,
     )
+
+    calculated_answer = models.FloatField(
+        blank=True,
+        max_length=100,
+        null=True,
+    )
+
     solution = MarkdownxField(
         default='The solution to this problem is not available yet.',
         max_length=1000,
     )
+
+    def save(self, *args, **kwargs):
+        """ Save the calculated_answer
+        https://docs.djangoproject.com/en/2.2/topics/db/models/#overriding-predefined-model-methods"""
+        self.calculated_answer = self.calculate_answer()
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+        #do_something_else()
+
+    def calculate_answer(self):
+        if self.variables:
+            template = Template(self.answer)
+            answer = evaluate_answer(template.safe_substitute(**self.variables))
+        else:
+            answer = evaluate_answer(self.answer)
+        answer_rounded = sn_round(answer)
+        return answer_rounded
 
     @property
     def html_id(self):
@@ -304,16 +327,6 @@ class Problem(models.Model):
                 for key, value in variables.items()
             }
             return variables
-
-    @property
-    def calculated_answer(self):
-        if self.variables:
-            template = Template(self.answer)
-            answer = eval(template.safe_substitute(**self.variables))
-        else:
-            answer = eval(self.answer)
-        answer_rounded = sn_round(answer)
-        return answer_rounded
 
     def check_user_answer(self, user_answer):
         if user_answer == self.calculated_answer or sn_round(user_answer) == self.calculated_answer:

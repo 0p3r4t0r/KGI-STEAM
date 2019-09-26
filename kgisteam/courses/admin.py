@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
+from courses.forms import ProblemAdminForm
 from courses.models import Course, CourseResource, Lesson, Problem, SharedResource, Syllabus, Worksheet
 
 
@@ -47,6 +48,7 @@ class SyllabusAdmin(admin.ModelAdmin):
 
 class ProblemInline(admin.StackedInline):
     extra = 0
+    form = ProblemAdminForm
     model = Problem
 
 

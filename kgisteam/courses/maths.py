@@ -16,7 +16,7 @@ def tan(theta):
     return tan_rads(radians(theta))
 # END functions that can be used in the forms.
 
-def string_to_float(string: str) -> float:
+def evaluate_answer(string: str) -> float:
     return eval(string)
 
 def sn_round(number: float) -> float:
