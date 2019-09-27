@@ -102,8 +102,8 @@ function updatePage(xhr) {
             problem.classList.add("checked_correct");
             problem.classList.remove("checked_incorrect");
         } else if (response.checked_problems_correct && response.checked_problems_incorrect.includes(problemID)) {
-            problem.classList.add("checked_correct");
-            problem.classList.remove("checked_incorrect");
+            problem.classList.add("checked_incorrect");
+            problem.classList.remove("checked_correct");
         }
     }
 }// end of function updatePate
