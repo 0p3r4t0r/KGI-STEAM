@@ -1,3 +1,6 @@
+import { getCookie } from '/static/kgisteam/js/getCookie.js'
+
+
 var problemForms = document.getElementsByClassName("worksheet-problem-form");
 // prevent the form from being submitted
 for (i = 0; i < problemForms.length; i++) {
@@ -7,24 +10,8 @@ for (i = 0; i < problemForms.length; i++) {
     });
 };
 
-// https://stackoverflow.com/questions/42291370/csrf-token-ajax-based-post-in-a-django-project
-function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    };
-};
 
 function checkAnswer(form) {
-    var userAnswerValue = form.elements["user_answer"];
     // Create and send the request
     var xhr = new XMLHttpRequest();
     xhr.open("POST", form.action);
@@ -47,10 +34,9 @@ function checkAnswer(form) {
 
     // Update the page
     function updatePage(xhr) {
-        response = JSON.parse(xhr.responseText);
-        console.log(response);
-        problem = document.getElementById(response.HTML_id);
-        problemID = Number(problem.id.slice(-1))
+        let response = JSON.parse(xhr.responseText);
+        let problem = document.getElementById(response.HTML_id);
+        let problemID = Number(problem.id.slice(-1))
         if (response.result == 'correct') {
             problem.classList.add("checked_correct");
             problem.classList.remove("checked_incorrect");

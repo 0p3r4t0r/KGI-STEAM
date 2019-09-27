@@ -109,5 +109,29 @@ function updatePage(xhr) {
 }// end of function updatePate
 </script>
 <script src="{% static 'courses/js/show_solutions_accordion.js' %}"></script>
-<script src="{% static 'courses/js/worksheet_problem_form_ajax.js' %}"></script>
+<script type="module">
+    import { ajaxForm } from "{% static 'kgisteam/js/ajaxForm.js' %}";
+
+    var problemForms = document.getElementsByClassName("worksheet-problem-form");
+    // prevent the form from being submitted
+    for (i = 0; i < problemForms.length; i++) {
+        problemForms[i].addEventListener("submit", function(event){
+            event.preventDefault();
+            ajaxForm("POST", true, this, updatePage);
+        });
+    }
+
+    function updatePage(xhr) {
+        let response = JSON.parse(xhr.responseText);
+        let problem = document.getElementById(response.HTML_id);
+        let problemID = Number(problem.id.slice(-1))
+        if (response.result == 'correct') {
+            problem.classList.add("checked_correct");
+            problem.classList.remove("checked_incorrect");
+        } else if (response.result == 'incorrect') {
+            problem.classList.add("checked_incorrect");
+            problem.classList.remove("checked_correct");
+        }
+    }
+</script>
 {% endblock %}
