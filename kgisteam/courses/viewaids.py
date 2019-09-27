@@ -13,13 +13,12 @@ def course_from_kwargs(kwargs: dict) -> "<class 'courses.models.Course'>":
     """
     # Split nen-kumi into nen and kumi
     nen_kumi = kwargs['nen_kumi']
+    # Remove anything in kwargs that does not correspond to a field in Course.
     filtered_kwargs = {
         key: value for key, value in kwargs.items()
         if key in (field.name for field in Course._meta.fields)
     }
     filtered_kwargs['nen'], filtered_kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
-    # Remove anything in kwargs that does not correspond to a field in Course.
-    print(filtered_kwargs)
     return Course.objects.filter(**filtered_kwargs).first()
 
 def get_checked_problems(result: str, session: 'SessionStore') -> tuple:

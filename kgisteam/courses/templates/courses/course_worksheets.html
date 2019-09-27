@@ -14,7 +14,7 @@
             </p>
             <ul class="menu-list">
                 {% for worksheet in course.worksheet_set.all %}
-                    {% if worksheet.title == view.kwargs.worksheet_title %}
+                    {% if worksheet.title == active_worksheet.title %}
                     <li>
                         <a class="is-active" href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet.title 'ordered' %}">
                             {{ worksheet.title }}
