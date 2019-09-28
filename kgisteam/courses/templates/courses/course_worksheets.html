@@ -72,13 +72,10 @@
 
 {% block body_scripts %}
 <script type="module">
-import { ajaxRequest } from "{% static 'kgisteam/js/ajaxRequest.js' %}";
+import { ajaxGet } from "{% static 'kgisteam/js/ajaxGet.js' %}";
 
 
-var loadCheckedResults = ajaxRequest(
-    "GET",
-    "{% url 'course-worksheets-check-results' %}",
-    updatePage )
+var loadCheckedResults = ajaxGet("{% url 'course-worksheets-check-results' %}", updatePage )
 document.addEventListener("DOMContentLoaded", loadCheckedResults);
 
 function updatePage(xhr) {

@@ -1,15 +1,15 @@
 /*
 */
-export default ajaxRequest;
-export { ajaxRequest };
+export default ajaxGet;
+export { ajaxGet };
 
 
-function ajaxRequest(method, url, updateFunction) {
+function ajaxGet(url, updateFunction) {
     // Declare variables
     let xhr;
     // Create and send the request
     xhr = new XMLHttpRequest();
-    xhr.open(method, url);
+    xhr.open("GET", url);
     xhr.send();
     // Recieve the response
     xhr.onreadystatechange = function () {
