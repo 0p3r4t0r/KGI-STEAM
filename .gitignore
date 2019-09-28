@@ -21,4 +21,4 @@ kgisteam/static/
 *.sass-cache
 
 # Database Backups
-db_backups/
+db_backups/*.sql
