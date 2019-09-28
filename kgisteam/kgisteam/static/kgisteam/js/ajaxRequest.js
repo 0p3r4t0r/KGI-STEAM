@@ -1,25 +1,16 @@
 /*
 */
-export default ajaxForm;
-export { ajaxForm };
+export default ajaxRequest;
+export { ajaxRequest };
 
 
-import { getCookie } from "/static/kgisteam/js/getCookie.js";
-
-function ajaxForm(method, url, form, with_csrf, updateFunction) {
+function ajaxRequest(method, url, updateFunction) {
     // Declare variables
     let xhr;
-    let csrftoken;
-    let formData;
     // Create and send the request
     xhr = new XMLHttpRequest();
     xhr.open(method, url);
-    if (with_csrf) {
-        csrftoken = getCookie("csrftoken");
-        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-    }
-    formData = new FormData(form);
-    xhr.send(formData);
+    xhr.send();
     // Recieve the response
     xhr.onreadystatechange = function () {
         let DONE = 4;  // readyState 4 means the request is done.

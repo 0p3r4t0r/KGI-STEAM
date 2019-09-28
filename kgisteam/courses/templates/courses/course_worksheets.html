@@ -71,29 +71,20 @@
 
 
 {% block body_scripts %}
-<script>
+<script type="module">
+import { ajaxRequest } from "{% static 'kgisteam/js/ajaxRequest.js' %}";
+
+
+var loadCheckedResults = ajaxRequest(
+    "GET",
+    "{% url 'course-worksheets-check-results' %}",
+    updatePage )
 document.addEventListener("DOMContentLoaded", loadCheckedResults);
 
-function loadCheckedResults() {
-    // send request
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "{% url 'course-worksheets-check-results' %}");
-    xhr.send();
-    // recieve response
-    xhr.onreadystatechange = function () {
-        var DONE = 4; // readyState 4 means the request is done.
-        var OK = 200; // status 200 is a successful return.
-        if (xhr.readyState === DONE) {
-            if (xhr.status === OK) {
-                updatePage(xhr);
-            } else {
-                console.log('Error: ' + xhr.status); // An error occurred during the request.
-            }
-        }
-    }// end of nameless function
-}// end of function loadCheckedResults
-
 function updatePage(xhr) {
+    let response;
+    let problems;
+    let problemID;
     response = JSON.parse(xhr.responseText);
     problems = document.getElementsByClassName('worksheet-problem-container');
     for (let problem of problems) {
@@ -108,7 +99,6 @@ function updatePage(xhr) {
     }
 }// end of function updatePate
 </script>
-<script src="{% static 'courses/js/show_solutions_accordion.js' %}"></script>
 <script type="module">
     import { ajaxForm } from "{% static 'kgisteam/js/ajaxForm.js' %}";
 
@@ -117,7 +107,7 @@ function updatePage(xhr) {
     for (i = 0; i < problemForms.length; i++) {
         problemForms[i].addEventListener("submit", function(event){
             event.preventDefault();
-            ajaxForm("POST", true, this, updatePage);
+            ajaxForm("POST", this.action, this, true, updatePage);
         });
     }
 
@@ -134,4 +124,5 @@ function updatePage(xhr) {
         }
     }
 </script>
+<script src="{% static 'courses/js/show_solutions_accordion.js' %}"></script>
 {% endblock %}
