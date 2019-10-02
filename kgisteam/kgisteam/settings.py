@@ -15,17 +15,18 @@ from dotenv import load_dotenv
 import os
 
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Load env files using paths based on BASE_DIR.
 """
 Environmental variables:
     Variables are stored in the .env_settings file.
     Required variables are called with os.environ['ENV_VAL'].
     Optional variables are called with os.getenv('ENV_VAL').
 """
-load_dotenv(verbose=True)
-
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+settings_envpath = os.path.join(BASE_DIR, 'kgisteam', '.env_settings')
+load_dotenv(dotenv_path=settings_envpath, verbose=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -34,12 +35,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') or False
+DEBUG = os.getenv('DEBUG', False)
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'www.kgisteam.com',
-]
+if DEBUG:
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+    ]
+else:
+    ALLOWED_HOSTS = [
+        'www.kgisteam.com',
+    ]
+
 
 
 # Application definition
@@ -105,11 +112,11 @@ WSGI_APPLICATION = 'kgisteam.wsgi.application'
 if os.environ.get('MYSQL_ENGINE'):
     DATABASES = {
         'default': {
-            'ENGINE': os.environ.get('MYSQL_ENGINE'),
-            'NAME': os.environ.get('MYSQL_NAME'),
-            'USER': os.environ.get('MYSQL_USER'),
-            'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
-            'HOST': os.environ.get('MYSQL_HOST'),
+            'ENGINE': os.environ['MYSQL_ENGINE'],
+            'NAME': os.environ['MYSQL_NAME'],
+            'USER': os.environ['MYSQL_USER'],
+            'PASSWORD': os.environ['MYSQL_PASSWORD'],
+            'HOST': os.environ['MYSQL_HOST'],
             'OPTIONS': {
                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
             },
@@ -118,8 +125,8 @@ if os.environ.get('MYSQL_ENGINE'):
 else:
     DATABASES = {
         'default': {
-            'ENGINE': os.environ.get('MYSQL_ENGINE') or 'django.db.backends.sqlite3',
-            'NAME': os.environ.get('MYSQL_NAME') or os.path.join(BASE_DIR, 'db_for_testing.sqlite3'),
+            'ENGINE': os.environ.get('MYSQL_ENGINE', default='django.db.backends.sqlite3'),
+            'NAME': os.environ.get('MYSQL_NAME', default=os.path.join(BASE_DIR, 'db_for_testing.sqlite3')),
             }
         }
 
