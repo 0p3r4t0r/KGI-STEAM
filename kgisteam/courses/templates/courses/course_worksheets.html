@@ -84,14 +84,13 @@ function updatePage(xhr) {
     let problems;
     let problemID;
     response = JSON.parse(xhr.responseText);
-    console.log(response);
     problems = document.getElementsByClassName('worksheet-problem-container');
     for (let problem of problems) {
-        problemID = Number(problem.id.slice(-1))
-        if (response.checked_problems_correct && response.checked_problems_correct.includes(problemID)) {
+        problemID = Number(problem.id.substring('problem-pk'.length));
+        if (response.checked_problems_correct.includes(problemID)) {
             problem.classList.add("checked_correct");
             problem.classList.remove("checked_incorrect");
-        } else if (response.checked_problems_correct && response.checked_problems_incorrect.includes(problemID)) {
+        } else if (response.checked_problems_incorrect.includes(problemID)) {
             problem.classList.add("checked_incorrect");
             problem.classList.remove("checked_correct");
         }
@@ -113,7 +112,6 @@ function updatePage(xhr) {
 
     function updatePage(xhr) {
         let response = JSON.parse(xhr.responseText);
-        console.log(response);
         let problem = document.getElementById(response.HTML_id);
         if (response.result == 'correct') {
             problem.classList.add("checked_correct");
