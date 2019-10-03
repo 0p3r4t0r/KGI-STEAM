@@ -72,6 +72,7 @@
 
 {% block body_scripts %}
 <script type="module">
+/* Mark problems as right or wrong on page load. */
 import { ajaxGet } from "{% static 'kgisteam/js/ajaxGet.js' %}";
 
 
@@ -98,6 +99,7 @@ function updatePage(xhr) {
 }// end of function updatePage
 </script>
 <script type="module">
+    /* Check problem with ajax. */
     import { ajaxForm } from "{% static 'kgisteam/js/ajaxForm.js' %}";
 
     var problemForms = document.getElementsByClassName("worksheet-problem-form");
@@ -113,7 +115,6 @@ function updatePage(xhr) {
         let response = JSON.parse(xhr.responseText);
         console.log(response);
         let problem = document.getElementById(response.HTML_id);
-        let problemID = Number(problem.id.slice(-1))
         if (response.result == 'correct') {
             problem.classList.add("checked_correct");
             problem.classList.remove("checked_incorrect");
@@ -123,5 +124,25 @@ function updatePage(xhr) {
         }
     }// end of function updatePage
 </script>
-<script src="{% static 'courses/js/show_solutions_accordion.js' %}"></script>
+<script>
+    /* Show and hide solutions. */
+    var acc = document.getElementsByClassName("show_solution_accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            /* Toggle between hiding and showing the active panel */
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+                this.innerHTML="show solution";
+            } else {
+                panel.style.display = "block";
+                this.innerHTML="hide solution";
+            }
+        });
+    }
+</script>
+
+</script>
 {% endblock %}
