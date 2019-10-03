@@ -83,6 +83,7 @@ function updatePage(xhr) {
     let problems;
     let problemID;
     response = JSON.parse(xhr.responseText);
+    console.log(response);
     problems = document.getElementsByClassName('worksheet-problem-container');
     for (let problem of problems) {
         problemID = Number(problem.id.slice(-1))
@@ -94,7 +95,7 @@ function updatePage(xhr) {
             problem.classList.remove("checked_correct");
         }
     }
-}// end of function updatePate
+}// end of function updatePage
 </script>
 <script type="module">
     import { ajaxForm } from "{% static 'kgisteam/js/ajaxForm.js' %}";
@@ -110,6 +111,7 @@ function updatePage(xhr) {
 
     function updatePage(xhr) {
         let response = JSON.parse(xhr.responseText);
+        console.log(response);
         let problem = document.getElementById(response.HTML_id);
         let problemID = Number(problem.id.slice(-1))
         if (response.result == 'correct') {
@@ -119,7 +121,7 @@ function updatePage(xhr) {
             problem.classList.add("checked_incorrect");
             problem.classList.remove("checked_correct");
         }
-    }
+    }// end of function updatePage
 </script>
 <script src="{% static 'courses/js/show_solutions_accordion.js' %}"></script>
 {% endblock %}
