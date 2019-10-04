@@ -36,14 +36,16 @@
     <div class="column">
         <ol>
             {% for problem in active_problems %}
-            <div class="worksheet-problem-container" id="{{ problem.html_id }}">
-                <li class="worksheet-problem">
-                    {{ problem.question_markdown|safe }}
-                    <form action="{% url 'course-worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
-                        {% csrf_token %}
-                        {{ worksheet_problem_form }}
-                        <input type="submit" value="Check">
-                    </form>
+            <div class="worksheet-problem-container">
+                <li class="worksheet-problem" id="{{ problem.html_id }}">
+                    <div class="worksheet-problem-color">
+                        {{ problem.question_markdown|safe }}
+                        <form action="{% url 'course-worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
+                            {% csrf_token %}
+                            {{ worksheet_problem_form }}
+                            <input type="submit" value="Check">
+                        </form>
+                    </div>
                     <button class="show_solution_accordion button is-fullwidth is-small">show solution</button>
                     <div class="show_solution_accordion-content">
                         {{ problem.solution_markdown|safe }}
@@ -83,16 +85,18 @@ function updatePage(xhr) {
     let response;
     let problems;
     let problemID;
+    let problemColor;
     response = JSON.parse(xhr.responseText);
-    problems = document.getElementsByClassName('worksheet-problem-container');
+    problems = document.getElementsByClassName('worksheet-problem');
     for (let problem of problems) {
         problemID = Number(problem.id.substring('problem-pk'.length));
+        problemColor = problem.querySelector(".worksheet-problem-color");
         if (response.checked_problems_correct.includes(problemID)) {
-            problem.classList.add("checked_correct");
-            problem.classList.remove("checked_incorrect");
+            problemColor.classList.add("checked_correct");
+            problemColor.classList.remove("checked_incorrect");
         } else if (response.checked_problems_incorrect.includes(problemID)) {
-            problem.classList.add("checked_incorrect");
-            problem.classList.remove("checked_correct");
+            problemColor.classList.add("checked_incorrect");
+            problemColor.classList.remove("checked_correct");
         }
     }
 }// end of function updatePage
@@ -113,12 +117,13 @@ function updatePage(xhr) {
     function updatePage(xhr) {
         let response = JSON.parse(xhr.responseText);
         let problem = document.getElementById(response.HTML_id);
+        let problemColor = problem.querySelector(".worksheet-problem-color");
         if (response.result == 'correct') {
-            problem.classList.add("checked_correct");
-            problem.classList.remove("checked_incorrect");
+            problemColor.classList.add("checked_correct");
+            problemColor.classList.remove("checked_incorrect");
         } else if (response.result == 'incorrect') {
-            problem.classList.add("checked_incorrect");
-            problem.classList.remove("checked_correct");
+            problemColor.classList.add("checked_incorrect");
+            problemColor.classList.remove("checked_correct");
         }
     }// end of function updatePage
 </script>
