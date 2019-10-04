@@ -82,15 +82,11 @@ var loadCheckedResults = ajaxGet("{% url 'course-worksheets-check-results' %}", 
 document.addEventListener("DOMContentLoaded", loadCheckedResults);
 
 function updatePage(xhr) {
-    let response;
-    let problems;
-    let problemID;
-    let problemColor;
-    response = JSON.parse(xhr.responseText);
-    problems = document.getElementsByClassName('worksheet-problem');
+    let response = JSON.parse(xhr.responseText);
+    let problems = document.getElementsByClassName('worksheet-problem');
     for (let problem of problems) {
-        problemID = Number(problem.id.substring('problem-pk'.length));
-        problemColor = problem.querySelector(".worksheet-problem-color");
+        let problemID = Number(problem.id.substring('problem-pk'.length));
+        let problemColor = problem.querySelector(".worksheet-problem-color");
         if (response.checked_problems_correct.includes(problemID)) {
             problemColor.classList.add("checked_correct");
             problemColor.classList.remove("checked_incorrect");
@@ -107,8 +103,8 @@ function updatePage(xhr) {
 
     var problemForms = document.getElementsByClassName("worksheet-problem-form");
     // prevent the form from being submitted
-    for (i = 0; i < problemForms.length; i++) {
-        problemForms[i].addEventListener("submit", function(event){
+    for (let problemForm of problemForms) {
+        problemForm.addEventListener("submit", function(event){
             event.preventDefault();
             ajaxForm("POST", this.action, this, true, updatePage);
         });
@@ -129,13 +125,11 @@ function updatePage(xhr) {
 </script>
 <script>
     /* Show and hide solutions. */
-    var acc = document.getElementsByClassName("show_solution_accordion");
-    var i;
-
-    for (i = 0; i < acc.length; i++) {
-        acc[i].addEventListener("click", function() {
+    let accordions = document.getElementsByClassName("show_solution_accordion");
+    for (let accordion of accordions) {
+        accordion.addEventListener("click", function() {
             /* Toggle between hiding and showing the active panel */
-            var panel = this.nextElementSibling;
+            let panel = this.nextElementSibling;
             if (panel.style.display === "block") {
                 panel.style.display = "none";
                 this.innerHTML="show solution";
