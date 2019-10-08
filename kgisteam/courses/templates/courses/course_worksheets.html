@@ -45,6 +45,7 @@
                             {{ worksheet_problem_form }}
                             <input type="submit" value="Check">
                         </form>
+                        <span class="worksheet-problem-form-error"></span>
                     </div>
                     <button class="show_solution_accordion button is-fullwidth is-small">show solution</button>
                     <div class="show_solution_accordion-content">
@@ -114,12 +115,19 @@ function updatePage(xhr) {
         let response = JSON.parse(xhr.responseText);
         let problem = document.getElementById(response.HTML_id);
         let problemColor = problem.querySelector(".worksheet-problem-color");
+        let problemError = problem.querySelector(".worksheet-problem-form-error");
+        problemColor.classList.remove("checked_correct");
+        problemColor.classList.remove("checked_incorrect");
+        problemColor.classList.remove("checked_invalid");
         if (response.result == 'correct') {
             problemColor.classList.add("checked_correct");
-            problemColor.classList.remove("checked_incorrect");
+            problemError.innerHTML = "";
         } else if (response.result == 'incorrect') {
             problemColor.classList.add("checked_incorrect");
-            problemColor.classList.remove("checked_correct");
+            problemError.innerHTML = "";
+        } else {
+            problemColor.classList.add("checked_invalid");
+            problemError.innerHTML = "Invalid mathematical expression.";
         }
     }// end of function updatePage
 </script>

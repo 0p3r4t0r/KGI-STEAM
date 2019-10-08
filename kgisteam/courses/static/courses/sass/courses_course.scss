@@ -90,6 +90,7 @@ table.flex-table {
 }
 
 .worksheet-problem-color {
+
     &.checked_correct {
         background-color: lightgreen;
     }
@@ -97,6 +98,14 @@ table.flex-table {
     &.checked_incorrect {
         background-color: pink;
     }
+
+    &.checked_invalid {
+        background-color: rgb(210, 77, 255); // light purple
+    }
+}
+
+.worksheet-problem-form-error {
+    margin-left: 12ex; // length of string "your answer:"
 }
 
 .worksheet-problem {

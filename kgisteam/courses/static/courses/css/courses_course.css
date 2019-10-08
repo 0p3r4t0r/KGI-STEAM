@@ -63,6 +63,13 @@ table.flex-table tr.flex-table-row td {
 .worksheet-problem-color.checked_incorrect {
   background-color: pink;
 }
+.worksheet-problem-color.checked_invalid {
+  background-color: #d24dff;
+}
+
+.worksheet-problem-form-error {
+  margin-left: 12ex;
+}
 
 .worksheet-problem {
   margin: 1em;
