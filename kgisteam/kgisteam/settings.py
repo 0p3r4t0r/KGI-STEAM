@@ -99,7 +99,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/2.2/howto/overriding-templates/
         'DIRS': [
             os.path.join(BASE_DIR, 'kgisteam/templates'),
-            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'template_overrides'),
          ],
         'APP_DIRS': True,
         'OPTIONS': {
