@@ -46,19 +46,19 @@ class SyllabusAdmin(admin.ModelAdmin):
 
 
 class ProblemInline(admin.StackedInline):
+    """
+    https://neutronx.github.io/django-markdownx/customization/#fields
+    """
     extra = 0
     model = Problem
+    formfield_overrides = {
+        models.TextField: {'widget': AdminMarkdownxWidget},
+    }
     readonly_fields = ["calculated_answer"]
 
 
 @admin.register(Worksheet)
 class WorksheetAdmin(admin.ModelAdmin):
-    """
-    https://neutronx.github.io/django-markdownx/customization/#fields
-    """
-    formfield_overrides = {
-        models.TextField: {'widget': AdminMarkdownxWidget},
-    }
     inlines = [ProblemInline,]
     filter_horizontal = ('course',)
     list_display = ('title',)
