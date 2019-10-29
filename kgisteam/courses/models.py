@@ -283,13 +283,15 @@ class Problem(models.Model):
     answer = models.CharField(
         max_length=100,
     )
-
     calculated_answer = models.FloatField(
         blank=True,
         max_length=100,
         null=True,
     )
-
+    answer_units = models.CharField(
+        blank=True,
+        max_length=50,
+    )
     solution = MarkdownxField(
         default='The solution to this problem is not available yet.',
         max_length=1000,
