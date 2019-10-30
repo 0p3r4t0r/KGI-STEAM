@@ -44,6 +44,10 @@ table.flex-table tr.flex-table-row td {
   word-wrap: break-word;
 }
 
+.worksheet-answer-units {
+  padding-left: 1ex;
+}
+
 .worksheet-buttons {
   padding: 1em;
 }

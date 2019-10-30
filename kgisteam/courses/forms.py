@@ -7,7 +7,7 @@ from courses.maths import sn_round, evaluate_answer
 
 class WorksheetProblemForm(forms.Form):
     user_answer = forms.CharField(
-        label='your answer',
+        label='',
         validators=[validate_math_expression],
         widget=forms.TextInput(attrs={
             'autocomplete': 'off',
