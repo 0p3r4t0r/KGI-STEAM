@@ -27,7 +27,20 @@
         </div>
         <div class="level-right">
             <div class="level-item">
-                <p id="course_mark">{{ course.school }}: {{ course.nen_kumi }} {{ course.name }}</p>
+                {% if syllabus and perms.courses.change_syllabus %}
+                    <p class="level-item">
+                        <a href="{% url 'admin:courses_syllabus_change' syllabus.id %}">Edit Syllabus</a>
+                    </p>
+                {% elif active_worksheet and perms.courses.change_worksheet %}
+                    <p class="level-item">
+                        <a href="{% url 'admin:courses_worksheet_change' active_worksheet.id %}">Edit Current Worksheet</a>
+                    </p>
+                {% elif active_worksheet and perms.courses.change_worksheet %}
+                    <p class="level-item">
+                        <a href="{% url 'admin:courses_worksheet_change' active_worksheet.id %}">Edit Current Worksheet</a>
+                    </p>
+                {% endif %}
+                <p class="level-item" id="course_mark">{{ course.school }}: {{ course.nen_kumi }} {{ course.name }}</p>
             </div>
         </div>
     </div>
