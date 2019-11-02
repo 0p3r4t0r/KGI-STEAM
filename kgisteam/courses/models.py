@@ -108,12 +108,10 @@ class Course(models.Model):
     @property
     def resources(self):
         shared_resources = self.sharedresource_set.all()
-        course_resources = self.courseresource_set.all()
         resources = dict()
         for category in CATEGORY_CHOICES:
             resources[category[1]] = (
-                list(shared_resources.filter(category=category[0])) +
-                list(course_resources.filter(category=category[0]))
+                list(shared_resources.filter(category=category[0]))
             )
         return resources
 
@@ -413,11 +411,3 @@ class ResourceBaseClass(models.Model):
 
 class SharedResource(ResourceBaseClass):
     courses = models.ManyToManyField(Course)
-
-
-class CourseResource(ResourceBaseClass):
-    course = models.ForeignKey(
-        Course,
-        null=True,
-        on_delete=models.CASCADE,
-    )

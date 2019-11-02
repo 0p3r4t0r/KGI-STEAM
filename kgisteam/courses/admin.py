@@ -4,12 +4,7 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
-from courses.models import Course, CourseResource, Lesson, Problem, SharedResource, Syllabus, Worksheet
-
-
-class CourseResourceInline(admin.StackedInline):
-    extra = 0
-    model = CourseResource
+from courses.models import Course, Lesson, Problem, SharedResource, Syllabus, Worksheet
 
 
 @admin.register(Course)
@@ -18,7 +13,6 @@ class CourseAdmin(admin.ModelAdmin):
     https://books.agiliq.com/projects/django-admin-cookbook/en/latest/imagefield.html
     https://docs.djangoproject.com/en/2.2/ref/utils/#module-django.utils.html
     """
-    inlines = [CourseResourceInline,]
     list_display = ('name', 'school', 'nen_kumi', 'year')
 
     readonly_fields = ["image_preview"]
