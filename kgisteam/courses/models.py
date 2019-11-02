@@ -140,7 +140,7 @@ class Syllabus(models.Model):
 
 class Lesson(models.Model):
     url_max_length=200
-    url_text_max_length=30
+    url_text_max_length=50
 
     syllabus = models.ForeignKey(
         Syllabus,
@@ -410,4 +410,4 @@ class ResourceBaseClass(models.Model):
 
 
 class Resource(ResourceBaseClass):
-    courses = models.ManyToManyField(Course)
+    courses = models.ManyToManyField(Course, blank=True)
