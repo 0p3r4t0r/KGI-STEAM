@@ -1,3 +1,4 @@
+from markdownx.models import MarkdownxField
 from markdownx.widgets import AdminMarkdownxWidget
 
 from django.contrib import admin
@@ -41,12 +42,12 @@ class SyllabusAdmin(admin.ModelAdmin):
 
 class ProblemInline(admin.StackedInline):
     """
-    https://neutronx.github.io/django-markdownx/customization/#fields
+    https://github.com/neutronX/django-markdownx/blob/a4029397ccc2c7cbadc852eed50d1d4949eec028/markdownx/admin.py
     """
     extra = 0
     model = Problem
     formfield_overrides = {
-        models.TextField: {'widget': AdminMarkdownxWidget},
+        MarkdownxField: {'widget': AdminMarkdownxWidget},
     }
     readonly_fields = ["calculated_answer"]
 
