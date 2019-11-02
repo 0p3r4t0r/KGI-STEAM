@@ -107,7 +107,7 @@ class Course(models.Model):
 
     @property
     def resources(self):
-        shared_resources = self.courseresource_set.all()
+        shared_resources = self.resource_set.all()
         resources = dict()
         for category in CATEGORY_CHOICES:
             resources[category[1]] = (
@@ -409,5 +409,5 @@ class ResourceBaseClass(models.Model):
         return '{}: {}'.format(self.category, self.link_text)
 
 
-class CourseResource(ResourceBaseClass):
+class Resource(ResourceBaseClass):
     courses = models.ManyToManyField(Course)

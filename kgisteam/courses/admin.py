@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
-from courses.models import Course, Lesson, Problem, CourseResource, Syllabus, Worksheet
+from courses.models import Course, Lesson, Problem, Resource, Syllabus, Worksheet
 
 
 @admin.register(Course)
@@ -58,6 +58,6 @@ class WorksheetAdmin(admin.ModelAdmin):
     list_display = ('title',)
 
 
-@admin.register(CourseResource)
+@admin.register(Resource)
 class ResourceAdmin(admin.ModelAdmin):
     filter_horizontal = ('courses',)
