@@ -39,13 +39,15 @@
                     <p class="level-item">
                         <a href="{% url 'admin:courses_worksheet_change' active_worksheet.id %}">Edit Current Worksheet</a>
                     </p>
-                {% elif resources %}
+                {% elif resources and perms.courses.change_courseresource %}
+                    <p class="level-item">
+                        <a href="{% url 'admin:courses_courseresource_changelist' %}">Edit Resources</a>
+                    </p>
                 {% endif %}
                 <p class="level-item" id="course_mark">{{ course.school }}: {{ course.nen_kumi }} {{ course.name }}</p>
             </div>
         </div>
     </div>
-    {{ perms.list }}
     {% block course_content %}
     {% endblock %}
 {% endblock %}
