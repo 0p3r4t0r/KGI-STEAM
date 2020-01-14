@@ -223,6 +223,21 @@ class Lesson(models.Model):
                 )
         return links
 
+    @property
+    def trimester(self):
+        start_first = datetime.date(2019, 4, 1)
+        end_first = datetime.date(2019, 7, 19)
+        start_second = datetime.date(2019, 9, 2)
+        end_second = datetime.date(2019, 12, 21)
+        start_third = datetime.date(2020, 1, 8)
+        end_third = datetime.date(2020, 3, 23)
+        if start_first <= self.date and self.date <= end_first:
+            return 1
+        elif start_second <= self.date and self.date <= end_second:
+            return 2
+        elif start_third <= self.date and self.date <= end_third:
+            return 3
+
 
 class Worksheet(models.Model):
 

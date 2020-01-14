@@ -21,10 +21,10 @@ def courses_home(request):
 
 def syllabus(request, *args, **kwargs):
     course = course_from_kwargs(kwargs)
-    syllabus = Syllabus.objects.filter(course=course).first()
+    lessons = Syllabus.objects.filter(course=course).first().lesson_set.all
     context = {
         'course': course,
-        'syllabus': syllabus,
+        'lessons': lessons,
     }
     return render(request, 'courses/course_syllabus.html', context)
 
