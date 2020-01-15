@@ -17,28 +17,26 @@
                 </tr>
             </thead>
             <tbody>
-                {% for lesson in lessons %}
-                    {% if lesson.trimester == 3 %}
-                        <tr class="flex-table-row">
-                            <td class="has-text-centered lesson-number">{{ lesson.number }}</td>
-                            <td class="has-text-centered lesson-date">{{ lesson.date }}</td>
-                            <td class="has-text-centered lesson-quiz">{{ lesson.quiz }}</td>
-                            <td class="has-text-centered lesson-topics">{{ lesson.topics }}</td>
-                            <td class="has-text-centered lesson-pages">{{ lesson.reading }}</td>
-                            <td class="has-text-centered lesson-homework">{{ lesson.homework }}</td>
-                            <td class="has-text-centered lesson-links">
-                            {% for link in lesson.links %}
-                                {% if link.0 and link.1 %}
-                                    {% if forloop.last %}
-                                    <a href="{{ link.0 }}" target="_blank">{{ link.1 }}</a>
-                                    {% else %}
-                                    <a href="{{ link.0 }}" target="_blank">{{ link.1 }}</a>,
-                                    {% endif %}
+                {% for lesson in lessons.2 %}
+                    <tr class="flex-table-row">
+                        <td class="has-text-centered lesson-number">{{ lesson.number }}</td>
+                        <td class="has-text-centered lesson-date">{{ lesson.date }}</td>
+                        <td class="has-text-centered lesson-quiz">{{ lesson.quiz }}</td>
+                        <td class="has-text-centered lesson-topics">{{ lesson.topics }}</td>
+                        <td class="has-text-centered lesson-pages">{{ lesson.reading }}</td>
+                        <td class="has-text-centered lesson-homework">{{ lesson.homework }}</td>
+                        <td class="has-text-centered lesson-links">
+                        {% for link in lesson.links %}
+                            {% if link.0 and link.1 %}
+                                {% if forloop.last %}
+                                <a href="{{ link.0 }}" target="_blank">{{ link.1 }}</a>
+                                {% else %}
+                                <a href="{{ link.0 }}" target="_blank">{{ link.1 }}</a>,
                                 {% endif %}
-                            {% endfor %}
-                            </td>
-                        </tr>
-                    {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

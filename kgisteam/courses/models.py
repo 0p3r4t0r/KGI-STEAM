@@ -127,6 +127,15 @@ class Course(models.Model):
 
 
 class Syllabus(models.Model):
+    # Dates can be compared the the tuples below.
+    # (month, day)
+    start_t1    = (4, 1)
+    end_t1      = (7, 19)
+    start_t2    = (9, 2)
+    end_t2      = (12, 21)
+    start_t3    = (1, 8)
+    end_t3      = (3, 23)
+
     course = models.OneToOneField(
         Course,
         null=True,
@@ -225,17 +234,11 @@ class Lesson(models.Model):
 
     @property
     def trimester(self):
-        start_first = datetime.date(2019, 4, 1)
-        end_first = datetime.date(2019, 7, 19)
-        start_second = datetime.date(2019, 9, 2)
-        end_second = datetime.date(2019, 12, 21)
-        start_third = datetime.date(2020, 1, 8)
-        end_third = datetime.date(2020, 3, 23)
-        if start_first <= self.date and self.date <= end_first:
+        if self.syllabus.start_t1 <= (self.date.month, self.date.day) <= self.syllabus.end_t1:
             return 1
-        elif start_second <= self.date and self.date <= end_second:
+        elif self.syllabus.start_t2 <= (self.date.month, self.date.day) <= self.syllabus.end_t2:
             return 2
-        elif start_third <= self.date and self.date <= end_third:
+        elif self.syllabus.start_t3 <= (self.date.month, self.date.day) <= self.syllabus.end_t3:
             return 3
 
 
