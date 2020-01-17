@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from courses.forms import WorksheetProblemForm
 from courses.maths import sn_round
 from courses.models import CATEGORY_CHOICES
-from courses.models import Course, CourseResource, Problem, SharedResource, Syllabus, Worksheet
+from courses.models import Course, Resource, Problem, Syllabus, Worksheet
 from courses.viewaids import course_from_kwargs, get_checked_problems, trimestinate, updated_checked_problems
 
 
