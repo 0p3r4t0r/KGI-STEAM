@@ -8,8 +8,8 @@ from django.views.decorators.http import require_POST
 from courses.forms import WorksheetProblemForm
 from courses.maths import sn_round
 from courses.models import CATEGORY_CHOICES
-from courses.models import Course, Problem, Resource, Syllabus, Worksheet
-from courses.viewaids import course_from_kwargs, get_checked_problems, updated_checked_problems
+from courses.models import Course, CourseResource, Problem, SharedResource, Syllabus, Worksheet
+from courses.viewaids import course_from_kwargs, get_checked_problems, trimestinate, updated_checked_problems
 
 
 def courses_home(request):
@@ -22,9 +22,10 @@ def courses_home(request):
 def syllabus(request, *args, **kwargs):
     course = course_from_kwargs(kwargs)
     syllabus = Syllabus.objects.filter(course=course).first()
+    lessons = trimestinate(syllabus)
     context = {
         'course': course,
-        'syllabus': syllabus,
+        'lessons': lessons,
     }
     return render(request, 'courses/course_syllabus.html', context)
 

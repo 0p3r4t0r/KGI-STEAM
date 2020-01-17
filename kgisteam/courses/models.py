@@ -125,6 +125,15 @@ class Course(models.Model):
 
 
 class Syllabus(models.Model):
+    # Dates can be compared the the tuples below.
+    # (month, day)
+    start_t1    = (4, 1)
+    end_t1      = (7, 19)
+    start_t2    = (9, 2)
+    end_t2      = (12, 21)
+    start_t3    = (1, 8)
+    end_t3      = (3, 23)
+
     course = models.OneToOneField(
         Course,
         null=True,
@@ -220,6 +229,15 @@ class Lesson(models.Model):
                     (url, url)
                 )
         return links
+
+    @property
+    def trimester(self):
+        if self.syllabus.start_t1 <= (self.date.month, self.date.day) <= self.syllabus.end_t1:
+            return 1
+        elif self.syllabus.start_t2 <= (self.date.month, self.date.day) <= self.syllabus.end_t2:
+            return 2
+        elif self.syllabus.start_t3 <= (self.date.month, self.date.day) <= self.syllabus.end_t3:
+            return 3
 
 
 class Worksheet(models.Model):
