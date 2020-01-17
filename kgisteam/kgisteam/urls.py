@@ -23,6 +23,11 @@ from courses import views as courses_views
 from kgisteam import views as kgisteam_views
 
 
+# https://www.webforefront.com/django/admincustomlayout.html
+admin.site.site_header = 'KGIsteam admin'
+admin.site.site_title = 'KGIsteam admin'
+admin.site.index_title = 'KGIsteam administration'
+
 urlpatterns = [
     path('', courses_views.courses_home, name='home'),
     path('admin/', admin.site.urls),
@@ -31,7 +36,9 @@ urlpatterns = [
     url(r'^markdownx/', include('markdownx.urls')),
 ]
 
+# Error handlers
 handler404 = kgisteam_views.error_404
+handler500 = kgisteam_views.error_500
 
 # https://docs.djangoproject.com/en/2.2/howto/static-files/#serving-files-uploaded-by-a-user-during-development
 if settings.DEBUG:
