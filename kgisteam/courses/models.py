@@ -107,13 +107,11 @@ class Course(models.Model):
 
     @property
     def resources(self):
-        shared_resources = self.sharedresource_set.all()
-        course_resources = self.courseresource_set.all()
+        shared_resources = self.resource_set.all()
         resources = dict()
         for category in CATEGORY_CHOICES:
             resources[category[1]] = (
-                list(shared_resources.filter(category=category[0])) +
-                list(course_resources.filter(category=category[0]))
+                list(shared_resources.filter(category=category[0]))
             )
         return resources
 
@@ -142,7 +140,7 @@ class Syllabus(models.Model):
 
 class Lesson(models.Model):
     url_max_length=200
-    url_text_max_length=30
+    url_text_max_length=50
 
     syllabus = models.ForeignKey(
         Syllabus,
@@ -411,13 +409,5 @@ class ResourceBaseClass(models.Model):
         return '{}: {}'.format(self.category, self.link_text)
 
 
-class SharedResource(ResourceBaseClass):
-    courses = models.ManyToManyField(Course)
-
-
-class CourseResource(ResourceBaseClass):
-    course = models.ForeignKey(
-        Course,
-        null=True,
-        on_delete=models.CASCADE,
-    )
+class Resource(ResourceBaseClass):
+    courses = models.ManyToManyField(Course, blank=True)
