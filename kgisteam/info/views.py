@@ -10,5 +10,4 @@ def info_home(request):
         'steam_acronym': ('Keyless', 'Grading', 'Interface',
             'Science', 'Technology', 'Engineering', 'Art', 'Mathematics',),
     }
-    raise Exception(500)
     return render(request, 'info/info_home.html', context)
