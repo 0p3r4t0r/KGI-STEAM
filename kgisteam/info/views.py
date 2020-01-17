@@ -4,7 +4,6 @@ from django.apps import apps
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-
 def info_home(request):
     """The info page."""
     context = {

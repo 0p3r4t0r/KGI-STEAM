@@ -36,7 +36,9 @@ urlpatterns = [
     url(r'^markdownx/', include('markdownx.urls')),
 ]
 
+# Error handlers
 handler404 = kgisteam_views.error_404
+handler500 = kgisteam_views.error_500
 
 # https://docs.djangoproject.com/en/2.2/howto/static-files/#serving-files-uploaded-by-a-user-during-development
 if settings.DEBUG:
