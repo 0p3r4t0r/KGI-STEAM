@@ -39,6 +39,13 @@ def get_checked_problems(result: str, session: 'SessionStore') -> tuple:
         )
         return checked_problems
 
+def trimestinate(syllabus: 'Syllabus') -> list:
+    """ Split lessons by trimester.
+    lessons = 
+    """
+    lessons = syllabus.lesson_set.all()
+    return [[ lesson for lesson in lessons if lesson.trimester == i ] for i in range(1, 4)]
+
 def updated_checked_problems(response: dict, session: 'SessionStore') -> namedtuple:
     checked_incorrect, checked_correct = get_checked_problems('both', session)
     checked_incorrect, checked_correct = set(checked_incorrect), set(checked_correct)
