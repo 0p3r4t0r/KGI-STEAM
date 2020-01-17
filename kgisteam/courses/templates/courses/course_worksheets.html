@@ -43,6 +43,11 @@
                         <form action="{% url 'course-worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
                             {% csrf_token %}
                             {{ worksheet_problem_form }}
+                            <span class="worksheet-answer-units">
+                                <!-- Enable mathjax rendering by enclosing the content with \( \) -->
+                                \( {{ problem.answer_units }} \)
+                            </span>
+                            <br>
                             <input type="submit" value="Check">
                         </form>
                         <span class="worksheet-problem-form-error"></span>

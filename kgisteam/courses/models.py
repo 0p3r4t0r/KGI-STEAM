@@ -107,13 +107,11 @@ class Course(models.Model):
 
     @property
     def resources(self):
-        shared_resources = self.sharedresource_set.all()
-        course_resources = self.courseresource_set.all()
+        shared_resources = self.resource_set.all()
         resources = dict()
         for category in CATEGORY_CHOICES:
             resources[category[1]] = (
-                list(shared_resources.filter(category=category[0])) +
-                list(course_resources.filter(category=category[0]))
+                list(shared_resources.filter(category=category[0]))
             )
         return resources
 
@@ -127,6 +125,15 @@ class Course(models.Model):
 
 
 class Syllabus(models.Model):
+    # Dates can be compared the the tuples below.
+    # (month, day)
+    start_t1    = (4, 1)
+    end_t1      = (7, 19)
+    start_t2    = (9, 2)
+    end_t2      = (12, 21)
+    start_t3    = (1, 8)
+    end_t3      = (3, 23)
+
     course = models.OneToOneField(
         Course,
         null=True,
@@ -142,7 +149,7 @@ class Syllabus(models.Model):
 
 class Lesson(models.Model):
     url_max_length=200
-    url_text_max_length=30
+    url_text_max_length=50
 
     syllabus = models.ForeignKey(
         Syllabus,
@@ -223,6 +230,15 @@ class Lesson(models.Model):
                 )
         return links
 
+    @property
+    def trimester(self):
+        if self.syllabus.start_t1 <= (self.date.month, self.date.day) <= self.syllabus.end_t1:
+            return 1
+        elif self.syllabus.start_t2 <= (self.date.month, self.date.day) <= self.syllabus.end_t2:
+            return 2
+        elif self.syllabus.start_t3 <= (self.date.month, self.date.day) <= self.syllabus.end_t3:
+            return 3
+
 
 class Worksheet(models.Model):
 
@@ -283,13 +299,15 @@ class Problem(models.Model):
     answer = models.CharField(
         max_length=100,
     )
-
     calculated_answer = models.FloatField(
         blank=True,
         max_length=100,
         null=True,
     )
-
+    answer_units = models.CharField(
+        blank=True,
+        max_length=50,
+    )
     solution = MarkdownxField(
         default='The solution to this problem is not available yet.',
         max_length=1000,
@@ -409,13 +427,5 @@ class ResourceBaseClass(models.Model):
         return '{}: {}'.format(self.category, self.link_text)
 
 
-class SharedResource(ResourceBaseClass):
-    courses = models.ManyToManyField(Course)
-
-
-class CourseResource(ResourceBaseClass):
-    course = models.ForeignKey(
-        Course,
-        null=True,
-        on_delete=models.CASCADE,
-    )
+class Resource(ResourceBaseClass):
+    courses = models.ManyToManyField(Course, blank=True)
