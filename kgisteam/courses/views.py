@@ -16,7 +16,7 @@ def courses_home(request):
     context = {
         'courses': Course.objects.order_by('-school', 'nen', 'kumi'),
     }
-    return render(request, 'courses/courses_home.html', context)
+    return render(request, 'courses/home.html', context)
 
 
 def syllabus(request, *args, **kwargs):
@@ -27,7 +27,7 @@ def syllabus(request, *args, **kwargs):
         'course': course,
         'lessons': lessons,
     }
-    return render(request, 'courses/course_syllabus.html', context)
+    return render(request, 'courses/syllabus.html', context)
 
 
 # Begin worksheet view functions----------------------------------------------->
@@ -47,7 +47,7 @@ def worksheets(request, *args, **kwargs):
         context['active_problems'] = active_problems
         context['worksheet_problem_form'] = WorksheetProblemForm()
         context['problem_order'] = kwargs['order']
-    return render(request, 'courses/course_worksheets.html', context)
+    return render(request, 'courses/worksheets.html', context)
 
 
 @require_POST
@@ -121,4 +121,4 @@ def resources(request, *args, **kwargs):
         'course': course,
         'resources': course.resources,
     }
-    return render(request, 'courses/course_resources.html', context)
+    return render(request, 'courses/resources.html', context)
