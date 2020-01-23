@@ -34,6 +34,10 @@ urlpatterns = [
     path('courses/', include('courses.urls')),
     path('info/', include('info.urls')),
     url(r'^markdownx/', include('markdownx.urls')),
+
+    # URLs for testing
+    path('test/error404', kgisteam_views.error_404, name='error404'),
+    path('test/error500', kgisteam_views.error_500, name='error500'),
 ]
 
 # Error handlers
