@@ -9,6 +9,7 @@ from taggit.managers import TaggableManager
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.utils.timezone import localtime, make_aware
+from django.urls import reverse
 
 from courses.maths import evaluate_answer, sn_round, sn_round_str
 from kgisteam.settings import TIME_ZONE
@@ -145,6 +146,15 @@ class Syllabus(models.Model):
 
     def __str__(self):
         return '{} syllabus'.format(self.course)
+
+    def get_absolute_url(self):
+        kwargs={
+            'school': self.course.school,
+            'name': 'Solution Check',
+            'nen_kumi': str(self.course.nen) + '-' + str(self.course.kumi),
+            'year': self.course.year
+        }
+        return reverse('course-syllabi', kwargs=kwargs)
 
 
 class Lesson(models.Model):
