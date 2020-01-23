@@ -17,6 +17,13 @@ from kgisteam.settings import TIME_ZONE
 from courses.tests import spaced_print
 
 
+class BaseModel(models.Model):
+    last_modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
 IN_CLASS = 'IC'
 LANGUAGE_LEARNING = 'LL'
 FURTHER_STUDY = 'FS'
@@ -28,7 +35,7 @@ CATEGORY_CHOICES = [
 ]
 
 
-class Course(models.Model):
+class Course(BaseModel):
     """Store course information.
 
     course_name --> You should be careful about support for Japanese.
@@ -125,7 +132,7 @@ class Course(models.Model):
         )
 
 
-class Syllabus(models.Model):
+class Syllabus(BaseModel):
     # Dates can be compared the the tuples below.
     # (month, day)
     start_t1    = (4, 1)
@@ -157,7 +164,7 @@ class Syllabus(models.Model):
         return reverse('course-syllabi', kwargs=kwargs)
 
 
-class Lesson(models.Model):
+class Lesson(BaseModel):
     url_max_length=200
     url_text_max_length=50
 
@@ -250,7 +257,7 @@ class Lesson(models.Model):
             return 3
 
 
-class Worksheet(models.Model):
+class Worksheet(BaseModel):
 
     def default_release_date():
         return make_aware(datetime.datetime.today().replace(
@@ -284,7 +291,7 @@ class Worksheet(models.Model):
             return False
 
 
-class Problem(models.Model):
+class Problem(BaseModel):
     """
     https://neutronx.github.io/django-markdownx/
     """

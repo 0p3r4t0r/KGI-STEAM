@@ -33,6 +33,7 @@ admin.site.index_title = 'KGIsteam administration'
 
 info_dict = {
     'queryset': Syllabus.objects.all(),
+    'date_field': 'last_modified',
 }
 
 urlpatterns = [
@@ -41,6 +42,8 @@ urlpatterns = [
     path('courses/', include('courses.urls')),
     path('info/', include('info.urls')),
     url(r'^markdownx/', include('markdownx.urls')),
+
+    # Sitemap https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/
     path('sitemap.xml', sitemap, {'sitemaps': {
             'courses': GenericSitemap(info_dict, priority=0.5)
             }
