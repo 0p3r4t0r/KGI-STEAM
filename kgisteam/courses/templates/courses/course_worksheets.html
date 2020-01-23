@@ -16,13 +16,13 @@
                 {% for worksheet in course.worksheet_set.all %}
                     {% if worksheet.title == active_worksheet.title %}
                     <li>
-                        <a class="is-active" href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet.title 'ordered' %}">
+                        <a class="is-active" href="{% url 'course-worksheets' course.year course.school course.name course.nen_kumi worksheet.title 'ordered' %}">
                             {{ worksheet.title }}
                         </a>
                     </li>
                     {% else %}
                     <li>
-                        <a href="{% url 'course-worksheets' course.school course.name course.nen_kumi course.year worksheet.title 'ordered' %}">
+                        <a href="{% url 'course-worksheets' course.year course.school course.name course.nen_kumi worksheet.title 'ordered' %}">
                             {{ worksheet.title }}
                         </a>
                     </li>
@@ -61,8 +61,8 @@
             {% endfor %}
         </ol>
         <div class="worksheet-buttons">
-            <a class="button" href="{% url 'course-worksheets-reset' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order %}" id="worksheet-reset">Reset</a>
-            <a class="button" href="{% url 'course-worksheets-reset-all' course.school course.name course.nen_kumi course.year active_worksheet.title problem_order %}" id="worksheet-reset-all">Reset all</a>
+            <a class="button" href="{% url 'course-worksheets-reset' course.year course.school course.name course.nen_kumi active_worksheet.title problem_order %}" id="worksheet-reset">Reset</a>
+            <a class="button" href="{% url 'course-worksheets-reset-all' course.year course.school course.name course.nen_kumi active_worksheet.title problem_order %}" id="worksheet-reset-all">Reset all</a>
         </div>
     </div>
     {% else %}

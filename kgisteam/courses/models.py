@@ -157,7 +157,6 @@ class Syllabus(BaseModel):
     def get_absolute_url(self):
         kwargs={
             'school': self.course.school,
-            'name': 'Solution Check',
             'nen_kumi': str(self.course.nen) + '-' + str(self.course.kumi),
             'year': self.course.year
         }
