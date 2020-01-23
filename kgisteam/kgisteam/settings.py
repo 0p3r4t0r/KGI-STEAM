@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 from dotenv import load_dotenv
 import os
+import re
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -66,8 +67,9 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.sitemaps',
     'django.contrib.staticfiles',
     'django.forms',
     'info.apps.InfoConfig',
@@ -92,6 +94,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'kgisteam.urls'
+
+IGNORABLE_404_URLS = [
+    re.compile(r'\.(php|xml)$'),
+    re.compile(r'^/favicon\.ico$'),
+    re.compile(r'^\robots\.txt'),
+]
 
 TEMPLATES = [
     {
