@@ -26,6 +26,7 @@ def syllabus(request, *args, **kwargs):
     context = {
         'course': course,
         'lessons': lessons,
+        'syllabus': syllabus,
     }
     return render(request, 'courses/syllabus.html', context)
 
