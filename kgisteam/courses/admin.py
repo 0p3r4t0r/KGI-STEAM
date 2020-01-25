@@ -8,14 +8,20 @@ from django.utils.html import format_html
 from courses.models import Course, Lesson, Problem, Resource, Syllabus, Worksheet
 
 
+class CoursesBaseAdmin(admin.ModelAdmin):
+    save_on_top = True
+
+    class Meta:
+        abstract = True
+
+
 @admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
+class CourseAdmin(CoursesBaseAdmin):
     """
     https://books.agiliq.com/projects/django-admin-cookbook/en/latest/imagefield.html
     https://docs.djangoproject.com/en/2.2/ref/utils/#module-django.utils.html
     """
     list_display = ('name', 'school', 'nen_kumi', 'year')
-
     readonly_fields = ["image_preview"]
 
     def image_preview(self, obj):
@@ -32,10 +38,11 @@ class LessonInline(admin.StackedInline):
     """
     extra = 0
     model=Lesson
+    ordering = ('-date',)
 
 
 @admin.register(Syllabus)
-class SyllabusAdmin(admin.ModelAdmin):
+class SyllabusAdmin(CoursesBaseAdmin):
     inlines = [LessonInline,]
     list_display = ('course',)
 
@@ -53,12 +60,12 @@ class ProblemInline(admin.StackedInline):
 
 
 @admin.register(Worksheet)
-class WorksheetAdmin(admin.ModelAdmin):
+class WorksheetAdmin(CoursesBaseAdmin):
     inlines = [ProblemInline,]
     filter_horizontal = ('course',)
     list_display = ('title',)
 
 
 @admin.register(Resource)
-class ResourceAdmin(admin.ModelAdmin):
+class ResourceAdmin(CoursesBaseAdmin):
     filter_horizontal = ('courses',)
