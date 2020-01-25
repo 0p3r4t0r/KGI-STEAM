@@ -156,10 +156,10 @@ class Syllabus(BaseModel):
 
     def get_absolute_url(self):
         kwargs={
+            'year': self.course.year,
             'school': self.course.school,
-            'name': 'Solution Check',
+            'name': self.course.name,
             'nen_kumi': str(self.course.nen) + '-' + str(self.course.kumi),
-            'year': self.course.year
         }
         return reverse('course-syllabi', kwargs=kwargs)
 
