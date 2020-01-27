@@ -1,3 +1,4 @@
+<!-- Contains 2 extra html snippets for page bottom/top buttons. -->
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls static admin_modify %}
 
@@ -29,9 +30,11 @@
   <ul class="object-tools">
     {% block object-tools-items %}
       {% change_form_object_tools %}
+      <!-- Start customized html snippet 1 -->
       <li>
         <a class="viewsitelink" href="#pagebottom" id="pagetop">Go to bottom</a>
       </li>
+      <!-- End cusomtized html snippet 1 -->
     {% endblock %}
   </ul>
 {% endif %}{% endif %}
@@ -63,12 +66,14 @@
 {% endblock %}
 
 {% block after_related_objects %}
+<!-- Start customized html snippet 2 -->
   <ul class="object-tools">
     <li>
         <br>
         <a class="viewsitelink" href="#pagetop" id="pagebottom">Go to top</a>
     </li>
   </ul>
+<!-- End customized html snippet 2 -->
 {% endblock %}
 
 {% block submit_buttons_bottom %}{% submit_row %}{% endblock %}

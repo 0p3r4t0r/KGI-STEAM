@@ -1,3 +1,4 @@
+<!-- Contains 2 extra html snippets for page bottom/top buttons. -->
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls static admin_modify %}
 
@@ -29,6 +30,11 @@
   <ul class="object-tools">
     {% block object-tools-items %}
       {% change_form_object_tools %}
+      <!-- Start customized html snippet 1 -->
+      <li>
+        <a class="viewsitelink" href="#pagebottom" id="pagetop">Go to bottom</a>
+      </li>
+      <!-- End cusomtized html snippet 1 -->
     {% endblock %}
   </ul>
 {% endif %}{% endif %}
@@ -59,7 +65,16 @@
 {% endfor %}
 {% endblock %}
 
-{% block after_related_objects %}{% endblock %}
+{% block after_related_objects %}
+<!-- Start customized html snippet 2 -->
+  <ul class="object-tools">
+    <li>
+        <br>
+        <a class="viewsitelink" href="#pagetop" id="pagebottom">Go to top</a>
+    </li>
+  </ul>
+<!-- End customized html snippet 2 -->
+{% endblock %}
 
 {% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
 
@@ -71,18 +86,12 @@
                 data-model-name="{{ opts.model_name }}"
             {% endif %}>
     </script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-    <script>
-        setInterval(function() {
-        MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-        }, 500);
-    </script>
+    {% include "./mathjax.html" %}
 {% endblock %}
 
 {# JavaScript for prepopulated fields #}
 {% prepopulated_fields_js %}
 
 </div>
-</form>
-</div>
+</form></div>
 {% endblock %}
