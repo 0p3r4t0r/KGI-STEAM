@@ -38,7 +38,6 @@ class LessonInline(admin.StackedInline):
     """
     extra = 0
     model=Lesson
-    ordering = ('-date', '-number')
 
 
 @admin.register(Syllabus)
