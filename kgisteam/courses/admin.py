@@ -9,7 +9,7 @@ from courses.models import Course, Lesson, Problem, Resource, Syllabus, Workshee
 
 
 class CoursesBaseAdmin(admin.ModelAdmin):
-    save_on_top = True
+    pass
 
     class Meta:
         abstract = True
