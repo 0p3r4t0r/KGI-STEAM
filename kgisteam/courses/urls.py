@@ -9,7 +9,7 @@ urlpatterns = [
     # Syllabi
     path('{}/syllabus'.format(courses_base_url),
         views.syllabus,
-        name='syllabi',
+        name='syllabus',
     ),
     # Worksheets
     path('{}/worksheets/<worksheet_title>/<order>'.format(courses_base_url),
