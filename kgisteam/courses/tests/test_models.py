@@ -5,10 +5,6 @@ from courses.models import Course
 
 
 class CourseModelTest(TestCase):
-    course1 = None
-    ms_course1 = None
-    hs_course1 = None
-
     def setUp(self):
         # Create MS Course
         Course.objects.create(
