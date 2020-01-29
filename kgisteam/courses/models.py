@@ -14,8 +14,6 @@ from django.urls import reverse
 from courses.maths import evaluate_answer, sn_round, sn_round_str
 from kgisteam.settings import TIME_ZONE
 
-from courses.tests import spaced_print
-
 
 class BaseModel(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
