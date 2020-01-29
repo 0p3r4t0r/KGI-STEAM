@@ -21,6 +21,14 @@ def course_from_kwargs(kwargs: dict) -> "<class 'courses.models.Course'>":
     filtered_kwargs['nen'], filtered_kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
     return Course.objects.filter(**filtered_kwargs).first()
 
+def kwargs_from_course(course: "<class 'courses.models.Course'>") -> dict:
+    return {
+        'year': course.year,
+        'school': course.school,
+        'name': course.name,
+        'nen_kumi': course.nen_kumi,
+    }
+
 def get_checked_problems(result: str, session: 'SessionStore') -> tuple:
     """Get the primary keys of attempted problems from the session.
 

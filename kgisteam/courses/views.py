@@ -35,7 +35,7 @@ def syllabus(request, *args, **kwargs):
 def worksheets(request, *args, **kwargs):
     course = course_from_kwargs(kwargs)
     active_worksheet = course.worksheet_set.filter(
-        title=kwargs['worksheet_title']
+        title=kwargs['title']
     ).first()
     context = {
         'course': course,
