@@ -1,40 +1,40 @@
 from django.urls import path
 
 from . import views
-
-courses_url = '<int:year>/<school>/<name>/<nen_kumi>'
+app_name = 'courses'
+courses_base_url = '<int:year>/<school>/<name>/<nen_kumi>'
 
 urlpatterns = [
-    path('', views.courses_home, name='courses-home'),
+    path('', views.courses_home, name='home'),
     # Syllabi
-    path('{}/syllabus'.format(courses_url),
+    path('{}/syllabus'.format(courses_base_url),
         views.syllabus,
-        name='course-syllabi',
+        name='syllabi',
     ),
     # Worksheets
-    path('{}/worksheets/<worksheet_title>/<order>'.format(courses_url),
+    path('{}/worksheets/<worksheet_title>/<order>'.format(courses_base_url),
         views.worksheets,
-        name='course-worksheets',
+        name='worksheets',
     ),
     path('worksheets/problems/check/results',
         views.worksheets_check_answer_results,
-        name='course-worksheets-check-results',
+        name='worksheets-check-results',
     ),
     path('worksheets/problems/check/<problem_id>',
         views.worksheets_check_answer,
-        name='course-worksheets-check',
+        name='worksheets-check',
     ),
-    path('{}/worksheets/<worksheet_title>/<order>/reset'.format(courses_url),
+    path('{}/worksheets/<worksheet_title>/<order>/reset'.format(courses_base_url),
         views.worksheets_reset,
-        name='course-worksheets-reset',
+        name='worksheets-reset',
     ),
-    path('{}/worksheets/<worksheet_title>/<order>/resetall'.format(courses_url),
+    path('{}/worksheets/<worksheet_title>/<order>/resetall'.format(courses_base_url),
         views.worksheets_reset_all,
-        name='course-worksheets-reset-all',
+        name='worksheets-reset-all',
     ),
     # Resources
-    path('{}/resources'.format(courses_url),
+    path('{}/resources'.format(courses_base_url),
         views.resources,
-        name='course-resources',
+        name='resources',
     ),
 ]

@@ -16,13 +16,13 @@
                 {% for worksheet in course.worksheet_set.all %}
                     {% if worksheet.title == active_worksheet.title %}
                     <li>
-                        <a class="is-active" href="{% url 'course-worksheets' course.year course.school course.name course.nen_kumi worksheet.title 'ordered' %}">
+                        <a class="is-active" href="{% url 'courses:worksheets' course.year course.school course.name course.nen_kumi worksheet.title 'ordered' %}">
                             {{ worksheet.title }}
                         </a>
                     </li>
                     {% else %}
                     <li>
-                        <a href="{% url 'course-worksheets' course.year course.school course.name course.nen_kumi worksheet.title 'ordered' %}">
+                        <a href="{% url 'courses:worksheets' course.year course.school course.name course.nen_kumi worksheet.title 'ordered' %}">
                             {{ worksheet.title }}
                         </a>
                     </li>
@@ -40,7 +40,7 @@
                 <li class="worksheet-problem" id="{{ problem.html_id }}">
                     <div class="worksheet-problem-color">
                         {{ problem.question_markdown|safe }}
-                        <form action="{% url 'course-worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
+                        <form action="{% url 'courses:worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
                             {% csrf_token %}
                             {{ worksheet_problem_form }}
                             <span class="worksheet-answer-units">
@@ -61,8 +61,8 @@
             {% endfor %}
         </ol>
         <div class="worksheet-buttons">
-            <a class="button" href="{% url 'course-worksheets-reset' course.year course.school course.name course.nen_kumi active_worksheet.title problem_order %}" id="worksheet-reset">Reset</a>
-            <a class="button" href="{% url 'course-worksheets-reset-all' course.year course.school course.name course.nen_kumi active_worksheet.title problem_order %}" id="worksheet-reset-all">Reset all</a>
+            <a class="button" href="{% url 'courses:worksheets-reset' course.year course.school course.name course.nen_kumi active_worksheet.title problem_order %}" id="worksheet-reset">Reset</a>
+            <a class="button" href="{% url 'courses:worksheets-reset-all' course.year course.school course.name course.nen_kumi active_worksheet.title problem_order %}" id="worksheet-reset-all">Reset all</a>
         </div>
     </div>
     {% else %}
@@ -84,7 +84,7 @@
 import { ajaxGet } from "{% static 'kgisteam/js/ajaxGet.js' %}";
 
 
-var loadCheckedResults = ajaxGet("{% url 'course-worksheets-check-results' %}", updatePage )
+var loadCheckedResults = ajaxGet("{% url 'courses:worksheets-check-results' %}", updatePage )
 document.addEventListener("DOMContentLoaded", loadCheckedResults);
 
 function updatePage(xhr) {
