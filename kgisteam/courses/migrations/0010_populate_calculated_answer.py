@@ -2,19 +2,30 @@
 # https://docs.djangoproject.com/en/2.2/topics/migrations/#data-migrations
 
 from django.db import migrations
+from django.db.utils import OperationalError
 
 from courses.models import Problem
 
 
 def populate_calculated_answer(apps, schema_editor):
-    for problem in Problem.objects.all():
-        problem.calculated_answer = problem.calculate_answer()
-        problem.save()
-
+    """Data migration."""
+    try:
+        for problem in Problem.objects.all():
+            problem.calculated_answer = problem.calculate_answer()
+            problem.save()
+    except OperationalError:
+        """Suppress this error when the data migration is reapplied."""
+        pass
+    
 def unpopulate_calculated_answer(apps, schema_editor):
-    for problem in Problem.objects.all():
-        problem.calculated_answer = None
-        problem.save()
+    """Data migration."""
+    try:
+        for problem in Problem.objects.all():
+            problem.calculated_answer = None
+            problem.save()
+    except OperationalError:
+        """Suppress this error when the data migration is reapplied."""
+        pass
 
 
 class Migration(migrations.Migration):
