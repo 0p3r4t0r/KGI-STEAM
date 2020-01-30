@@ -42,6 +42,7 @@ urlpatterns = [
     path('courses/', include('courses.urls')),
     path('info/', include('info.urls')),
     url(r'^markdownx/', include('markdownx.urls')),
+    url(r'^martor/', include('martor.urls')),
 
     # Sitemap https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/
     path('sitemap.xml', sitemap, {'sitemaps': {

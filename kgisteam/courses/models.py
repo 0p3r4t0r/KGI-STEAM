@@ -1,8 +1,8 @@
 import copy
 import datetime
 
-from markdownx.models import MarkdownxField
-from markdownx.utils import markdownify
+from markdown import markdown
+from martor.models import MartorField
 from string import Template
 from taggit.managers import TaggableManager
 
@@ -298,7 +298,7 @@ class Problem(BaseModel):
         null=True,
         on_delete=models.CASCADE,
     )
-    question = MarkdownxField(
+    question = MartorField(
         default='Your question here.',
         max_length=500,
     )
@@ -322,7 +322,7 @@ class Problem(BaseModel):
         blank=True,
         max_length=50,
     )
-    solution = MarkdownxField(
+    solution = MartorField(
         default='The solution to this problem is not available yet.',
         max_length=1000,
     )
@@ -381,9 +381,9 @@ class Problem(BaseModel):
                 in self.variables.items()
             }
             question = template.safe_substitute(**variables)
-            return markdownify(question)
+            return markdown(question)
         else:
-            return markdownify(self.question)
+            return markdown(self.question)
 
     @property
     def solution_markdown(self):
@@ -396,14 +396,14 @@ class Problem(BaseModel):
                 variables['calculated_answer'] = self.calculated_answer
                 template = Template(self.solution)
                 solution = template.safe_substitute(**variables)
-                return markdownify(solution)
+                return markdown(solution)
             else:
-                return markdownify(self.solution)
+                return markdown(self.solution)
         else:
                 release_datetime_local = localtime(self.worksheet.solution_release_datetime)
                 release_date_str = release_datetime_local.strftime('%y-%m-%d')
                 release_time_str = release_datetime_local.strftime('%H:%M')
-                return markdownify(
+                return markdown(
                     'Solutions will be released on {release_date}, at {release_time}.'.format(
                         release_date=release_date_str,
                         release_time=release_time_str,

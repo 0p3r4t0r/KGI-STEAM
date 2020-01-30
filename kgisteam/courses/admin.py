@@ -1,5 +1,5 @@
-from markdownx.models import MarkdownxField
-from markdownx.widgets import AdminMarkdownxWidget
+from martor.models import MartorField
+from martor.widgets import AdminMartorWidget
 
 from django.contrib import admin
 from django.db import models
@@ -53,7 +53,7 @@ class ProblemInline(admin.StackedInline):
     extra = 0
     model = Problem
     formfield_overrides = {
-        MarkdownxField: {'widget': AdminMarkdownxWidget},
+        MartorField: {'widget': AdminMartorWidget},
     }
     readonly_fields = ["calculated_answer"]
 

@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'django.forms',
     'info.apps.InfoConfig',
     'markdownx',
+    'martor',
     'taggit',
     'users.apps.UsersConfig',
     'utils.apps.UtilsConfig',
