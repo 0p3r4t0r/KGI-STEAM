@@ -104,7 +104,7 @@ def worksheets_reset(request, *args, **kwargs):
             if pk in checked_problems[1]: checked_problems[1].remove(pk)
         request.session['checked_problems_wrong'] = checked_problems[0]
         request.session['checked_problems_right'] = checked_problems[1]
-    return redirect('course-worksheets', *args, **kwargs)
+    return redirect('courses:worksheets', *args, **kwargs)
 
 
 def worksheets_reset_all(request, *args, **kwargs):
@@ -112,7 +112,7 @@ def worksheets_reset_all(request, *args, **kwargs):
         del request.session['checked_problems_correct']
     if request.session.get('checked_problems_incorrect'):
         del request.session['checked_problems_incorrect']
-    return redirect('course-worksheets', *args, **kwargs)
+    return redirect('courses:worksheets', *args, **kwargs)
 # END worksheet view functions ------------------------------------------------>
 
 
