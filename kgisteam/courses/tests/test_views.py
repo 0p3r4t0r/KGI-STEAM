@@ -1,16 +1,22 @@
+'''
+Test reset buttons
+Test check buttons
+'''
 from django.shortcuts import reverse
 from django.test import Client, TestCase
 from django.utils import timezone
 
-from courses.models import Course, Syllabus, Worksheet
+from courses.models import Course, Problem, Syllabus, Worksheet
 from courses.viewaids import kwargs_from_course
 
 
 class CoursesViewTest(TestCase):
     def setUp(self):
-        num_ws = 5
+        # Set the number of worksheets and problems to make.
+        self.num_ws = 2
+        self.problems_per_ws = 2
         # Create a course.
-        course1 = Course.objects.create(
+        course = Course.objects.create(
             year=timezone.now().year,
             name='Test MS Course',
             school='MS',
@@ -18,14 +24,24 @@ class CoursesViewTest(TestCase):
             kumi='A',
         )
         # Create a syllabus
-        Syllabus.objects.create(course=course1)
-        #Create some worksheets
-        for i in range(0, 5):
+        Syllabus.objects.create(course=course)
+        #Create some worksheets with problems.
+        for i in range(0, self.num_ws):
             ws = Worksheet.objects.create(title='Test Worksheet {}'.format(i))
-            course1.worksheet_set.add(ws)
+            course.worksheet_set.add(ws)
+            for i in range(0, self.problems_per_ws):
+                problem = Problem.objects.create(
+                    question='What are $x and ${y}?',
+                    variable_names='x, y',
+                    variable_default_values='40, 2',
+                    answer = '$x+${y}', # Should evaluate to 42.
+                )
+                ws.problem_set.add(problem)
+                self.assertEqual(problem.calculated_answer, 42)
+            self.assertEqual(len(ws.problem_set.all()), self.problems_per_ws)
 
     def test_create_worksheets(self):
-        self.assertEqual(len(Worksheet.objects.all()), 5)
+        self.assertEqual(len(Worksheet.objects.all()), self.num_ws)
 
     def test_syllabus_view(self):
         course = Course.objects.first()
@@ -48,7 +64,7 @@ class CoursesViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-    def test_worksheet_view(self):
+    def test_resource_view(self):
         course = Course.objects.first()
         client = Client()
         response = client.get(
