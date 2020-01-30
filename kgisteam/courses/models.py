@@ -12,7 +12,6 @@ from django.utils.timezone import localtime, make_aware
 from django.urls import reverse
 
 from courses.maths import evaluate_answer, sn_round, sn_round_str
-from kgisteam.settings import TIME_ZONE
 
 
 class BaseModel(models.Model):
