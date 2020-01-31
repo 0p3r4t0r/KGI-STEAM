@@ -1,7 +1,3 @@
-'''
-Test reset buttons
-Test check buttons
-'''
 from django.shortcuts import reverse
 from django.test import Client, TestCase
 from django.utils import timezone
@@ -64,15 +60,34 @@ class CoursesViewTest(TestCase):
         response = client.get(courses_worksheets_url)
         self.assertEqual(response.status_code, 200)
         # Test the check answers results view
+        problem = ws.problem_set.first()
         response = client.get(reverse('courses:worksheets-check-results'))
         self.assertEqual(response.status_code, 200)
-        # Test the problem check view
+        # problem check view returns a json response with result: 'invalid form'
         response = client.post(
             reverse('courses:worksheets-check',
-                kwargs={ 'problem_id': ws.problem_set.first().id }
+                kwargs={ 'problem_id': problem.id }
             )
         )
         self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json())
+        self.assertEqual(dict(response.json())['result'], 'invalid form')
+        # problem check view returns result: 'correct'
+        response = client.post(
+            reverse('courses:worksheets-check',
+                kwargs={ 'problem_id': problem.id }
+            ),
+            { 'user_answer': problem.calculated_answer }
+        )
+        self.assertEqual(dict(response.json())['result'], 'correct')
+        # proble check view return result: 'incorrect'
+        response = client.post(
+            reverse('courses:worksheets-check',
+                kwargs={ 'problem_id': problem.id }
+            ),
+            { 'user_answer': problem.calculated_answer + 1 }
+        )
+        self.assertEqual(dict(response.json())['result'], 'incorrect')
         # Test the reset view
         response = client.get(
             reverse('courses:worksheets-reset', kwargs=ws_kwargs),
@@ -82,6 +97,10 @@ class CoursesViewTest(TestCase):
             response.redirect_chain[-1][0],
             courses_worksheets_url,
         )
+        response = client.get(reverse('courses:worksheets-check-results'))
+        for _ in ws.problem_set.all():
+            self.assertNotIn(_.id, response.json()['checked_problems_correct'])
+            self.assertNotIn(_.id, response.json()['checked_problems_incorrect'])
         # Test the reset_all view
         response = client.get(
             reverse('courses:worksheets-reset-all', kwargs=ws_kwargs),
@@ -91,6 +110,8 @@ class CoursesViewTest(TestCase):
             response.redirect_chain[-1][0],
             courses_worksheets_url,
         )
+        response = client.get(reverse('courses:worksheets-check-results'))
+        self.assertEqual(response.json(), {'checked_problems_correct': [], 'checked_problems_incorrect': []})
 
     def test_resource_view(self):
         course = Course.objects.first()
