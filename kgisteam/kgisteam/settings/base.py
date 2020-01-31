@@ -83,7 +83,6 @@ INSTALLED_APPS = [
     'martor',
     'taggit',
     'users.apps.UsersConfig',
-    'utils.apps.UtilsConfig',
 ]
 
 MIDDLEWARE = [
