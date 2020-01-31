@@ -7,7 +7,7 @@ from django.test import Client, TestCase
 from django.utils import timezone
 
 from courses.models import Course, Problem, Syllabus, Worksheet
-from courses.viewaids import kwargs_from_course
+from courses.viewaids import kwargs_from_course, kwargs_from_course_and_worksheet
 
 
 class CoursesViewTest(TestCase):
@@ -55,13 +55,10 @@ class CoursesViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_worksheet_view(self):
+        course = Course.objects.first()
         ws = Worksheet.objects.first()
         client = Client()
-        ws_kwargs = { 
-            **kwargs_from_course(ws.course.first()),
-            'title': ws.title,
-            'order': 'ordered',
-        }
+        ws_kwargs = kwargs_from_course_and_worksheet(course, ws) 
         courses_worksheets_url = reverse('courses:worksheets', kwargs=ws_kwargs)
         # Test a worksheet view
         response = client.get(courses_worksheets_url)

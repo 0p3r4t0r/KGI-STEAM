@@ -29,6 +29,13 @@ def kwargs_from_course(course: "<class 'courses.models.Course'>") -> dict:
         'nen_kumi': course.nen_kumi,
     }
 
+def kwargs_from_course_and_worksheet(course, worksheet) -> dict:
+    return {
+        **kwargs_from_course(course),
+        'title': worksheet.title,
+        'order': 'ordered',
+    }
+
 def get_checked_problems(result: str, session: 'SessionStore') -> tuple:
     """Get the primary keys of attempted problems from the session.
 
