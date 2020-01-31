@@ -57,12 +57,43 @@ class CoursesViewTest(TestCase):
     def test_worksheet_view(self):
         ws = Worksheet.objects.first()
         client = Client()
-        kwargs = kwargs_from_course(ws.course.first())
-        kwargs['title'] = ws.title
-        kwargs['order'] = 'ordered'
-        response = client.get(reverse('courses:worksheets', kwargs=kwargs))
+        ws_kwargs = { 
+            **kwargs_from_course(ws.course.first()),
+            'title': ws.title,
+            'order': 'ordered',
+        }
+        courses_worksheets_url = reverse('courses:worksheets', kwargs=ws_kwargs)
+        # Test a worksheet view
+        response = client.get(courses_worksheets_url)
         self.assertEqual(response.status_code, 200)
-
+        # Test the check answers results view
+        response = client.get(reverse('courses:worksheets-check-results'))
+        self.assertEqual(response.status_code, 200)
+        # Test the problem check view
+        response = client.post(
+            reverse('courses:worksheets-check',
+                kwargs={ 'problem_id': ws.problem_set.first().id }
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        # Test the reset view
+        response = client.get(
+            reverse('courses:worksheets-reset', kwargs=ws_kwargs),
+            follow=True,
+        )
+        self.assertEqual(
+            response.redirect_chain[-1][0],
+            courses_worksheets_url,
+        )
+        # Test the reset_all view
+        response = client.get(
+            reverse('courses:worksheets-reset-all', kwargs=ws_kwargs),
+            follow=True,
+        )
+        self.assertEqual(
+            response.redirect_chain[-1][0],
+            courses_worksheets_url,
+        )
 
     def test_resource_view(self):
         course = Course.objects.first()
