@@ -22,7 +22,8 @@ class CourseAdmin(CoursesBaseAdmin):
     https://docs.djangoproject.com/en/2.2/ref/utils/#module-django.utils.html
     """
     list_display = ('name', 'school', 'nen_kumi', 'year')
-    readonly_fields = ["image_preview"]
+    readonly_fields = ("image_preview",)
+    search_fields = ('name', 'nen_kumi', 'year')
 
     def image_preview(self, obj):
         return format_html('<img src="{}" width="{}" height={} />',
@@ -44,6 +45,7 @@ class LessonInline(admin.StackedInline):
 class SyllabusAdmin(CoursesBaseAdmin):
     inlines = [LessonInline,]
     list_display = ('course',)
+    search_fields = ('course',)
 
 
 class ProblemInline(admin.StackedInline):
@@ -60,8 +62,10 @@ class WorksheetAdmin(CoursesBaseAdmin):
     inlines = [ProblemInline,]
     filter_horizontal = ('course',)
     list_display = ('title',)
+    search_fields = ('title',)
 
 
 @admin.register(Resource)
 class ResourceAdmin(CoursesBaseAdmin):
     filter_horizontal = ('courses',)
+    search_fields = ('description', 'link_text')
