@@ -21,6 +21,7 @@ class CourseAdmin(CoursesBaseAdmin):
     https://books.agiliq.com/projects/django-admin-cookbook/en/latest/imagefield.html
     https://docs.djangoproject.com/en/2.2/ref/utils/#module-django.utils.html
     """
+    exclude = ('nen_kumi',)
     list_display = ('name', 'school', 'nen_kumi', 'year')
     readonly_fields = ("image_preview",)
     search_fields = ('name', 'nen_kumi', 'year')

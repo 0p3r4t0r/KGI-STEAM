@@ -82,13 +82,22 @@ class Course(BaseModel):
     kumi = models.CharField(
         max_length=1,
         validators=[
-            # Match A-E (Middle School) or 1-8 (High School)
             RegexValidator(
                 message='Middle School classes: A-E or High School classes: 1-8',
                 regex='[A-E]|[1-8]',
             )
         ],
         verbose_name='kumi (class)',
+        )
+    nen_kumi = models.CharField(
+            blank=True,
+            max_length=3,
+            validators=[
+                RegexValidator(
+                    message='Middle School classes: A-E or High School classes: 1-8',
+                    regex='[1-3]-([A-E]|[1-8])',
+                )
+            ],
         )
     description = models.TextField(
             blank=True,
@@ -104,13 +113,6 @@ class Course(BaseModel):
         )
 
     @property
-    def nen_kumi(self):
-        return '{nen}-{kumi}'.format(
-            nen=self.nen,
-            kumi=self.kumi,
-        )
-
-    @property
     def resources(self):
         shared_resources = self.resource_set.all()
         resources = dict()
@@ -119,6 +121,12 @@ class Course(BaseModel):
                 list(shared_resources.filter(category=category[0]))
             )
         return resources
+
+    def save(self, *args, **kwargs):
+        updated_nen_kumi = '{}-{}'.format(self.nen, self.kumi)
+        if self.nen_kumi != updated_nen_kumi:
+            self.nen_kumi = updated_nen_kumi 
+        super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def __str__(self):
         return '{name} ({school}: {nen_kumi}) {year}'.format(
