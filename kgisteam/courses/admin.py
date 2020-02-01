@@ -45,7 +45,7 @@ class LessonInline(admin.StackedInline):
 class SyllabusAdmin(CoursesBaseAdmin):
     inlines = [LessonInline,]
     list_display = ('course',)
-    search_fields = ('course',)
+    search_fields = ('course__name',)
 
 
 class ProblemInline(admin.StackedInline):
@@ -68,4 +68,4 @@ class WorksheetAdmin(CoursesBaseAdmin):
 @admin.register(Resource)
 class ResourceAdmin(CoursesBaseAdmin):
     filter_horizontal = ('courses',)
-    search_fields = ('description', 'link_text')
+    search_fields = ('category', 'description', 'link_text')
