@@ -54,7 +54,7 @@ class ProblemInline(admin.StackedInline):
     formfield_overrides = {
         MartorField: {'widget': AdminMartorWidget},
     }
-    readonly_fields = ["calculated_answer"]
+    readonly_fields = ("calculated_answer",)
 
 
 @admin.register(Worksheet)
@@ -62,7 +62,7 @@ class WorksheetAdmin(CoursesBaseAdmin):
     inlines = [ProblemInline,]
     filter_horizontal = ('course',)
     list_display = ('title',)
-    search_fields = ('title',)
+    search_fields = ('description', 'title')
 
 
 @admin.register(Resource)

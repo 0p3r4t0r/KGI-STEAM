@@ -275,6 +275,10 @@ class Worksheet(BaseModel):
     solution_release_datetime = models.DateTimeField(
         default=default_release_date
         )
+    description = models.TextField(
+        blank=True,
+        max_length=300,
+    )
 
 
     @property
