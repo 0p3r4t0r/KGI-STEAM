@@ -47,9 +47,6 @@ class SyllabusAdmin(CoursesBaseAdmin):
 
 
 class ProblemInline(admin.StackedInline):
-    """
-    https://github.com/neutronX/django-markdownx/blob/a4029397ccc2c7cbadc852eed50d1d4949eec028/markdownx/admin.py
-    """
     extra = 0
     model = Problem
     formfield_overrides = {

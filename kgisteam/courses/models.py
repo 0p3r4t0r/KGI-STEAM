@@ -289,10 +289,6 @@ class Worksheet(BaseModel):
 
 
 class Problem(BaseModel):
-    """
-    https://neutronx.github.io/django-markdownx/
-    """
-
     worksheet = models.ForeignKey(
         Worksheet,
         null=True,
@@ -369,8 +365,6 @@ class Problem(BaseModel):
     @property
     def question_markdown(self):
         """
-        https://github.com/neutronX/django-markdownx/issues/74#issuecomment-340216995
-
         Use a template to substitute variables.
         https://docs.python.org/3/library/string.html#template-strings
         """

@@ -80,7 +80,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.forms',
     'info.apps.InfoConfig',
-    'markdownx',
     'martor',
     'taggit',
     'users.apps.UsersConfig',
@@ -202,14 +201,6 @@ STATIC_URL = '/static/'
 
 # Adding settings to the default: Settings are in alphabetical order.
 AUTH_USER_MODEL = 'users.CustomUser'
-
-# https://docs.djangoproject.com/en/2.2/ref/forms/renderers/#django.forms.renderers.TemplatesSetting
-'''
-Allows widget override for markdownx.
-docs: https://neutronx.github.io/django-markdownx/customization/
-custom template: templates/markdownx/widget2.html
-'''
-FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 # django-taggit settings
 TAGGIT_CASE_INSENSITIVE = True
