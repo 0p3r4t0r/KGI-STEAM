@@ -10,7 +10,7 @@ from django.db import models
 from django.utils.timezone import localtime, make_aware
 from django.urls import reverse
 
-from courses.maths import sn_round, sn_round_str
+from courses.maths import evaluate_answer, sn_round, sn_round_str
 
 
 class BaseModel(models.Model):
@@ -358,9 +358,9 @@ class Problem(BaseModel):
                 for key, value
                 in self.variables.items()
             }
-            answer = eval(answer_template.safe_substitute(**variables))
+            answer = evaluate_answer(answer_template.safe_substitute(**variables))
         else:
-            answer = eval(self.answer)
+            answer = evaluate_answer(self.answer)
         answer_rounded = sn_round(answer)
         return answer_rounded
 
