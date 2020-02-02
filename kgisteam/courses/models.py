@@ -309,14 +309,6 @@ class Problem(BaseModel):
         default='Your question here.',
         max_length=500,
     )
-    variable_names = models.CharField(
-        blank = True,
-        max_length=100,
-    )
-    variable_default_values = models.CharField(
-        blank = True,
-        max_length=100,
-    )
     # variable_name[default_value, min, max, step]
     variables_with_values = models.CharField(
         blank = True,

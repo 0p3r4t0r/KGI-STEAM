@@ -19,9 +19,4 @@ class Migration(migrations.Migration):
             model_name='problem',
             name='variable_names',
         ),
-        migrations.AlterField(
-            model_name='problem',
-            name='variables_with_values',
-            field=models.CharField(blank=True, max_length=100, validators=[django.core.validators.RegexValidator(message='Variables format is variable_name[default_value, min, max, step].', regex='(([a-z|A-Z]\\w*)\\[(([0-9]+\\.?[0-9]*)(,\\s)?){0,3}([0-9]+\\.?[0-9]*)\\](,\\s)?)*')]),
-        ),
     ]
