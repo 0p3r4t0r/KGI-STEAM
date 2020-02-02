@@ -309,6 +309,14 @@ class Problem(BaseModel):
         default='Your question here.',
         max_length=500,
     )
+    variable_names = models.CharField(
+        blank = True,
+        max_length=100,
+    )
+    variable_default_values = models.CharField(
+        blank = True,
+        max_length=100,
+    )
     # variable_name[default_value, min, max, step]
     variables_with_values = models.CharField(
         blank = True,
@@ -345,12 +353,12 @@ class Problem(BaseModel):
 
     def calculate_answer(self):
         if self.variables_with_values:
-            template = Template(self.answer)
-            variables = { key: sn_round_str(value[0])
+            answer_template = Template(self.answer)
+            variables = { key: sn_round(value[0])
                 for key, value
                 in self.variables.items()
             }
-            answer = eval(template.safe_substitute(**variables))
+            answer = eval(answer_template.safe_substitute(**variables))
         else:
             answer = eval(self.answer)
         answer_rounded = sn_round(answer)
@@ -386,12 +394,12 @@ class Problem(BaseModel):
         https://docs.python.org/3/library/string.html#template-strings
         """
         if self.variables_with_values:
-            template = Template(self.question)
+            question_template = Template(self.question)
             variables = { key: sn_round_str(value[0])
                 for key, value
                 in self.variables.items()
             }
-            question = template.safe_substitute(**variables)
+            question = question_template.safe_substitute(**variables)
             return markdown(question)
         else:
             return markdown(self.question)
@@ -408,8 +416,8 @@ class Problem(BaseModel):
                     in self.variables.items()
                 }
                 variables['calculated_answer'] = self.calculated_answer
-                template = Template(self.solution)
-                solution = template.safe_substitute(**variables)
+                solution_template = Template(self.solution)
+                solution = solution_template.safe_substitute(**variables)
                 return markdown(solution)
             else:
                 return markdown(self.solution)

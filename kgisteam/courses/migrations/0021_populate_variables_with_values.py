@@ -25,7 +25,7 @@ def update_problem_variables(apps, schema_editor):
                 problem.variables_with_values = ', '.join( 
                     [ '{name}[{default_value}]'.format(name=key, default_value=value) 
                         for key, value in current_variables.items()  ]   
-                )    
+                )
                 problem.save()
     except OperationalError:
         """Suppress this error when the data migration is reapplied."""
