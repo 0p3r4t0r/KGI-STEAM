@@ -1,3 +1,4 @@
+import random
 from math import trunc
 
 from django.http import JsonResponse
@@ -112,6 +113,19 @@ def worksheets_reset_all(request, *args, **kwargs):
     if request.session.get('checked_problems_incorrect'):
         del request.session['checked_problems_incorrect']
     return redirect('courses:worksheets', *args, **kwargs)
+
+def worksheets_randomize(request, *args, **kwargs):
+    json_response = dict()
+    problems = [ Problem.objects.get(pk=pk) for pk in request.session['active_problem_pks'] ]
+    for problem in problems:
+        name_values = dict()
+        if problem.variables:
+            print(problem.variables)
+            for name, values in problem.variables.items():
+                if len(values) == 3 or len(values) == 4:
+                    name_values[name] = sn_round(random.uniform(values[1], values[2]))
+            json_response[problem.pk] = name_values
+    return JsonResponse(json_response)
 # END worksheet view functions ------------------------------------------------>
 
 
