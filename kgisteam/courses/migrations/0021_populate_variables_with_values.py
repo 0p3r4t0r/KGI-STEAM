@@ -20,7 +20,7 @@ def update_problem_variables(apps, schema_editor):
                 )
                 current_variables = { 
                     key.strip(): sn_round(float(value.strip()))
-                    for key, value in variables.items()
+                    for key, value in current_variables.items()
                 }
                 problem.variables_with_values = ', '.join( 
                     [ '{name}[{default_value}]'.format(name=key, default_value=value) 
