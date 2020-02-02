@@ -1,4 +1,3 @@
-import copy
 import datetime
 
 from markdown import markdown
@@ -11,7 +10,7 @@ from django.db import models
 from django.utils.timezone import localtime, make_aware
 from django.urls import reverse
 
-from courses.maths import evaluate_answer, sn_round, sn_round_str
+from courses.maths import sn_round, sn_round_str
 
 
 class BaseModel(models.Model):
@@ -310,13 +309,16 @@ class Problem(BaseModel):
         default='Your question here.',
         max_length=500,
     )
-    variable_names = models.CharField(
+    # variable_name[default_value, min, max, step]
+    variables_with_values = models.CharField(
         blank = True,
         max_length=100,
-    )
-    variable_default_values = models.CharField(
-        blank = True,
-        max_length=100,
+        validators=[
+            RegexValidator(
+                message='Variables format is variable_name[default_value, min, max, step].',
+                regex=r'(([a-z|A-Z]\w*)\[(([0-9]+\.?[0-9]*)(,\s)?){0,3}([0-9]+\.?[0-9]*)\](,\s)?)*',
+            )
+        ],
     )
     answer = models.CharField(
         max_length=100,
@@ -340,14 +342,17 @@ class Problem(BaseModel):
         https://docs.djangoproject.com/en/2.2/topics/db/models/#overriding-predefined-model-methods"""
         self.calculated_answer = self.calculate_answer()
         super().save(*args, **kwargs)  # Call the "real" save() method.
-        #do_something_else()
 
     def calculate_answer(self):
-        if self.variables:
+        if self.variables_with_values:
             template = Template(self.answer)
-            answer = evaluate_answer(template.safe_substitute(**self.variables))
+            variables = { key: sn_round_str(value[0])
+                for key, value
+                in self.variables.items()
+            }
+            answer = eval(template.safe_substitute(**variables))
         else:
-            answer = evaluate_answer(self.answer)
+            answer = eval(self.answer)
         answer_rounded = sn_round(answer)
         return answer_rounded
 
@@ -356,16 +361,16 @@ class Problem(BaseModel):
         return 'problem-pk{}'.format(self.pk)
 
     @property
-    def variables(self):
-        if self.variable_names and self.variable_default_values:
-            variables = zip(
-                self.variable_names.split(','),
-                self.variable_default_values.split(',')
-            )
-            variables = dict(variables)
-            variables = { key.strip(): sn_round(float(value.strip()))
-                for key, value in variables.items()
-            }
+    def variables(self) -> dict:
+        """Return a dict of the form { variable_name: [values]"""
+        if self.variables_with_values:
+            variables = dict()
+            for _ in [ var.strip() for var in self.variables_with_values.split('],') ]:
+                # Trim the brackets
+                variable_name, variable_values = _.split('[')
+                variable_values = variable_values.replace(']', '')
+                # Convet the numbers into a list.
+                variables[variable_name] = [ float(value) for value in variable_values.split(', ') ]
             return variables
 
     def check_user_answer(self, user_answer):
@@ -380,9 +385,9 @@ class Problem(BaseModel):
         Use a template to substitute variables.
         https://docs.python.org/3/library/string.html#template-strings
         """
-        if self.variables:
+        if self.variables_with_values:
             template = Template(self.question)
-            variables = { key: sn_round_str(value)
+            variables = { key: sn_round_str(value[0])
                 for key, value
                 in self.variables.items()
             }
@@ -397,8 +402,11 @@ class Problem(BaseModel):
         see the docstring for self.question_markdown
         """
         if self.worksheet.solutions_released:
-            if self.variables:
-                variables = copy.deepcopy(self.variables)
+            if self.variables_with_values:
+                variables = { key: sn_round_str(value[0])
+                    for key, value
+                    in self.variables.items()
+                }
                 variables['calculated_answer'] = self.calculated_answer
                 template = Template(self.solution)
                 solution = template.safe_substitute(**variables)

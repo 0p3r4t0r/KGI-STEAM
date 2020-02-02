@@ -27,10 +27,9 @@ class CoursesViewTest(TestCase):
             course.worksheet_set.add(ws)
             for i in range(0, self.problems_per_ws):
                 problem = Problem.objects.create(
-                    question='What are $x and ${y}?',
-                    variable_names='x, y',
-                    variable_default_values='40, 2',
-                    answer = '$x+${y}', # Should evaluate to 42.
+                    question='What is the sum of $x and ${y}?',
+                    variables_with_values='x[40], y[2]',
+                    answer = '$x + ${y}', # Should evaluate to 42.
                 )
                 ws.problem_set.add(problem)
                 self.assertEqual(problem.calculated_answer, 42)
