@@ -316,7 +316,7 @@ class Problem(BaseModel):
         validators=[
             RegexValidator(
                 message='Variables format is variable_name[default_value, min, max, step].',
-                regex=r'(([a-z|A-Z]\w*)\[(([0-9]+\.?[0-9]*)(,\s)?){0,3}([0-9]+\.?[0-9]*)\](,\s)?)*',
+                regex=r'([a-z|A-Z]\w*\[([0-9]+(\.?[0-9]*e?[0-9]{0,3})(,\s)?){0,3}([0-9]+\.?[0-9]*e?[0-9]{0,3}\])(,\s)?)*',
             )
         ],
     )
