@@ -21,6 +21,10 @@ def course_from_kwargs(kwargs: dict) -> "<class 'courses.models.Course'>":
     filtered_kwargs['nen'], filtered_kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
     return Course.objects.filter(**filtered_kwargs).first()
 
+def worksheet_from_kwargs(kwargs: dict) -> "<class 'courses.modes.Worksheet'>":
+    course = course_from_kwargs(kwargs)
+    return course.worksheet_set.get(title=kwargs['title'])
+
 def kwargs_from_course(course: "<class 'courses.models.Course'>") -> dict:
     return {
         'year': course.year,

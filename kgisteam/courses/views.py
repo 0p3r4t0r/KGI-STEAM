@@ -8,7 +8,8 @@ from courses.forms import WorksheetProblemForm
 from courses.maths import sn_round
 from courses.models import CATEGORY_CHOICES
 from courses.models import Course, Resource, Problem, Syllabus, Worksheet
-from courses.viewaids import course_from_kwargs, get_checked_problems, trimestinate, updated_checked_problems
+from courses.viewaids import ( course_from_kwargs, worksheet_from_kwargs,
+    get_checked_problems, trimestinate, updated_checked_problems )
 
 
 def courses_home(request):
@@ -33,9 +34,7 @@ def syllabus(request, *args, **kwargs):
 # Begin worksheet view functions----------------------------------------------->
 def worksheets(request, *args, **kwargs):
     course = course_from_kwargs(kwargs)
-    active_worksheet = course.worksheet_set.filter(
-        title=kwargs['title']
-    ).first()
+    active_worksheet = worksheet_from_kwargs(kwargs)
     context = {
         'course': course,
     }
@@ -47,6 +46,7 @@ def worksheets(request, *args, **kwargs):
         context['active_problems'] = active_problems
         context['worksheet_problem_form'] = WorksheetProblemForm()
         context['problem_order'] = kwargs['order']
+        context['is_randomized'] = request.session.get('is_randomized')
     return render(request, 'courses/worksheets.html', context)
 
 
@@ -114,12 +114,28 @@ def worksheets_reset_all(request, *args, **kwargs):
     return redirect('courses:worksheets', *args, **kwargs)
 
 def worksheets_randomize(request, *args, **kwargs):
-    json_response = dict()
-    problems = [ Problem.objects.get(pk=pk) for pk in request.session['active_problem_pks'] ]
-    for problem in problems:
-        if problem.variables:
-            json_response[problem.pk] = problem.variables_randomized()
-    return JsonResponse(json_response)
+    is_randomized = request.session.get('is_randomized')
+    problems = worksheet_from_kwargs(kwargs).problem_set.all()
+    if is_randomized:
+        # update the session
+        randomized_problems = request.session.get('randomized_problems')
+        for key in ( str(problem.pk) for problem in problems):
+            randomized_problems.pop(key, None)
+        request.session['randomized_problems'] = randomized_problems
+        request.session['is_randomized'] = 0
+    else:
+        # get randomized values
+        problem_vars_values = dict()
+        for problem in problems:
+            pk = '{}'.format(problem.pk)
+            problem_vars_values[pk] = problem.variables_randomized()
+        # update the session
+        randomized_problems = request.session.get('randomized_problems') or dict()
+        for problem_pk, variables_randomized in problem_vars_values.items():
+            randomized_problems[problem_pk] = variables_randomized
+        request.session['randomized_problems'] = randomized_problems
+        request.session['is_randomized'] = 1
+    return redirect('courses:worksheets', *args, **kwargs)
 # END worksheet view functions ------------------------------------------------>
 
 

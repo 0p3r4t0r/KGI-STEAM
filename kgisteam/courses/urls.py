@@ -24,7 +24,7 @@ urlpatterns = [
         views.worksheets_check_answer,
         name='worksheets-check',
     ),
-    path('worksheets/problems/randomize',
+    path('{}/worksheets/<title>/<order>/randomize'.format(courses_base_url),
         views.worksheets_randomize,
         name='worksheets-randomize',
     ),
