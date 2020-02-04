@@ -21,28 +21,6 @@ def course_from_kwargs(kwargs: dict) -> "<class 'courses.models.Course'>":
     filtered_kwargs['nen'], filtered_kwargs['kumi'] = nen_kumi[0], nen_kumi[2]
     return Course.objects.filter(**filtered_kwargs).first()
 
-def worksheet_from_kwargs(kwargs: dict) -> "<class 'courses.modes.Worksheet'>":
-    course = course_from_kwargs(kwargs)
-    if kwargs['title'] == 'None':
-        return None
-    else:
-        return course.worksheet_set.get(title=kwargs['title'])
-
-def kwargs_from_course(course: "<class 'courses.models.Course'>") -> dict:
-    return {
-        'year': course.year,
-        'school': course.school,
-        'name': course.name,
-        'nen_kumi': course.nen_kumi,
-    }
-
-def kwargs_from_course_and_worksheet(course, worksheet) -> dict:
-    return {
-        **kwargs_from_course(course),
-        'title': worksheet.title,
-        'order': 'ordered',
-    }
-
 def get_checked_problems(result: str, session: 'SessionStore') -> tuple:
     """Get the primary keys of attempted problems from the session.
 
@@ -60,6 +38,21 @@ def get_checked_problems(result: str, session: 'SessionStore') -> tuple:
             session.get('checked_problems_correct', default=tuple()),
         )
         return checked_problems
+
+def kwargs_from_course(course: "<class 'courses.models.Course'>") -> dict:
+    return {
+        'year': course.year,
+        'school': course.school,
+        'name': course.name,
+        'nen_kumi': course.nen_kumi,
+    }
+
+def kwargs_from_course_and_worksheet(course, worksheet) -> dict:
+    return {
+        **kwargs_from_course(course),
+        'title': worksheet.title,
+        'order': 'ordered',
+    }
 
 def trimestinate(syllabus: 'Syllabus') -> list:
     """ Split lessons by trimester.
@@ -85,3 +78,11 @@ def updated_checked_problems(response: dict, session: 'SessionStore') -> namedtu
         tuple(checked_correct),
     )
     return checked_problems
+
+def worksheet_from_kwargs(kwargs: dict) -> "<class 'courses.modes.Worksheet'>":
+    course = course_from_kwargs(kwargs)
+    if kwargs['title'] == 'None':
+        return None
+    else:
+        return course.worksheet_set.get(title=kwargs['title'])
+

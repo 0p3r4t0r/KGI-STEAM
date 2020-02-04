@@ -40,8 +40,7 @@ class CoursesViewTest(TestCase):
 
     def test_syllabus_view(self):
         course = Course.objects.first()
-        client = Client()
-        response = client.get(
+        response = self.client.get(
             reverse(
                 'courses:syllabus',
                 kwargs=kwargs_from_course(course)
@@ -52,18 +51,17 @@ class CoursesViewTest(TestCase):
     def test_worksheet_view(self):
         course = Course.objects.first()
         ws = Worksheet.objects.first()
-        client = Client()
         ws_kwargs = kwargs_from_course_and_worksheet(course, ws) 
         courses_worksheets_url = reverse('courses:worksheets', kwargs=ws_kwargs)
         # Test a worksheet view
-        response = client.get(courses_worksheets_url)
+        response = self.client.get(courses_worksheets_url)
         self.assertEqual(response.status_code, 200)
         # Test the check answers results view
         problem = ws.problem_set.first()
-        response = client.get(reverse('courses:worksheets-check-results'))
+        response = self.client.get(reverse('courses:worksheets-check-results'))
         self.assertEqual(response.status_code, 200)
         # problem check view returns a json response with result: 'invalid form'
-        response = client.post(
+        response = self.client.post(
             reverse('courses:worksheets-check',
                 kwargs={ 'problem_id': problem.id }
             )
@@ -72,15 +70,15 @@ class CoursesViewTest(TestCase):
         self.assertTrue(response.json())
         self.assertEqual(dict(response.json())['result'], 'invalid form')
         # problem check view returns result: 'correct'
-        response = client.post(
+        response = self.client.post(
             reverse('courses:worksheets-check',
                 kwargs={ 'problem_id': problem.id }
             ),
             { 'user_answer': problem.calculated_answer }
         )
         self.assertEqual(dict(response.json())['result'], 'correct')
-        # proble check view return result: 'incorrect'
-        response = client.post(
+        # problem check view return result: 'incorrect'
+        response = self.client.post(
             reverse('courses:worksheets-check',
                 kwargs={ 'problem_id': problem.id }
             ),
@@ -88,7 +86,7 @@ class CoursesViewTest(TestCase):
         )
         self.assertEqual(dict(response.json())['result'], 'incorrect')
         # Test the reset view
-        response = client.get(
+        response = self.client.get(
             reverse('courses:worksheets-reset', kwargs=ws_kwargs),
             follow=True,
         )
@@ -96,12 +94,12 @@ class CoursesViewTest(TestCase):
             response.redirect_chain[-1][0],
             courses_worksheets_url,
         )
-        response = client.get(reverse('courses:worksheets-check-results'))
+        response = self.client.get(reverse('courses:worksheets-check-results'))
         for _ in ws.problem_set.all():
             self.assertNotIn(_.id, response.json()['checked_problems_correct'])
             self.assertNotIn(_.id, response.json()['checked_problems_incorrect'])
         # Test the reset_all view
-        response = client.get(
+        response = self.client.get(
             reverse('courses:worksheets-reset-all', kwargs=ws_kwargs),
             follow=True,
         )
@@ -109,13 +107,27 @@ class CoursesViewTest(TestCase):
             response.redirect_chain[-1][0],
             courses_worksheets_url,
         )
-        response = client.get(reverse('courses:worksheets-check-results'))
+        response = self.client.get(reverse('courses:worksheets-check-results'))
         self.assertEqual(response.json(), {'checked_problems_correct': [], 'checked_problems_incorrect': []})
+
+    def test_worksheet_randomization(self):
+        course = Course.objects.first()
+        ws = Worksheet.objects.first()
+        ws_kwargs = kwargs_from_course_and_worksheet(course, ws) 
+        courses_worksheets_url = reverse('courses:worksheets', kwargs=ws_kwargs)
+        # Ensure that you end up back at worksheets.
+        response = self.client.get(
+            reverse('courses:worksheets-randomize', kwargs=ws_kwargs),
+            follow=True,
+        )
+        self.assertEqual(
+            response.redirect_chain[-1][0],
+            courses_worksheets_url,
+        )
 
     def test_resource_view(self):
         course = Course.objects.first()
-        client = Client()
-        response = client.get(
+        response = self.client.get(
             reverse(
                 'courses:resources',
                 kwargs=kwargs_from_course(course)

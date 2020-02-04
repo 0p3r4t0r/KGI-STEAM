@@ -39,7 +39,7 @@ def worksheets(request, *args, **kwargs):
         'course': course,
     }
     if active_worksheet:
-        #get problems and update context
+        # get problems and update context
         active_problems = active_worksheet.problem_set.all()
         active_problem_pks = [ problem.pk for problem in active_problems ]
         randomized_problems = request.session.get('randomized_problems')
@@ -104,25 +104,6 @@ def worksheets_check_answer_results(request, *args, **kwargs) -> 'JsonResponse':
     return JsonResponse(json_response)
 
 
-def worksheets_reset(request, *args, **kwargs):
-    checked_problems = get_checked_problems('both', request.session)
-    if any(map(len, checked_problems)):
-        problem_pks = request.session['active_problem_pks']
-        for pk in problem_pks:
-            if pk in checked_problems[0]: checked_problems[0].remove(pk)
-            if pk in checked_problems[1]: checked_problems[1].remove(pk)
-        request.session['checked_problems_wrong'] = checked_problems[0]
-        request.session['checked_problems_right'] = checked_problems[1]
-    return redirect('courses:worksheets', *args, **kwargs)
-
-
-def worksheets_reset_all(request, *args, **kwargs):
-    if request.session.get('checked_problems_correct'):
-        del request.session['checked_problems_correct']
-    if request.session.get('checked_problems_incorrect'):
-        del request.session['checked_problems_incorrect']
-    return redirect('courses:worksheets', *args, **kwargs)
-
 def worksheets_randomize(request, *args, **kwargs):
     is_randomized = request.session.get('is_randomized')
     problems = worksheet_from_kwargs(kwargs).problem_set.all()
@@ -146,6 +127,26 @@ def worksheets_randomize(request, *args, **kwargs):
             randomized_problems[problem_pk] = variables_randomized
         request.session['randomized_problems'] = randomized_problems
         request.session['is_randomized'] = 1
+    return redirect('courses:worksheets', *args, **kwargs)
+
+
+def worksheets_reset(request, *args, **kwargs):
+    checked_problems = get_checked_problems('both', request.session)
+    if any(map(len, checked_problems)):
+        problem_pks = request.session['active_problem_pks']
+        for pk in problem_pks:
+            if pk in checked_problems[0]: checked_problems[0].remove(pk)
+            if pk in checked_problems[1]: checked_problems[1].remove(pk)
+        request.session['checked_problems_wrong'] = checked_problems[0]
+        request.session['checked_problems_right'] = checked_problems[1]
+    return redirect('courses:worksheets', *args, **kwargs)
+
+
+def worksheets_reset_all(request, *args, **kwargs):
+    if request.session.get('checked_problems_correct'):
+        del request.session['checked_problems_correct']
+    if request.session.get('checked_problems_incorrect'):
+        del request.session['checked_problems_incorrect']
     return redirect('courses:worksheets', *args, **kwargs)
 # END worksheet view functions ------------------------------------------------>
 
