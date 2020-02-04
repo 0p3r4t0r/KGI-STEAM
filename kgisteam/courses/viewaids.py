@@ -23,7 +23,10 @@ def course_from_kwargs(kwargs: dict) -> "<class 'courses.models.Course'>":
 
 def worksheet_from_kwargs(kwargs: dict) -> "<class 'courses.modes.Worksheet'>":
     course = course_from_kwargs(kwargs)
-    return course.worksheet_set.get(title=kwargs['title'])
+    if kwargs['title'] == 'None':
+        return None
+    else:
+        return course.worksheet_set.get(title=kwargs['title'])
 
 def kwargs_from_course(course: "<class 'courses.models.Course'>") -> dict:
     return {

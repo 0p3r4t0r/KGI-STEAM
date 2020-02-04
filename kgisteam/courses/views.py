@@ -41,7 +41,13 @@ def worksheets(request, *args, **kwargs):
     if active_worksheet:
         #get problems and update context
         active_problems = active_worksheet.problem_set.all()
-        request.session['active_problem_pks'] = [ problem.pk for problem in active_problems ]
+        active_problem_pks = [ problem.pk for problem in active_problems ]
+        randomized_problems = request.session.get('randomized_problems')
+        if randomized_problems:
+            for problem in active_problems:
+                if str(problem.pk) in randomized_problems.keys():
+                    problem.variables_as_floats = problem.variables_as_floats(randomized_problems[str(problem.pk)])
+        request.session['active_problem_pks'] = active_problem_pks
         context['active_worksheet'] = active_worksheet
         context['active_problems'] = active_problems
         context['worksheet_problem_form'] = WorksheetProblemForm()
@@ -66,6 +72,10 @@ def worksheets_check_answer(request, *args, **kwargs) -> 'JsonResponse':
     .. _djdocs-when-session-are-saved: https://docs.djangoproject.com/en/2.2/topics/http/sessions/#when-sessions-are-saved
     """
     problem = Problem.objects.filter(pk=kwargs['problem_id']).first()
+    randomized_problems = request.session.get('randomized_problems')
+    if randomized_problems:
+        if str(problem.pk) in randomized_problems.keys():
+            problem.variables_as_floats = problem.variables_as_floats(randomized_problems[str(problem.pk)])
     # Default response
     json_response = {
         'primary-key': problem.pk,
@@ -125,10 +135,11 @@ def worksheets_randomize(request, *args, **kwargs):
         request.session['is_randomized'] = 0
     else:
         # get randomized values
-        problem_vars_values = dict()
-        for problem in problems:
-            pk = '{}'.format(problem.pk)
-            problem_vars_values[pk] = problem.variables_randomized()
+        problem_vars_values = { 
+            str(problem.pk): problem.variables_randomized()
+            for problem in problems
+            if problem.variables
+        }
         # update the session
         randomized_problems = request.session.get('randomized_problems') or dict()
         for problem_pk, variables_randomized in problem_vars_values.items():

@@ -347,7 +347,12 @@ class Problem(BaseModel):
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     def calculate_answer(self):
-        if self.variables_with_values:
+        if self.randomized_vars:
+            answer_template = Template(self.answer)
+            answer = evaluate_answer(
+                answer_template.safe_substitute(**self.randomized_vars)
+            )
+        elif self.variables_with_values:
             answer_template = Template(self.answer)
             answer = evaluate_answer(
                 answer_template.safe_substitute(**self.variables_as_floats())
