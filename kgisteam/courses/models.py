@@ -1,4 +1,5 @@
 import datetime
+import random
 
 from markdown import markdown
 from martor.models import MartorField
@@ -300,6 +301,8 @@ class Worksheet(BaseModel):
 
 
 class Problem(BaseModel):
+    randomized_vars = None
+    
     worksheet = models.ForeignKey(
         Worksheet,
         null=True,
@@ -346,11 +349,9 @@ class Problem(BaseModel):
     def calculate_answer(self):
         if self.variables_with_values:
             answer_template = Template(self.answer)
-            variables = { key: sn_round(value[0])
-                for key, value
-                in self.variables.items()
-            }
-            answer = evaluate_answer(answer_template.safe_substitute(**variables))
+            answer = evaluate_answer(
+                answer_template.safe_substitute(**self.variables_as_floats())
+            )
         else:
             answer = evaluate_answer(self.answer)
         answer_rounded = sn_round(answer)
@@ -373,8 +374,43 @@ class Problem(BaseModel):
                 variables[variable_name] = [ float(value) for value in variable_values.split(', ') ]
             return variables
 
+    def variables_as_floats(self, randomized_vars=None) -> dict:
+        if randomized_vars:
+            self.randomized_vars = randomized_vars
+            return randomized_vars
+        else:
+            vars = { key: sn_round(value[0])
+                for key, value
+                in self.variables.items()
+            }
+            return vars
+
+    @property
+    def variables_as_strings(self) -> dict:
+        if self.randomized_vars:
+            vars = { key: sn_round_str(value)
+                for key, value
+                in self.randomized_vars.items()
+            }
+        else:
+            vars = { key: sn_round_str(value)
+                for key, value
+                in self.variables_as_floats().items()
+            }
+        return vars
+
+    def variables_randomized(self) -> dict:
+        vars = dict()
+        if self.variables:
+            for name, values in self.variables.items():
+                if len(values) == 3 or len(values) == 4:
+                    vars[name] = sn_round(random.uniform(values[1], values[2]))
+            return vars
+
     def check_user_answer(self, user_answer):
-        if user_answer == self.calculated_answer or sn_round(user_answer) == self.calculated_answer:
+        if sn_round(user_answer) == self.calculated_answer:
+            return True
+        elif sn_round(user_answer) == self.calculate_answer():
             return True
         else:
             return False
@@ -387,11 +423,7 @@ class Problem(BaseModel):
         """
         if self.variables_with_values:
             question_template = Template(self.question)
-            variables = { key: sn_round_str(value[0])
-                for key, value
-                in self.variables.items()
-            }
-            question = question_template.safe_substitute(**variables)
+            question = question_template.safe_substitute(**self.variables_as_strings)
             return markdown(question)
         else:
             return markdown(self.question)
@@ -403,10 +435,7 @@ class Problem(BaseModel):
         """
         if self.worksheet.solutions_released:
             if self.variables_with_values:
-                variables = { key: sn_round_str(value[0])
-                    for key, value
-                    in self.variables.items()
-                }
+                variables = self.variables_as_strings
                 variables['calculated_answer'] = self.calculated_answer
                 solution_template = Template(self.solution)
                 solution = solution_template.safe_substitute(**variables)

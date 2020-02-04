@@ -1,5 +1,0 @@
-+ Change secret key.
-+ Set the secret key with an environmental variable.
-- Upload to hosting service.
-- Set database connection via environmental variables.
-- Django deployment checklist.
