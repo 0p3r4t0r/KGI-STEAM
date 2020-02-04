@@ -46,7 +46,7 @@ def worksheets(request, *args, **kwargs):
         if randomized_problems:
             for problem in active_problems:
                 if str(problem.pk) in randomized_problems.keys():
-                    problem.variables_as_floats = problem.variables_as_floats(randomized_problems[str(problem.pk)])
+                    problem.use_variables(randomized_problems[str(problem.pk)])
         request.session['active_problem_pks'] = active_problem_pks
         context['active_worksheet'] = active_worksheet
         context['active_problems'] = active_problems
@@ -75,7 +75,7 @@ def worksheets_check_answer(request, *args, **kwargs) -> 'JsonResponse':
     randomized_problems = request.session.get('randomized_problems')
     if randomized_problems:
         if str(problem.pk) in randomized_problems.keys():
-            problem.variables_as_floats = problem.variables_as_floats(randomized_problems[str(problem.pk)])
+            problem.use_variables(randomized_problems[str(problem.pk)])
     # Default response
     json_response = {
         'primary-key': problem.pk,
@@ -138,7 +138,7 @@ def worksheets_randomize(request, *args, **kwargs):
         problem_vars_values = { 
             str(problem.pk): problem.variables_randomized()
             for problem in problems
-            if problem.variables
+            if problem.variables_lists
         }
         # update the session
         randomized_problems = request.session.get('randomized_problems') or dict()

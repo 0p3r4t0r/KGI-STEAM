@@ -301,7 +301,7 @@ class Worksheet(BaseModel):
 
 
 class Problem(BaseModel):
-    randomized_vars = None
+    use_vars = None
     
     worksheet = models.ForeignKey(
         Worksheet,
@@ -340,34 +340,53 @@ class Problem(BaseModel):
         max_length=1000,
     )
 
-    def save(self, *args, **kwargs):
-        """ Save the calculated_answer
-        https://docs.djangoproject.com/en/2.2/topics/db/models/#overriding-predefined-model-methods"""
-        self.calculated_answer = self.calculate_answer()
-        super().save(*args, **kwargs)  # Call the "real" save() method.
-
     def calculate_answer(self):
-        if self.randomized_vars:
+        if self.use_vars:
             answer_template = Template(self.answer)
             answer = evaluate_answer(
-                answer_template.safe_substitute(**self.randomized_vars)
+                answer_template.safe_substitute(**self.use_vars)
             )
         elif self.variables_with_values:
             answer_template = Template(self.answer)
             answer = evaluate_answer(
-                answer_template.safe_substitute(**self.variables_as_floats())
+                answer_template.safe_substitute(**self.variables_as_floats)
             )
         else:
             answer = evaluate_answer(self.answer)
         answer_rounded = sn_round(answer)
         return answer_rounded
 
+    def check_user_answer(self, user_answer):
+        if sn_round(user_answer) == self.calculated_answer:
+            return True
+        elif sn_round(user_answer) == self.calculate_answer():
+            return True
+        else:
+            return False
+
+    def variables_randomized(self) -> dict:
+        vars = dict()
+        if self.variables_lists:
+            for name, values in self.variables_lists.items():
+                if len(values) == 3 or len(values) == 4:
+                    vars[name] = sn_round(random.uniform(values[1], values[2]))
+            return vars
+
+    def save(self, *args, **kwargs):
+        """ Save the calculated_answer
+        https://docs.djangoproject.com/en/2.2/topics/db/models/#overriding-predefined-model-methods"""
+        self.calculated_answer = self.calculate_answer()
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
+    def use_variables(self, use_vars: dict) -> None:
+        self.use_vars = use_vars
+
     @property
     def html_id(self):
         return 'problem-pk{}'.format(self.pk)
 
     @property
-    def variables(self) -> dict:
+    def variables_lists(self) -> dict:
         """Return a dict of the form { variable_name: [values]"""
         if self.variables_with_values:
             variables = dict()
@@ -379,46 +398,30 @@ class Problem(BaseModel):
                 variables[variable_name] = [ float(value) for value in variable_values.split(', ') ]
             return variables
 
-    def variables_as_floats(self, randomized_vars=None) -> dict:
-        if randomized_vars:
-            self.randomized_vars = randomized_vars
-            return randomized_vars
+    @property
+    def variables_as_floats(self) -> dict:
+        if self.use_vars:
+            return use_vars
         else:
             vars = { key: sn_round(value[0])
                 for key, value
-                in self.variables.items()
+                in self.variables_lists.items()
             }
             return vars
 
     @property
     def variables_as_strings(self) -> dict:
-        if self.randomized_vars:
+        if self.use_vars:
             vars = { key: sn_round_str(value)
                 for key, value
-                in self.randomized_vars.items()
+                in self.use_vars.items()
             }
         else:
             vars = { key: sn_round_str(value)
                 for key, value
-                in self.variables_as_floats().items()
+                in self.variables_as_floats.items()
             }
         return vars
-
-    def variables_randomized(self) -> dict:
-        vars = dict()
-        if self.variables:
-            for name, values in self.variables.items():
-                if len(values) == 3 or len(values) == 4:
-                    vars[name] = sn_round(random.uniform(values[1], values[2]))
-            return vars
-
-    def check_user_answer(self, user_answer):
-        if sn_round(user_answer) == self.calculated_answer:
-            return True
-        elif sn_round(user_answer) == self.calculate_answer():
-            return True
-        else:
-            return False
 
     @property
     def question_markdown(self):
