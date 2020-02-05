@@ -375,6 +375,8 @@ class Problem(BaseModel):
                         vars[name] = sn_round(random.uniform(values[1], values[2]))
                     else:
                         vars[name] = int(random.uniform(values[1], values[2]))
+                else:
+                    vars[name] = sn_round(values[0])
             return vars
 
     def save(self, *args, **kwargs):
