@@ -43,16 +43,17 @@ def worksheets(request, *args, **kwargs):
         active_problems = active_worksheet.problem_set.all()
         active_problem_pks = [ problem.pk for problem in active_problems ]
         randomized_problems = request.session.get('randomized_problems')
+        context['is_randomized'] = 0
         if randomized_problems:
             for problem in active_problems:
                 if str(problem.pk) in randomized_problems.keys():
                     problem.use_variables(randomized_problems[str(problem.pk)])
+                    context['is_randomized'] = 1
         request.session['active_problem_pks'] = active_problem_pks
         context['active_worksheet'] = active_worksheet
         context['active_problems'] = active_problems
         context['worksheet_problem_form'] = WorksheetProblemForm()
         context['problem_order'] = kwargs['order']
-        context['is_randomized'] = request.session.get('is_randomized')
     return render(request, 'courses/worksheets.html', context)
 
 
@@ -105,17 +106,23 @@ def worksheets_check_answer_results(request, *args, **kwargs) -> 'JsonResponse':
 
 
 def worksheets_randomize(request, *args, **kwargs):
-    is_randomized = request.session.get('is_randomized')
+    course = course_from_kwargs(kwargs)
+    worksheet = worksheet_from_kwargs(kwargs)
+    course_ws_pk = '{}-{}'.format(course.pk, worksheet.pk)
     problems = worksheet_from_kwargs(kwargs).problem_set.all()
-    if is_randomized:
-        # update the session
+    randomized_course_ws_pks = request.session.get('randomized_course_ws_pks') or list()
+    if course_ws_pk in randomized_course_ws_pks:
+        # Remove the problems in the worksheet from randomized_problems
         randomized_problems = request.session.get('randomized_problems')
         for key in ( str(problem.pk) for problem in problems):
             randomized_problems.pop(key, None)
         request.session['randomized_problems'] = randomized_problems
-        request.session['is_randomized'] = 0
+        try:
+            request.session['randomized_course_ws_pks'].remove(course_ws_pk)
+        except ValueError:
+            pass
     else:
-        # get randomized values
+        # Calculate random values for variables in problems.
         problem_vars_values = { 
             str(problem.pk): problem.variables_randomized()
             for problem in problems
@@ -126,7 +133,8 @@ def worksheets_randomize(request, *args, **kwargs):
         for problem_pk, variables_randomized in problem_vars_values.items():
             randomized_problems[problem_pk] = variables_randomized
         request.session['randomized_problems'] = randomized_problems
-        request.session['is_randomized'] = 1
+        randomized_course_ws_pks.append(course_ws_pk)
+        request.session['randomized_course_ws_pks'] = randomized_course_ws_pks
     return redirect('courses:worksheets', *args, **kwargs)
 
 
