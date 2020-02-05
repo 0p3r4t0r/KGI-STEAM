@@ -135,7 +135,7 @@ def worksheets_randomize(request, *args, **kwargs):
         request.session['randomized_problems'] = randomized_problems
         randomized_course_ws_pks.append(course_ws_pk)
         request.session['randomized_course_ws_pks'] = randomized_course_ws_pks
-    return redirect('courses:worksheets', *args, **kwargs)
+    return redirect('courses:worksheets-reset', *args, **kwargs)
 
 
 def worksheets_reset(request, *args, **kwargs):
