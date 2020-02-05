@@ -318,8 +318,8 @@ class Problem(BaseModel):
         max_length=100,
         validators=[
             RegexValidator(
-                message='Variables format is variable_name[default_value, min, max, step].',
-                regex=r'([a-z|A-Z]\w*\[([0-9]+(\.?[0-9]*e?[0-9]{0,3})(,\s)?){0,3}([0-9]+\.?[0-9]*e?[0-9]{0,3}\])(,\s)?)*',
+                message='Variables format is variable_name[default_value: float, min: float, max: float, is_int: bool].',
+                regex=r'([a-z|A-Z]\w*\[([0-9]+(\.?[0-9]*e?[0-9]{0,3})(,\s)?){0,3}([0-1]\])(,\s)?)*',
             )
         ],
     )
@@ -368,8 +368,13 @@ class Problem(BaseModel):
         vars = dict()
         if self.variables_lists:
             for name, values in self.variables_lists.items():
-                if len(values) == 3 or len(values) == 4:
+                if len(values) == 3:
                     vars[name] = sn_round(random.uniform(values[1], values[2]))
+                elif len(values) == 4:
+                    if values[3]:
+                        vars[name] = sn_round(random.uniform(values[1], values[2]))
+                    else:
+                        vars[name] = int(random.uniform(values[1], values[2]))
             return vars
 
     def save(self, *args, **kwargs):
