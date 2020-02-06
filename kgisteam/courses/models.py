@@ -8,7 +8,7 @@ from taggit.managers import TaggableManager
 
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
-from django.utils.timezone import localtime, make_aware
+from django.utils import timezone 
 from django.urls import reverse
 
 from courses.maths import evaluate_answer, sn_round, sn_round_str
@@ -93,7 +93,7 @@ class Course(BaseModel):
         blank=True,
         max_length=200,
     )
-    image_source_url = models.CharField(
+    image_source_url = models.URLField(
         blank=True,
         max_length=200,
     )
@@ -149,7 +149,7 @@ class Syllabus(BaseModel):
             'year': self.course.year,
             'school': self.course.school,
             'name': self.course.name,
-            'nen_kumi': str(self.course.nen) + '-' + str(self.course.kumi),
+            'nen_kumi': self.course.nen_kumi,
         }
         return reverse('course-syllabi', kwargs=kwargs)
 
@@ -161,6 +161,9 @@ class Lesson(BaseModel):
     url_max_length=200
     url_text_max_length=50
 
+    def default_lesson_date():
+        return timezone.now().date()
+
     syllabus = models.ForeignKey(
         Syllabus,
         null=True,
@@ -169,7 +172,9 @@ class Lesson(BaseModel):
     number = models.IntegerField(
         null=True,
     )
-    date = models.DateField()
+    date = models.DateField(
+        default=default_lesson_date
+    )
     quiz = models.CharField(
         blank=True,
         max_length=30,
@@ -218,6 +223,16 @@ class Lesson(BaseModel):
         blank=True,
         max_length=url_text_max_length,
     )
+
+    @property
+    def links(self) -> list:
+        links_dict = { key: value for key, value in self.__dict__.items()
+            if value and key.startswith('link')
+        }
+        return [ 
+            (links_dict['link{}_URL'.format(i)], links_dict['link{}_text'.format(i)])
+            for i in range(0, int(len(links_dict)/2))
+        ]
     
     @property
     def trimester(self):
@@ -229,39 +244,18 @@ class Lesson(BaseModel):
             return 3
 
 
-    def links(self):
-        links_dict = { key: value for key, value in self.__dict__.items()
-            if key.startswith('link')
-        }
-        links = []
-        # Calculate the maximum number of links a lesson can have.
-        max_links_num = int(len(links_dict)/2)
-        for i in range(0, max_links_num):
-            url = links_dict['link{}_URL'.format(i)]
-            text = links_dict['link{}_text'.format(i)]
-            if url and text:
-                links.append(
-                    (url, text)
-                )
-            elif url and not text:
-                links.append(
-                    (url, url)
-                )
-        return links
-
-
 class Worksheet(BaseModel):
 
     def default_release_date():
-        return make_aware(datetime.datetime.today().replace(
+        return timezone.make_aware(datetime.datetime.today().replace(
             hour=20, minute=0,
             second=0, microsecond=0,
             )
         )
 
-    course = models.ManyToManyField(Course)
+    course = models.ManyToManyField(Course, blank=True)
     title = models.CharField(
-        default=datetime.datetime.now,
+        default=timezone.now,
         max_length=50,
         unique=True,
     )
@@ -282,7 +276,7 @@ class Worksheet(BaseModel):
         ''' Determine if solutions should be displayed whilst taking timezones
         into account.
         '''
-        if self.solution_release_datetime < make_aware(datetime.datetime.now()):
+        if self.solution_release_datetime < timezone.make_aware(datetime.datetime.now()):
             return  True
         else:
             return False
@@ -300,13 +294,17 @@ class Problem(BaseModel):
         default='Your question here.',
         max_length=500,
     )
-    # variable_name[default_value, min, max, step]
+
+    # variable_name[default_value, min, max, is_int]
     variables_with_values = models.CharField(
         blank = True,
         max_length=100,
         validators=[
             RegexValidator(
-                message='Variables format is variable_name[default_value: float, min: float, max: float, is_int: bool].',
+                message=(
+                    'Variables format is variable_name[default_value: '
+                    'float, min: float, max: float, is_int: bool].'
+                ),
                 regex=r'([a-z|A-Z]\w*\[([0-9]+(\.?[0-9]*e?[0-9]{0,3})(,\s)?){0,3}([0-1]\])(,\s)?)*',
             )
         ],
@@ -344,31 +342,35 @@ class Problem(BaseModel):
                 # Convet the numbers into a list.
                 variables[variable_name] = [ float(value) for value in variable_values.split(', ') ]
             return variables
+        else:
+            return dict()
 
     @property
     def variables_as_floats(self) -> dict:
         if self.use_vars:
-            return use_vars
-        else:
-            vars = { key: sn_round(value[0])
+            return self.use_vars
+        elif self.variables_with_values:
+            return { key: sn_round(value[0])
                 for key, value
                 in self.variables_lists.items()
             }
-            return vars
+        else:
+            return dict()
 
     @property
     def variables_as_strings(self) -> dict:
         if self.use_vars:
-            vars = { key: sn_round_str(value)
+            return { key: sn_round_str(value)
                 for key, value
                 in self.use_vars.items()
             }
-        else:
-            vars = { key: sn_round_str(value)
+        elif self.variables_with_values:
+            return { key: sn_round_str(value)
                 for key, value
                 in self.variables_as_floats.items()
             }
-        return vars
+        else:
+            return dict()
 
     @property
     def question_markdown(self):
@@ -398,7 +400,7 @@ class Problem(BaseModel):
             else:
                 return markdown(self.solution)
         else:
-                release_datetime_local = localtime(self.worksheet.solution_release_datetime)
+                release_datetime_local = timezone.localtime(self.worksheet.solution_release_datetime)
                 release_date_str = release_datetime_local.strftime('%y-%m-%d')
                 release_time_str = release_datetime_local.strftime('%H:%M')
                 return markdown(

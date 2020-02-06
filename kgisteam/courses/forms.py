@@ -15,7 +15,7 @@ class WorksheetProblemForm(forms.Form):
         )
     )
 
-    def clean_user_answer(self):
+    def clean_user_answer(self) -> float:
         """https://docs.djangoproject.com/en/2.2/ref/forms/validation/"""
         user_answer = evaluate_answer(self.cleaned_data['user_answer'])
         user_answer_rounded = sn_round(user_answer)
