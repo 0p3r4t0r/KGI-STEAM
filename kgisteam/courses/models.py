@@ -15,49 +15,45 @@ from courses.maths import evaluate_answer, sn_round, sn_round_str
 
 
 class BaseModel(models.Model):
-    last_modified = models.DateTimeField(auto_now=True)
-
     class Meta:
         abstract = True
 
-
-IN_CLASS = 'IC'
-LANGUAGE_LEARNING = 'LL'
-FURTHER_STUDY = 'FS'
-
-CATEGORY_CHOICES = [
-    (IN_CLASS, 'In Class'),
-    (LANGUAGE_LEARNING, 'Language Learning'),
-    (FURTHER_STUDY, 'Further Study'),
-]
+    last_modified = models.DateTimeField(auto_now=True)
 
 
 class Course(BaseModel):
-    """Store course information.
-
-    course_name --> You should be careful about support for Japanese.
-    course_school --> Middle School or High School (MS or HS)
-    course_nen --> MS and HS: 1-3
-    course_class --> MS: A-E and HS: 1-8
-
-
-    course_image --> an optional field to add and image for your course.
-
-    course_syllabus --> relation? separate app?
-    course_worksheets --> relation? separate app?
-    """
     MIDDLESCHOOL = 'MS'
     HIGHSCHOOL = 'HS'
 
-    SCHOOL_CHOICES = [
+    SCHOOL_CHOICES = (
         (MIDDLESCHOOL, 'Middle School'),
         (HIGHSCHOOL, 'High School'),
-    ]
-    NEN_CHOICES = [
+    )
+
+    NEN_CHOICES = (
         (1, '1'),
         (2, '2'),
         (3, '3'),
-    ]
+    )
+
+    MS_KUMI_CHOICES = (
+        ('A', 'A'),
+        ('B', 'B'),
+        ('C', 'C'),
+        ('D', 'D'),
+        ('E', 'E'),
+    )
+
+    HS_KUMI_CHOICES = (
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+    )
 
     year = models.IntegerField(
         default=2019,
@@ -70,15 +66,15 @@ class Course(BaseModel):
     )
     name = models.CharField(
         max_length=30
-        )
+    )
     school = models.CharField(
         max_length=2,
         choices=SCHOOL_CHOICES,
-        )
+    )
     nen = models.IntegerField(
         choices=NEN_CHOICES,
         verbose_name='nen (year)'
-        )
+    )
     kumi = models.CharField(
         max_length=1,
         validators=[
@@ -88,45 +84,36 @@ class Course(BaseModel):
             )
         ],
         verbose_name='kumi (class)',
-        )
+    )
     nen_kumi = models.CharField(
-            blank=True,
-            max_length=3,
-            validators=[
-                RegexValidator(
-                    message='Middle School classes: A-E or High School classes: 1-8',
-                    regex='[1-3]-([A-E]|[1-8])',
-                )
-            ],
-        )
+        blank=True,
+        max_length=3,
+    )
     description = models.TextField(
-            blank=True,
-            max_length=200,
-        )
+        blank=True,
+        max_length=200,
+    )
     image_source_url = models.CharField(
         blank=True,
         max_length=200,
-        )
+    )
     image_path = models.ImageField(
         blank=True,
         upload_to='courses',
-        )
+    )
 
     @property
     def resources(self):
-        shared_resources = self.resource_set.all()
-        resources = dict()
-        for category in CATEGORY_CHOICES:
-            resources[category[1]] = (
-                list(shared_resources.filter(category=category[0]))
-            )
-        return resources
+        return { 
+            category[1]: self.resource_set.filter(category=category[0])
+            for category in ResourceBaseClass.CATEGORY_CHOICES
+        }
 
     def save(self, *args, **kwargs):
         updated_nen_kumi = '{}-{}'.format(self.nen, self.kumi)
         if self.nen_kumi != updated_nen_kumi:
             self.nen_kumi = updated_nen_kumi 
-        super().save(*args, **kwargs)  # Call the "real" save() method.
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return '{name} ({school}: {nen_kumi}) {year}'.format(
@@ -138,6 +125,10 @@ class Course(BaseModel):
 
 
 class Syllabus(BaseModel):
+    
+    class Meta:
+        verbose_name_plural = "Syllabi"
+
     # Dates can be compared the the tuples below.
     # (month, day)
     start_t1    = (4, 1)
@@ -153,12 +144,6 @@ class Syllabus(BaseModel):
         on_delete=models.SET_NULL,
     )
 
-    class Meta:
-        verbose_name_plural = "Syllabi"
-
-    def __str__(self):
-        return '{} syllabus'.format(self.course)
-
     def get_absolute_url(self):
         kwargs={
             'year': self.course.year,
@@ -167,6 +152,9 @@ class Syllabus(BaseModel):
             'nen_kumi': str(self.course.nen) + '-' + str(self.course.kumi),
         }
         return reverse('course-syllabi', kwargs=kwargs)
+
+    def __str__(self):
+        return '{} syllabus'.format(self.course)
 
 
 class Lesson(BaseModel):
@@ -230,6 +218,15 @@ class Lesson(BaseModel):
         blank=True,
         max_length=url_text_max_length,
     )
+    
+    @property
+    def trimester(self):
+        if self.syllabus.start_t1 <= (self.date.month, self.date.day) <= self.syllabus.end_t1:
+            return 1
+        elif self.syllabus.start_t2 <= (self.date.month, self.date.day) <= self.syllabus.end_t2:
+            return 2
+        elif self.syllabus.start_t3 <= (self.date.month, self.date.day) <= self.syllabus.end_t3:
+            return 3
 
 
     def links(self):
@@ -251,15 +248,6 @@ class Lesson(BaseModel):
                     (url, url)
                 )
         return links
-
-    @property
-    def trimester(self):
-        if self.syllabus.start_t1 <= (self.date.month, self.date.day) <= self.syllabus.end_t1:
-            return 1
-        elif self.syllabus.start_t2 <= (self.date.month, self.date.day) <= self.syllabus.end_t2:
-            return 2
-        elif self.syllabus.start_t3 <= (self.date.month, self.date.day) <= self.syllabus.end_t3:
-            return 3
 
 
 class Worksheet(BaseModel):
@@ -339,54 +327,6 @@ class Problem(BaseModel):
         default='The solution to this problem is not available yet.',
         max_length=1000,
     )
-
-    def calculate_answer(self):
-        if self.use_vars:
-            answer_template = Template(self.answer)
-            answer = evaluate_answer(
-                answer_template.safe_substitute(**self.use_vars)
-            )
-        elif self.variables_with_values:
-            answer_template = Template(self.answer)
-            answer = evaluate_answer(
-                answer_template.safe_substitute(**self.variables_as_floats)
-            )
-        else:
-            answer = evaluate_answer(self.answer)
-        answer_rounded = sn_round(answer)
-        return answer_rounded
-
-    def check_user_answer(self, user_answer):
-        if sn_round(user_answer) == self.calculated_answer:
-            return True
-        elif sn_round(user_answer) == self.calculate_answer():
-            return True
-        else:
-            return False
-
-    def variables_randomized(self) -> dict:
-        vars = dict()
-        if self.variables_lists:
-            for name, values in self.variables_lists.items():
-                if len(values) == 3:
-                    vars[name] = sn_round(random.uniform(values[1], values[2]))
-                elif len(values) == 4:
-                    if values[3]:
-                        vars[name] = sn_round(random.uniform(values[1], values[2]))
-                    else:
-                        vars[name] = int(random.uniform(values[1], values[2]))
-                else:
-                    vars[name] = sn_round(values[0])
-            return vars
-
-    def save(self, *args, **kwargs):
-        """ Save the calculated_answer
-        https://docs.djangoproject.com/en/2.2/topics/db/models/#overriding-predefined-model-methods"""
-        self.calculated_answer = self.calculate_answer()
-        super().save(*args, **kwargs)  # Call the "real" save() method.
-
-    def use_variables(self, use_vars: dict) -> None:
-        self.use_vars = use_vars
 
     @property
     def html_id(self):
@@ -468,11 +408,68 @@ class Problem(BaseModel):
                     )
                 )
 
+    def calculate_answer(self):
+        if self.use_vars:
+            answer_template = Template(self.answer)
+            answer = evaluate_answer(
+                answer_template.safe_substitute(**self.use_vars)
+            )
+        elif self.variables_with_values:
+            answer_template = Template(self.answer)
+            answer = evaluate_answer(
+                answer_template.safe_substitute(**self.variables_as_floats)
+            )
+        else:
+            answer = evaluate_answer(self.answer)
+        answer_rounded = sn_round(answer)
+        return answer_rounded
+
+    def check_user_answer(self, user_answer):
+        if sn_round(user_answer) == self.calculated_answer:
+            return True
+        elif sn_round(user_answer) == self.calculate_answer():
+            return True
+        else:
+            return False
+
+    def save(self, *args, **kwargs):
+        """ Save the calculated_answer
+        https://docs.djangoproject.com/en/2.2/topics/db/models/#overriding-predefined-model-methods"""
+        self.calculated_answer = self.calculate_answer()
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
+    def use_variables(self, use_vars: dict) -> None:
+        self.use_vars = use_vars
+
+    def variables_randomized(self) -> dict:
+        vars = dict()
+        if self.variables_lists:
+            for name, values in self.variables_lists.items():
+                if len(values) == 3:
+                    vars[name] = sn_round(random.uniform(values[1], values[2]))
+                elif len(values) == 4:
+                    if values[3]:
+                        vars[name] = sn_round(random.uniform(values[1], values[2]))
+                    else:
+                        vars[name] = int(random.uniform(values[1], values[2]))
+                else:
+                    vars[name] = sn_round(values[0])
+            return vars
+
 
 class ResourceBaseClass(models.Model):
-
     class Meta:
         abstract=True
+
+    IN_CLASS = 'IC'
+    LANGUAGE_LEARNING = 'LL'
+    FURTHER_STUDY = 'FS'
+
+    CATEGORY_CHOICES = [
+        (IN_CLASS, 'In Class'),
+        (LANGUAGE_LEARNING, 'Language Learning'),
+        (FURTHER_STUDY, 'Further Study'),
+    ]
 
     url_max_length=200
     url_text_max_length=30

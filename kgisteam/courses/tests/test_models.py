@@ -1,32 +1,43 @@
 from django.test import TestCase
-from django.utils import timezone
 
-from courses.models import Course
+from courses.models import Course, Problem, Resource, Syllabus, Worksheet
 
 
-class CourseModelTest(TestCase):
+class TestCourse(TestCase):
     def setUp(self):
-        # Create MS Course
-        Course.objects.create(
-            year=timezone.now().year,
-            name='Test MS Course',
-            school='MS',
-            nen=1,
-            kumi='A',
+        self.hs_course = Course.objects.create(
+                name='Test HS Course',
+                school='HS',
+                nen='1',
+                kumi='1',
         )
-        # Create HS Course
-        Course.objects.create(
-            year=timezone.now().year,
-            name='Test HS Course',
-            school='HS',
-            nen=1,
-            kumi='1',
+        self.ms_course = Course.objects.create(
+                name='Test MS Course',
+                school='MS',
+                nen='1',
+                kumi='A',
         )
-        self.course1 = Course.objects.first()
-        self.ms_course1 = Course.objects.filter(
-            school='MS').first()
-        self.hs_course1 = Course.objects.filter(
-            school='HS').first()
 
-    def test_create_course(self):
-        self.assertIsInstance(self.course1, Course)
+    def test_courses_created(self):
+        self.assertEqual(len(Course.objects.all()), 2)
+    
+    def test_courses_nen_kumi_field(self):
+        self.assertEqual(self.hs_course.nen_kumi, '1-1')
+        self.assertEqual(self.ms_course.nen_kumi, '1-A')
+
+class TestProblem(TestCase):
+    def setUp(self):
+        pass
+
+class TestResource(TestCase):
+    def setUp(self):
+        pass
+
+class TestSyllabus(TestCase):
+    def setUp(self):
+        pass
+
+class TestWorksheet(TestCase):
+    def setUp(self):
+        pass
+

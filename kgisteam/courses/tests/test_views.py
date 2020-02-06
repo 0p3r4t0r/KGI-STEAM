@@ -35,8 +35,14 @@ class CoursesViewTest(TestCase):
                 self.assertEqual(problem.calculated_answer, 42)
             self.assertEqual(len(ws.problem_set.all()), self.problems_per_ws)
 
-    def test_create_worksheets(self):
-        self.assertEqual(len(Worksheet.objects.all()), self.num_ws)
+    def test_calculate_answer(self):
+        pass
+
+    def test_problem_variables(self):
+        pass
+
+    def test_problem_randomization(self):
+        pass
 
     def test_syllabus_view(self):
         course = Course.objects.first()
@@ -47,6 +53,24 @@ class CoursesViewTest(TestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_worksheets_created(self):
+        self.assertEqual(len(Worksheet.objects.all()), self.num_ws)
+
+    def test_worksheet_randomization(self):
+        course = Course.objects.first()
+        ws = Worksheet.objects.first()
+        ws_kwargs = kwargs_from_course_and_worksheet(course, ws) 
+        courses_worksheets_url = reverse('courses:worksheets', kwargs=ws_kwargs)
+        # Ensure that you end up back at worksheets.
+        response = self.client.get(
+            reverse('courses:worksheets-randomize', kwargs=ws_kwargs),
+            follow=True,
+        )
+        self.assertEqual(
+            response.redirect_chain[-1][0],
+            courses_worksheets_url,
+        )
 
     def test_worksheet_view(self):
         course = Course.objects.first()
@@ -109,21 +133,6 @@ class CoursesViewTest(TestCase):
         )
         response = self.client.get(reverse('courses:worksheets-check-results'))
         self.assertEqual(response.json(), {'checked_problems_correct': [], 'checked_problems_incorrect': []})
-
-    def test_worksheet_randomization(self):
-        course = Course.objects.first()
-        ws = Worksheet.objects.first()
-        ws_kwargs = kwargs_from_course_and_worksheet(course, ws) 
-        courses_worksheets_url = reverse('courses:worksheets', kwargs=ws_kwargs)
-        # Ensure that you end up back at worksheets.
-        response = self.client.get(
-            reverse('courses:worksheets-randomize', kwargs=ws_kwargs),
-            follow=True,
-        )
-        self.assertEqual(
-            response.redirect_chain[-1][0],
-            courses_worksheets_url,
-        )
 
     def test_resource_view(self):
         course = Course.objects.first()
