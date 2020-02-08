@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils import timezone
 
 from courses.models import Course, Lesson, Problem, Resource, Syllabus, Worksheet
 
@@ -92,6 +93,17 @@ class TestWorksheet(TestCase):
     def test_problems_created(self):
         for ws in Worksheet.objects.all():
             self.assertEqual(ws.problem_set.count(), self.problems_per_ws)
+
+    def test_solutions_released(self):
+        ws = Worksheet.objects.first()
+        ws.solution_release_datetime = timezone.make_aware(
+            timezone.datetime.now() - timezone.timedelta(days=1)
+        )
+        self.assertTrue(ws.solutions_released)
+        ws.solution_release_datetime = timezone.make_aware(
+            timezone.datetime.now() + timezone.timedelta(days=1)
+        )
+        self.assertFalse(ws.solutions_released)
 
 
 class TestProblem(TestCase):

@@ -1,4 +1,3 @@
-import datetime
 import random
 
 from markdown import markdown
@@ -247,7 +246,7 @@ class Lesson(BaseModel):
 class Worksheet(BaseModel):
 
     def default_release_date():
-        return timezone.make_aware(datetime.datetime.today().replace(
+        return timezone.make_aware(timezone.datetime.today().replace(
             hour=20, minute=0,
             second=0, microsecond=0,
             )
@@ -276,7 +275,7 @@ class Worksheet(BaseModel):
         ''' Determine if solutions should be displayed whilst taking timezones
         into account.
         '''
-        if self.solution_release_datetime < timezone.make_aware(datetime.datetime.now()):
+        if self.solution_release_datetime < timezone.make_aware(timezone.datetime.now()):
             return  True
         else:
             return False
