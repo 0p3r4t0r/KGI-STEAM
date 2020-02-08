@@ -125,7 +125,7 @@ def worksheets_randomize(request, *args, **kwargs):
         problem_vars_values = { 
             str(problem.pk): problem.variables_randomized()
             for problem in problems
-            if problem.variables_lists
+            if problem.variables_as_lists
         }
         # update the session
         randomized_problems = request.session.get('randomized_problems') or dict()

@@ -8,7 +8,7 @@ from taggit.managers import TaggableManager
 
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
-from django.utils import timezone 
+from django.utils import timezone
 from django.urls import reverse
 
 from courses.maths import evaluate_answer, sn_round, sn_round_str
@@ -104,7 +104,7 @@ class Course(BaseModel):
 
     @property
     def resources(self):
-        return { 
+        return {
             category[1]: self.resource_set.filter(category=category[0])
             for category in ResourceBaseClass.CATEGORY_CHOICES
         }
@@ -112,7 +112,7 @@ class Course(BaseModel):
     def save(self, *args, **kwargs):
         updated_nen_kumi = '{}-{}'.format(self.nen, self.kumi)
         if self.nen_kumi != updated_nen_kumi:
-            self.nen_kumi = updated_nen_kumi 
+            self.nen_kumi = updated_nen_kumi
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -125,7 +125,7 @@ class Course(BaseModel):
 
 
 class Syllabus(BaseModel):
-    
+
     class Meta:
         verbose_name_plural = "Syllabi"
 
@@ -229,11 +229,11 @@ class Lesson(BaseModel):
         links_dict = { key: value for key, value in self.__dict__.items()
             if value and key.startswith('link')
         }
-        return [ 
+        return [
             (links_dict['link{}_URL'.format(i)], links_dict['link{}_text'.format(i)])
             for i in range(0, int(len(links_dict)/2))
         ]
-    
+
     @property
     def trimester(self):
         if self.syllabus.start_t1 <= (self.date.month, self.date.day) <= self.syllabus.end_t1:
@@ -284,7 +284,7 @@ class Worksheet(BaseModel):
 
 class Problem(BaseModel):
     use_vars = None
-    
+
     worksheet = models.ForeignKey(
         Worksheet,
         null=True,
@@ -331,7 +331,7 @@ class Problem(BaseModel):
         return 'problem-pk{}'.format(self.pk)
 
     @property
-    def variables_lists(self) -> dict:
+    def variables_as_lists(self) -> dict:
         """Return a dict of the form { variable_name: [values]"""
         if self.variables_with_values:
             variables = dict()
@@ -352,7 +352,7 @@ class Problem(BaseModel):
         elif self.variables_with_values:
             return { key: sn_round(value[0])
                 for key, value
-                in self.variables_lists.items()
+                in self.variables_as_lists.items()
             }
         else:
             return dict()
@@ -445,8 +445,8 @@ class Problem(BaseModel):
 
     def variables_randomized(self) -> dict:
         vars = dict()
-        if self.variables_lists:
-            for name, values in self.variables_lists.items():
+        if self.variables_as_lists:
+            for name, values in self.variables_as_lists.items():
                 if len(values) == 3:
                     vars[name] = sn_round(random.uniform(values[1], values[2]))
                 elif len(values) == 4:

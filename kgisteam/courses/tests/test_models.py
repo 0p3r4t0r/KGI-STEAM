@@ -113,7 +113,7 @@ class TestProblem(TestCase):
         problem = Problem.objects.get(id=1)
         self.assertEqual(problem.calculate_answer(), 2.0)
         self.assertEqual(problem.calculated_answer, 2.0)
-        self.assertEqual(problem.variables_lists, dict())
+        self.assertEqual(problem.variables_as_lists, dict())
         self.assertEqual(problem.variables_as_floats, dict())
         self.assertEqual(problem.variables_as_strings, dict())
         self.assertTrue(problem.check_user_answer(2))
@@ -123,7 +123,7 @@ class TestProblem(TestCase):
         self.assertEqual(problem.calculate_answer(), 2.0)
         self.assertEqual(problem.calculated_answer, 2.0)
         self.assertEqual(
-            problem.variables_lists, 
+            problem.variables_as_lists, 
             {
                 'var1': [1, 0, 10, 1],
                 'var2': [1, 0, 10, 1],
