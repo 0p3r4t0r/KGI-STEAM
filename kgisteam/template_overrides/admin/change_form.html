@@ -1,5 +1,5 @@
 {% extends "admin/change_form.html" %}
-
+{% load static %}
 
 {% block object-tools-items %}
   {{ block.super }}
@@ -16,4 +16,9 @@
         <a class="viewsitelink" href="#pagetop" id="pagebottom">Go to top</a>
     </li>
   </ul>
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+  {{ block.super }}
+  <script type="text/javascript" src="{% static 'courses/js/formset_handlers.js' %}"></script>
 {% endblock %}
