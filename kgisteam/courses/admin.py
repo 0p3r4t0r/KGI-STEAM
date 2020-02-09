@@ -39,7 +39,7 @@ class LessonInline(admin.StackedInline):
     https://docs.djangoproject.com/en/2.2/ref/contrib/admin/#inlinemodeladmin-objects
     """
     extra = 0
-    model=Lesson
+    model = Lesson
 
 
 @admin.register(Syllabus)
