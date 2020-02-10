@@ -29,7 +29,7 @@ def get_checked_problems(result: str, session: 'SessionStore') -> tuple:
     the second element (index 1) is the correctly answered problems.
     """
     if result == 'correct' or result == 'incorrect':
-        checked_problems = session.get('checked_problems_{}'.format(result))
+        checked_problems = session.get('checked_problems_{}'.format(result)) or tuple()
         return checked_problems
     elif result == 'both':
         CheckedProblems = namedtuple('CheckedProblems', ['incorrect', 'correct'])
