@@ -1,10 +1,12 @@
 from martor.models import MartorField
 from martor.widgets import AdminMartorWidget
 
+from django import forms
 from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
+from courses.forms import ProblemInlineForm
 from courses.models import Course, Lesson, Problem, Resource, Syllabus, Worksheet
 
 
@@ -51,6 +53,7 @@ class SyllabusAdmin(CoursesBaseAdmin):
 
 class ProblemInline(admin.StackedInline):
     extra = 0
+    form = ProblemInlineForm
     model = Problem
     formfield_overrides = {
         MartorField: {'widget': AdminMartorWidget},

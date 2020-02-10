@@ -338,7 +338,7 @@ class Problem(BaseModel):
                 # Trim the brackets
                 variable_name, variable_values = _.split('[')
                 variable_values = variable_values.replace(']', '')
-                # Convet the numbers into a list.
+                # Convert the numbers into a list.
                 variables[variable_name] = [ float(value) for value in variable_values.split(', ') ]
             return variables
         else:
