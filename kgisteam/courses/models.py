@@ -372,6 +372,43 @@ class Problem(BaseModel):
             return dict()
 
     @property
+    def is_randomizable(self) -> bool:
+        is_randomizable = False
+        if self.variables_as_lists:
+            for name, value in self.variables_as_lists.items():
+                len_value = len(value)
+                if len_value == 4 or len_value == 3:
+                    if value[1] != value[2]:
+                        is_randomizable = True
+                if len_value == 2:
+                    if value[0] != value[1]:
+                        is_randomizable = True
+                if len_value == 1:
+                    is_randomizable = False
+        return is_randomizable
+
+    def variables_randomized(self) -> dict:
+        vars = dict()
+        if self.variables_as_lists:
+            for name, value in self.variables_as_lists.items():
+                len_value = len(value)
+                if len_value == 4:
+                    if value[3]:
+                        vars[name] = int(sn_round(random.uniform(value[1], value[2])))
+                    else:
+                        vars[name] = sn_round(random.uniform(value[1], value[2]))
+                elif len_value == 3:
+                    vars[name] = sn_round(random.uniform(value[1], value[2]))
+                elif len_value == 2:
+                    vars[name] = sn_round(random.uniform(value[0], value[2]))
+                else:
+                    vars[name] = sn_round(value[0])
+            return vars
+
+    def use_variables(self, use_vars: dict) -> None:
+        self.use_vars = use_vars
+
+    @property
     def question_markdown(self):
         """
         Use a template to substitute variables.
@@ -438,24 +475,6 @@ class Problem(BaseModel):
         https://docs.djangoproject.com/en/2.2/topics/db/models/#overriding-predefined-model-methods"""
         self.calculated_answer = self.calculate_answer()
         super().save(*args, **kwargs)  # Call the "real" save() method.
-
-    def use_variables(self, use_vars: dict) -> None:
-        self.use_vars = use_vars
-
-    def variables_randomized(self) -> dict:
-        vars = dict()
-        if self.variables_as_lists:
-            for name, values in self.variables_as_lists.items():
-                if len(values) == 3:
-                    vars[name] = sn_round(random.uniform(values[1], values[2]))
-                elif len(values) == 4:
-                    if values[3]:
-                        vars[name] = sn_round(random.uniform(values[1], values[2]))
-                    else:
-                        vars[name] = int(random.uniform(values[1], values[2]))
-                else:
-                    vars[name] = sn_round(values[0])
-            return vars
 
 
 class ResourceBaseClass(models.Model):

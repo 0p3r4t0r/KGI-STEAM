@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.utils import timezone
 
+from courses.maths import sn_round_str
 from courses.models import Course, Lesson, Problem, Resource, Syllabus, Worksheet
 
 
@@ -171,8 +172,8 @@ class TestProblem(TestCase):
         self.assertEqual(
             problem.variables_as_strings, 
             {
-                'var1': str(new_vars['var1']),
-                'var2': str(new_vars['var2']),
+                'var1': sn_round_str(new_vars['var1']),
+                'var2': sn_round_str(new_vars['var2']),
             },
         )
         self.assertTrue(problem.check_user_answer(new_vars['var1'] + new_vars['var2']))

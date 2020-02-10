@@ -40,6 +40,11 @@
                 <li class="worksheet-problem" id="{{ problem.html_id }}">
                     <div class="worksheet-problem-color">
                         {{ problem.question_markdown|safe }}
+                        {% if is_randomized %}
+                            {% if not problem.is_randomizable %}
+                                <p><b>* This problem cannot be randomized</b></p>.
+                            {% endif %}
+                        {% endif %}
                         <form action="{% url 'courses:worksheets-check' problem.id %}" class="worksheet-problem-form" method="POST">
                             {% csrf_token %}
                             {{ worksheet_problem_form }}
