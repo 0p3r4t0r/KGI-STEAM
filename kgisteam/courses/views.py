@@ -1,7 +1,7 @@
 from math import trunc
 
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
 from courses.forms import WorksheetProblemForm
@@ -20,8 +20,11 @@ def courses_home(request):
 
 def syllabus(request, *args, **kwargs):
     course = course_from_kwargs(kwargs)
-    syllabus = get_object_or_404(Syllabus, course=course)
-    lessons = trimestinate(syllabus)
+    syllabus = Syllabus.objects.filter(course=course).first()
+    if syllabus: 
+        lessons = trimestinate(syllabus)
+    else:
+        lessons = None
     context = {
         'course': course,
         'lessons': lessons,
