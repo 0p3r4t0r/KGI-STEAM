@@ -400,7 +400,7 @@ class Problem(BaseModel):
                 elif len_value == 3:
                     vars[name] = sn_round(random.uniform(value[1], value[2]))
                 elif len_value == 2:
-                    vars[name] = sn_round(random.uniform(value[0], value[2]))
+                    vars[name] = sn_round(random.uniform(value[0], value[1]))
                 else:
                     vars[name] = sn_round(value[0])
             return vars
