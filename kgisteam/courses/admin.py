@@ -11,10 +11,16 @@ from courses.models import Course, Lesson, Problem, Resource, Syllabus, Workshee
 
 
 class CoursesBaseAdmin(admin.ModelAdmin):
-    pass
 
     class Meta:
         abstract = True
+
+    def get_form(self, request, obj=None, **kwargs):
+        """Disable autocomplete in the admin because it's annoying."""
+        form = super().get_form(request, obj, **kwargs)
+        for name, field in form.base_fields.items():
+            field.widget.attrs['autocomplete'] = 'off' 
+        return form
 
 
 @admin.register(Course)
