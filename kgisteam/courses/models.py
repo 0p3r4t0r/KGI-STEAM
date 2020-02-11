@@ -55,7 +55,7 @@ class Course(BaseModel):
     )
 
     year = models.IntegerField(
-        default=2019,
+        default=timezone.now().year,
         validators=[
             MinValueValidator(
                 2019,
@@ -63,6 +63,34 @@ class Course(BaseModel):
             ),
         ]
     )
+    
+    term1_start = models.DateField(
+        blank = True,
+        default = timezone.datetime.fromisoformat(
+            '{}-04-01'.format(timezone.now().year)
+        ),
+        null = True,
+    )
+    term2_start = models.DateField(
+        blank = True,
+        default = timezone.datetime.fromisoformat(
+            '{}-09-01'.format(timezone.now().year)
+        ),
+        null = True,
+    )
+    term3_start = models.DateField(
+        blank = True,
+        default = timezone.datetime.fromisoformat(
+            '{}-01-01'.format(timezone.now().year + 1)
+        ),
+        null = True,
+    )
+    term4_start = models.DateField(
+        blank = True,
+        default = None,
+        null = True,
+    )
+
     name = models.CharField(
         max_length=30
     )
@@ -88,6 +116,7 @@ class Course(BaseModel):
         blank=True,
         max_length=3,
     )
+
     description = models.TextField(
         blank=True,
         max_length=200,
