@@ -63,7 +63,10 @@ class Course(BaseModel):
             ),
         ]
     )
-    
+   
+    """
+    NEED VALIDATORS FOR THESE FIELDS
+    """
     term1_start = models.DateField(
         blank = True,
         default = timezone.datetime.fromisoformat(
@@ -137,6 +140,19 @@ class Course(BaseModel):
             for category in ResourceBaseClass.CATEGORY_CHOICES
         }
 
+    @property
+    def term_type(self):
+        if not self.term1_start:
+            return None
+        elif self.term1_start and self.term2_start:
+            if not self.term3_start:
+                return 'semesters'
+            else:
+                if not self.term4_start:
+                    return 'trimesters'
+                else:
+                    return 'quarters'
+
     def save(self, *args, **kwargs):
         updated_nen_kumi = '{}-{}'.format(self.nen, self.kumi)
         if self.nen_kumi != updated_nen_kumi:
@@ -156,16 +172,7 @@ class Syllabus(BaseModel):
 
     class Meta:
         verbose_name_plural = "Syllabi"
-
-    # Dates can be compared the the tuples below.
-    # (month, day)
-    start_t1    = (4, 1)
-    end_t1      = (7, 19)
-    start_t2    = (9, 2)
-    end_t2      = (12, 21)
-    start_t3    = (1, 8)
-    end_t3      = (3, 23)
-
+    
     course = models.OneToOneField(
         Course,
         null=True,
@@ -263,13 +270,32 @@ class Lesson(BaseModel):
         ]
 
     @property
-    def trimester(self):
-        if self.syllabus.start_t1 <= (self.date.month, self.date.day) <= self.syllabus.end_t1:
-            return 1
-        elif self.syllabus.start_t2 <= (self.date.month, self.date.day) <= self.syllabus.end_t2:
-            return 2
-        elif self.syllabus.start_t3 <= (self.date.month, self.date.day) <= self.syllabus.end_t3:
-            return 3
+    def term_num(self):
+        course = self.syllabus.course
+        term_type = course.term_type
+        if term_type == None:
+            return None
+        elif term_type == 'semesters':
+            if course.term1_start <= self.date < course.term2_start:
+                return 1
+            else:
+                return 2
+        elif term_type == 'trimesters':
+            if course.term1_start <= self.date < course.term2_start:
+                return 1
+            elif course.term2_start <= self.date < course.term3_start:
+                return 2
+            else:
+                return 3
+        elif term_type == 'quarters':
+            if course.term1_start <= self.date < course.term2_start:
+                return 1
+            elif course.term2_start <= self.date < course.term3_start:
+                return 2
+            elif course.term3_start <= self.date < course.term4_start:
+                return 3
+            else:
+                return 4
 
 
 class Worksheet(BaseModel):
