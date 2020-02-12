@@ -141,10 +141,18 @@ class Course(BaseModel):
         }
 
     @property
+    def terms(self) -> list:
+        return [ self.term1_start, self.term2_start, self.term3_start, self.term4_start ]
+
+    @property
+    def term_count(self) -> int:
+        return len([ term for term in self.terms if term ])
+
+    @property
     def term_now(self):
         term_now = 0
         today = timezone.now().date()
-        terms = [ self.term1_start, self.term2_start, self.term3_start, self.term4_start ]
+        terms = self.terms
         for i in range(0, 3):
             if terms[i] and not terms[i+1]:
                 if terms[i] <= today:

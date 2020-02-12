@@ -48,18 +48,11 @@
         <div class="level-item">
             <div class="is-boxed tabs is-toggle">
                 <ul>
-                    <li>
-                        <a href="#">Term4</a>
-                    </li>
-                    <li>
-                        <a href="#">Term3</a>
-                    </li>
-                    <li>
-                        <a href="#">Term2</a>
-                    </li>
-                    <li>
-                        <a href="#">Term1</a>
-                    </li>
+                    {% for term_num in term_range %}
+                        <li>
+                            <a href="{% url 'courses:syllabus' course.year course.school course.name course.nen_kumi term_num %}">Term{{ term_num }}</a>
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>

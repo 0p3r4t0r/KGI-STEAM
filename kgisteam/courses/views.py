@@ -24,15 +24,19 @@ def syllabus(request, *args, **kwargs):
     syllabus = Syllabus.objects.filter(course=course).first()
     if syllabus and course.term_now: 
         lessons = terminate(syllabus)
-        lessons = lessons[course.term_now - 1]
+        if 1 <= kwargs['term'] <= 4:
+            lessons = lessons[kwargs['term'] - 1]
+        else:
+            lessons = lessons[course.term_now - 1]
     elif syllabus:
-        lessons = Lesson.objects.all()
+        lessons = syllabus.lesson_set.all()
     else:
         lessons = None
     context = {
         'course': course,
         'lessons': lessons,
         'syllabus': syllabus,
+        'term_range': range(1, course.term_count + 1)
     }
     return render(request, 'courses/syllabus.html', context)
 
