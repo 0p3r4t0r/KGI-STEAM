@@ -43,14 +43,15 @@ class CoursesViewTest(TestCase):
 
     def test_syllabus_view(self):
         kwargs = self.test_course_kwargs
-        kwargs['term'] = 0
-        response = self.client.get(
-            reverse(
-                'courses:syllabus',
-                kwargs=kwargs,
+        for i in range(0, 5):
+            kwargs['term'] = 0
+            response = self.client.get(
+                reverse(
+                    'courses:syllabus',
+                    kwargs=kwargs,
+                )
             )
-        )
-        self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
     def test_worksheet_randomization(self):
         response = self.client.get(
