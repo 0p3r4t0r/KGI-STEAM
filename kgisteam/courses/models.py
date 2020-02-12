@@ -141,6 +141,23 @@ class Course(BaseModel):
         }
 
     @property
+    def term_now(self):
+        term_now = 0
+        today = timezone.now().date()
+        terms = [ self.term1_start, self.term2_start, self.term3_start, self.term4_start ]
+        for i in range(0, 3):
+            if terms[i] and not terms[i+1]:
+                if terms[i] <= today:
+                    term_now = i+1
+            elif terms[i] and terms[i+1]:
+                if terms[i] <= today <= terms[i+1]:
+                    term_now = i+1
+        if term_now == 0 and terms[3]:
+            if terms[3] <= today:
+                term_now = 4
+        return term_now
+
+    @property
     def term_type(self):
         if not self.term1_start:
             return None

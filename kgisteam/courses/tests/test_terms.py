@@ -29,6 +29,20 @@ class TestTerms(TestCase):
             )
 
 
+    def test_course_term_now(self):
+
+        def rewind_starts(course, timedelta):
+            course.term1_start = course.term1_start - timedelta
+            course.term2_start = course.term2_start - timedelta
+            course.term3_start = course.term3_start - timedelta
+            course.term4_start = course.term4_start - timedelta
+            return course
+
+        course = Course.objects.get(id=1)
+        for i in range(0, 4):
+            course = rewind_starts(course, i * self.term_timedelta)
+            self.assertEqual(course.term_now, i + 1)
+
     def test_course_term_type(self):
         course = Course.objects.get(id=1)
         course.term1_start = ''

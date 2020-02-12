@@ -42,10 +42,12 @@ class CoursesViewTest(TestCase):
 
 
     def test_syllabus_view(self):
+        kwargs = self.test_course_kwargs
+        kwargs['term'] = 0
         response = self.client.get(
             reverse(
                 'courses:syllabus',
-                kwargs=self.test_course_kwargs
+                kwargs=kwargs,
             )
         )
         self.assertEqual(response.status_code, 200)

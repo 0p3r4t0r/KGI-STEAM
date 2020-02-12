@@ -8,12 +8,13 @@ from courses.forms import WorksheetProblemForm
 from courses.maths import sn_round
 from courses.models import Course, Resource, Problem, Syllabus, Worksheet
 from courses.viewaids import ( course_from_kwargs, worksheet_from_kwargs,
-    get_checked_problems, trimestinate, updated_checked_problems )
+    get_checked_problems, terminate, updated_checked_problems )
 
 
 def courses_home(request):
     context = {
         'courses': Course.objects.order_by('-school', 'nen', 'kumi'),
+        'term': 3,
     }
     return render(request, 'courses/home.html', context)
 
@@ -21,8 +22,11 @@ def courses_home(request):
 def syllabus(request, *args, **kwargs):
     course = course_from_kwargs(kwargs)
     syllabus = Syllabus.objects.filter(course=course).first()
-    if syllabus: 
-        lessons = trimestinate(syllabus)
+    if syllabus and course.term_now: 
+        lessons = terminate(syllabus)
+        lessons = lessons[course.term_now - 1]
+    elif syllabus:
+        lessons = Lesson.objects.all()
     else:
         lessons = None
     context = {

@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for lesson in lessons.2 %}
+                {% for lesson in lessons %}
                     <tr class="flex-table-row">
                         <td class="has-text-centered lesson-number">{{ lesson.number }}</td>
                         <td class="has-text-centered lesson-date">{{ lesson.date }}</td>
@@ -42,4 +42,28 @@
         </table>
     </div>
 </div>
+
+<div class="level is-marginless">
+    <div class="level-left">
+        <div class="level-item">
+            <div class="is-boxed tabs is-toggle">
+                <ul>
+                    <li>
+                        <a href="#">Term4</a>
+                    </li>
+                    <li>
+                        <a href="#">Term3</a>
+                    </li>
+                    <li>
+                        <a href="#">Term2</a>
+                    </li>
+                    <li>
+                        <a href="#">Term1</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
