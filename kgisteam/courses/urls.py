@@ -5,7 +5,7 @@ app_name = 'courses'
 courses_base_url = '<int:year>/<school>/<name>/<nen_kumi>'
 
 urlpatterns = [
-    path('', views.courses_home, name='home'),
+    path('', views.home, name='home'),
     # Syllabi
     path('{}/syllabus/<int:term>'.format(courses_base_url),
         views.syllabus,

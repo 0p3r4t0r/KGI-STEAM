@@ -37,7 +37,7 @@ info_dict = {
 }
 
 urlpatterns = [
-    path('', courses_views.courses_home, name='home'),
+    path('', courses_views.home, name='home'),
     path('admin/', admin.site.urls),
     path('courses/', include('courses.urls')),
     path('info/', include('info.urls')),
