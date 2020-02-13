@@ -55,7 +55,7 @@ class Course(BaseModel):
     )
 
     year = models.IntegerField(
-        default=2019,
+        default=timezone.now().year,
         validators=[
             MinValueValidator(
                 2019,
@@ -63,6 +63,37 @@ class Course(BaseModel):
             ),
         ]
     )
+   
+    """
+    NEED VALIDATORS FOR THESE FIELDS
+    """
+    term1_start = models.DateField(
+        blank = True,
+        default = timezone.datetime.fromisoformat(
+            '{}-04-01'.format(timezone.now().year)
+        ),
+        null = True,
+    )
+    term2_start = models.DateField(
+        blank = True,
+        default = timezone.datetime.fromisoformat(
+            '{}-09-01'.format(timezone.now().year)
+        ),
+        null = True,
+    )
+    term3_start = models.DateField(
+        blank = True,
+        default = timezone.datetime.fromisoformat(
+            '{}-01-01'.format(timezone.now().year + 1)
+        ),
+        null = True,
+    )
+    term4_start = models.DateField(
+        blank = True,
+        default = None,
+        null = True,
+    )
+
     name = models.CharField(
         max_length=30
     )
@@ -88,6 +119,7 @@ class Course(BaseModel):
         blank=True,
         max_length=3,
     )
+
     description = models.TextField(
         blank=True,
         max_length=200,
@@ -108,6 +140,44 @@ class Course(BaseModel):
             for category in ResourceBaseClass.CATEGORY_CHOICES
         }
 
+    @property
+    def terms(self) -> list:
+        return [ self.term1_start, self.term2_start, self.term3_start, self.term4_start ]
+
+    @property
+    def term_count(self) -> int:
+        return len([ term for term in self.terms if term ])
+
+    @property
+    def term_now(self):
+        term_now = 0
+        today = timezone.now().date()
+        terms = self.terms
+        for i in range(0, 3):
+            if terms[i] and not terms[i+1]:
+                if terms[i] <= today:
+                    term_now = i+1
+            elif terms[i] and terms[i+1]:
+                if terms[i] <= today <= terms[i+1]:
+                    term_now = i+1
+        if term_now == 0 and terms[3]:
+            if terms[3] <= today:
+                term_now = 4
+        return term_now
+
+    @property
+    def term_type(self):
+        if not self.term1_start:
+            return None
+        elif self.term1_start and self.term2_start:
+            if not self.term3_start:
+                return 'semesters'
+            else:
+                if not self.term4_start:
+                    return 'trimesters'
+                else:
+                    return 'quarters'
+
     def save(self, *args, **kwargs):
         updated_nen_kumi = '{}-{}'.format(self.nen, self.kumi)
         if self.nen_kumi != updated_nen_kumi:
@@ -127,16 +197,7 @@ class Syllabus(BaseModel):
 
     class Meta:
         verbose_name_plural = "Syllabi"
-
-    # Dates can be compared the the tuples below.
-    # (month, day)
-    start_t1    = (4, 1)
-    end_t1      = (7, 19)
-    start_t2    = (9, 2)
-    end_t2      = (12, 21)
-    start_t3    = (1, 8)
-    end_t3      = (3, 23)
-
+    
     course = models.OneToOneField(
         Course,
         null=True,
@@ -234,13 +295,32 @@ class Lesson(BaseModel):
         ]
 
     @property
-    def trimester(self):
-        if self.syllabus.start_t1 <= (self.date.month, self.date.day) <= self.syllabus.end_t1:
-            return 1
-        elif self.syllabus.start_t2 <= (self.date.month, self.date.day) <= self.syllabus.end_t2:
-            return 2
-        elif self.syllabus.start_t3 <= (self.date.month, self.date.day) <= self.syllabus.end_t3:
-            return 3
+    def term_num(self):
+        course = self.syllabus.course
+        term_type = course.term_type
+        if term_type == None:
+            return None
+        elif term_type == 'semesters':
+            if course.term1_start <= self.date < course.term2_start:
+                return 1
+            else:
+                return 2
+        elif term_type == 'trimesters':
+            if course.term1_start <= self.date < course.term2_start:
+                return 1
+            elif course.term2_start <= self.date < course.term3_start:
+                return 2
+            else:
+                return 3
+        elif term_type == 'quarters':
+            if course.term1_start <= self.date < course.term2_start:
+                return 1
+            elif course.term2_start <= self.date < course.term3_start:
+                return 2
+            elif course.term3_start <= self.date < course.term4_start:
+                return 3
+            else:
+                return 4
 
 
 class Worksheet(BaseModel):

@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for lesson in lessons.2 %}
+                {% for lesson in lessons %}
                     <tr class="flex-table-row">
                         <td class="has-text-centered lesson-number">{{ lesson.number }}</td>
                         <td class="has-text-centered lesson-date">{{ lesson.date }}</td>
@@ -42,4 +42,21 @@
         </table>
     </div>
 </div>
+
+<div class="level is-marginless">
+    <div class="level-left">
+        <div class="level-item">
+            <div class="is-boxed tabs is-toggle">
+                <ul>
+                    {% for term_num in term_range %}
+                        <li>
+                            <a href="{% url 'courses:syllabus' course.year course.school course.name course.nen_kumi term_num %}">Term{{ term_num }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

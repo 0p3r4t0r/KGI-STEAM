@@ -1,6 +1,9 @@
 from collections import namedtuple
 from copy import deepcopy
 
+from django.core.paginator import Paginator
+from django.utils.functional import cached_property
+
 from courses.models import Course
 
 
@@ -54,12 +57,10 @@ def kwargs_from_course_and_worksheet(course, worksheet) -> dict:
         'order': 'ordered',
     }
 
-def trimestinate(syllabus: 'Syllabus') -> list:
-    """ Split lessons by trimester.
-    lessons = 
-    """
+def terminate(syllabus: 'Syllabus') -> list:
+    """ Split lessons into their terms."""
     lessons = syllabus.lesson_set.all()
-    return [[ lesson for lesson in lessons if lesson.trimester == i ] for i in range(1, 4)]
+    return [[ lesson for lesson in lessons if lesson.term_num == i ] for i in range(1, 5)]
 
 def updated_checked_problems(response: dict, session: 'SessionStore') -> namedtuple:
     checked_incorrect, checked_correct = get_checked_problems('both', session)
@@ -85,4 +86,3 @@ def worksheet_from_kwargs(kwargs: dict) -> "<class 'courses.modes.Worksheet'>":
         return None
     else:
         return course.worksheet_set.get(title=kwargs['title'])
-
