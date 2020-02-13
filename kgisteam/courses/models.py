@@ -289,10 +289,13 @@ class Lesson(BaseModel):
         links_dict = { key: value for key, value in self.__dict__.items()
             if value and key.startswith('link')
         }
-        return [
-            (links_dict['link{}_URL'.format(i)], links_dict['link{}_text'.format(i)])
-            for i in range(0, int(len(links_dict)/2))
-        ]
+        links = list()
+        for i in range(0, 4):
+            link_url = links_dict.get('link{}_URL'.format(i))
+            link_text = links_dict.get('link{}_text'.format(i))
+            if link_url and link_text:
+                links.append((link_url, link_text))
+        return links
 
     @property
     def term_num(self):
