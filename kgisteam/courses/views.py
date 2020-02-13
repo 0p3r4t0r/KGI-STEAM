@@ -51,6 +51,8 @@ def worksheets(request, *args, **kwargs):
                 if str(problem.pk) in randomized_problems.keys():
                     problem.use_variables(randomized_problems[str(problem.pk)])
                     context['is_randomized'] = 1
+        if kwargs['order'] == 'random':
+            active_problems = active_problems.order_by('?')
         request.session['active_problem_pks'] = active_problem_pks
         context['active_worksheet'] = active_worksheet
         context['active_problems'] = active_problems
