@@ -210,8 +210,9 @@ class Syllabus(BaseModel):
             'school': self.course.school,
             'name': self.course.name,
             'nen_kumi': self.course.nen_kumi,
+            'term': self.course.term_now,
         }
-        return reverse('course-syllabi', kwargs=kwargs)
+        return reverse('courses:syllabus', kwargs=kwargs)
 
     def __str__(self):
         return '{} syllabus'.format(self.course)
