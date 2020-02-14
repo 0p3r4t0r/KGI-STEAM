@@ -3,7 +3,7 @@
 import datetime
 from django.db import migrations, models
 from django.utils.timezone import utc
-import markdownx.models
+import martor.models
 
 
 class Migration(migrations.Migration):
@@ -21,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='problem',
             name='solution',
-            field=markdownx.models.MarkdownxField(default='The solution to this problem is not available yet.', max_length=1000),
+            field=martor.models.MartorField(default='The solution to this problem is not available yet.', max_length=1000),
         ),
     ]

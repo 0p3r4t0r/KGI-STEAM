@@ -4,7 +4,7 @@ import datetime
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import markdownx.models
+import martor.models
 import taggit.managers
 
 
@@ -64,9 +64,9 @@ class Migration(migrations.Migration):
             name='Problem',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('question', markdownx.models.MarkdownxField(default='Your question here.', max_length=500)),
+                ('question', martor.models.MartorField(default='Your question here.', max_length=500)),
                 ('answer', models.FloatField()),
-                ('solution', markdownx.models.MarkdownxField(default='Your solution here.', max_length=1000)),
+                ('solution', martor.models.MartorField(default='Your solution here.', max_length=1000)),
                 ('worksheet', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='courses.Worksheet')),
             ],
         ),
