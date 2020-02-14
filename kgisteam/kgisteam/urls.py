@@ -40,7 +40,6 @@ urlpatterns = [
     path('', courses_views.courses_home, name='home'),
     path('admin/', admin.site.urls),
     path('courses/', include('courses.urls')),
-    path('info/', include('info.urls')),
     url(r'^martor/', include('martor.urls')),
 
     # Sitemap https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/
