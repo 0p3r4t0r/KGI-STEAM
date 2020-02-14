@@ -72,6 +72,7 @@ else:
 INSTALLED_APPS = [
     'courses.apps.CoursesConfig',
     'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
@@ -88,6 +89,9 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    # BEGIN django admindocs bookmarklets
+    'django.contrib.admindocs.middleware.XViewMiddleware',
+    # END django admindocs bookmarklets
     'django.middleware.csrf.CsrfViewMiddleware',
     # BEGIN django-htmlmin middleware
     'htmlmin.middleware.HtmlMinifyMiddleware',

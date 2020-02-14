@@ -39,6 +39,7 @@ info_dict = {
 urlpatterns = [
     path('', courses_views.home, name='home'),
     path('admin/', admin.site.urls),
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('courses/', include('courses.urls')),
     url(r'^martor/', include('martor.urls')),
 
