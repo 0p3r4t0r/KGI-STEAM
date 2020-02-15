@@ -69,7 +69,7 @@ class ProblemInlineForm(forms.ModelForm):
         vars_with_vals = self.cleaned_data['variables_with_values']
         answer = self.cleaned_data['answer']
         # Check to make sure all vars begin with '$'
-        words_in_answer = re.findall(r'\b(?<!\$)\w+\b', answer)
+        words_in_answer = re.findall(r'\b(?<!\$)[^0-9\.*+-\/\s]+\b', answer)
         if words_in_answer:
             raise ValidationError(
                 "Variables names must begin with '$'",
