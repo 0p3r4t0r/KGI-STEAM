@@ -81,7 +81,7 @@ class ProblemInlineForm(forms.ModelForm):
             re.findall(r'(?<=\$)\w+', answer) +     # names without brackets 
             re.findall(r'(?<=\$){([^}]+)}', answer) # names with brackets
         )
-        if vars != answer_vars:
+        if not vars.issuperset(answer_vars):
             raise ValidationError(
                 'Undefined variable(s): %(value)s',
                 code='invalid',
