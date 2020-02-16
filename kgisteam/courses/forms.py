@@ -1,3 +1,4 @@
+from string import Template
 import re
 
 from django import forms
@@ -68,6 +69,8 @@ class ProblemInlineForm(forms.ModelForm):
     def clean_answer(self):
         vars_with_vals = self.cleaned_data['variables_with_values']
         answer = self.cleaned_data['answer']
+        var_names_brackets = re.compile(r'(?<=\$)\w+')
+        var_names_no_brackets = re.compile(r'(?<=\$){([^}]+)}')
         # Check to make sure all vars begin with '$'
         words_in_answer = re.findall(r'\b(?<!\$)[^0-9\.*+-\/\s]+\b', answer)
         if words_in_answer:
@@ -78,14 +81,25 @@ class ProblemInlineForm(forms.ModelForm):
         # Check that all variables are defined.
         vars = set(re.findall(r'\w+(?=\[)', vars_with_vals))
         answer_vars = set( 
-            re.findall(r'(?<=\$)\w+', answer) +     # names without brackets 
-            re.findall(r'(?<=\$){([^}]+)}', answer) # names with brackets
+            re.findall(var_names_brackets, answer) +     # names without brackets 
+            re.findall(var_names_no_brackets, answer) # names with brackets
         )
         if not vars.issuperset(answer_vars):
             raise ValidationError(
                 'Undefined variable(s): %(value)s',
                 code='invalid',
                 params={'value': sorted(answer_vars)},
+            )
+        # Set all variables to 1 and check that answer if a valid math expression.
+        sub_vars = { '{}'.format(var): 1 for var in answer_vars }
+        template = Template(answer)
+        expression = template.substitute(**sub_vars)
+        try:
+            eval(expression)
+        except:
+            raise ValidationError(
+                'Answer is not a valid mathematical expression',
+                code='invalid',
             )
         return self.cleaned_data['answer']
 
