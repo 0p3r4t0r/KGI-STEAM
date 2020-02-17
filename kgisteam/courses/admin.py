@@ -12,6 +12,9 @@ from courses.models import Course, Lesson, Problem, Resource, Syllabus, Workshee
 
 class CoursesBaseAdmin(admin.ModelAdmin):
 
+    class Media:
+        js = ('courses/js/autocompleteOff.js',)
+
     class Meta:
         abstract = True
 
