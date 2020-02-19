@@ -15,15 +15,6 @@ class CourseAdminForm(forms.ModelForm):
         exclude = ('nen_kumi',)
         model = Course
 
-    def clean_name(self):
-        """Ensure that the name can be used in the URL for the worksheet."""
-        title = self.cleaned_data['title']
-        if re.match(r'(.*\.*|.*/.*)', title):  
-            raise ValidationError(
-                    'Your course name may not contain slashes.'
-                )
-        return title
-
     def clean_term1_start(self):
         """Make sure term1 starts in the same year as course.year"""
         date1 = self.cleaned_data.get('term1_start')
@@ -69,7 +60,6 @@ class CourseAdminForm(forms.ModelForm):
                     code='invalid',
                 )
         return self.cleaned_data['term4_start']
-    
 
 class ProblemInlineForm(forms.ModelForm):
     class Meta:
