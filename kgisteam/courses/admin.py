@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
-from courses.forms import CourseAdminForm, ProblemInlineForm
+from courses.forms import CourseAdminForm, ProblemInlineForm, WorksheetAdminForm
 from courses.models import Course, Lesson, Problem, Resource, Syllabus, Worksheet
 
 
@@ -74,6 +74,7 @@ class ProblemInline(admin.StackedInline):
 class WorksheetAdmin(CoursesBaseAdmin):
     inlines = [ProblemInline,]
     filter_horizontal = ('course',)
+    form = WorksheetAdminForm
     list_display = ('title',)
     search_fields = ('description', 'title')
 

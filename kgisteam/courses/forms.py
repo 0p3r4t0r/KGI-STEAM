@@ -104,6 +104,17 @@ class ProblemInlineForm(forms.ModelForm):
         return self.cleaned_data['answer']
 
 
+class WorksheetAdminForm(forms.ModelForm):
+    def clean_title(self):
+        """Ensure that the title can be used in the URL for the worksheet."""
+        title = self.cleaned_data['title']
+        if re.match(r'(.*\.*|.*/.*)', title):  
+            raise ValidationError(
+                    'Your title may not contain slashes.'
+                )
+        return title
+
+
 class WorksheetProblemForm(forms.Form):
     user_answer = forms.CharField(
         label='',
@@ -119,3 +130,4 @@ class WorksheetProblemForm(forms.Form):
         user_answer = evaluate_answer(self.cleaned_data['user_answer'])
         user_answer_rounded = sn_round(user_answer)
         return user_answer_rounded
+
