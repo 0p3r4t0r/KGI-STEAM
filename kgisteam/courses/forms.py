@@ -10,10 +10,26 @@ from courses.validators import validate_math_expression
 from courses.maths import evaluate_answer, sn_round
 
 
+def is_url_safe(string):
+    if re.match(r'(.*\\.*|.*\/.*)', string):  
+        raise ValidationError(
+                'Your course name may not contain slashes.'
+            )
+        return False
+    else:
+        return True
+
+
 class CourseAdminForm(forms.ModelForm):
     class Meta:
         exclude = ('nen_kumi',)
         model = Course
+
+    def clean_name(self):
+        """Ensure that the name can be used in the URL for the worksheet."""
+        name = self.cleaned_data['name']
+        if is_url_safe(name):
+            return name
 
     def clean_term1_start(self):
         """Make sure term1 starts in the same year as course.year"""
@@ -60,6 +76,7 @@ class CourseAdminForm(forms.ModelForm):
                     code='invalid',
                 )
         return self.cleaned_data['term4_start']
+    
 
 class ProblemInlineForm(forms.ModelForm):
     class Meta:
@@ -108,11 +125,8 @@ class WorksheetAdminForm(forms.ModelForm):
     def clean_title(self):
         """Ensure that the title can be used in the URL for the worksheet."""
         title = self.cleaned_data['title']
-        if re.match(r'(.*\.*|.*/.*)', title):  
-            raise ValidationError(
-                    'Your title may not contain slashes.'
-                )
-        return title
+        if is_url_safe(title):
+            return title
 
 
 class WorksheetProblemForm(forms.Form):
