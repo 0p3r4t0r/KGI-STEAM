@@ -467,7 +467,7 @@ class Problem(BaseModel):
                 if len_value == 2:
                     if value[0] != value[1]:
                         is_randomizable = True
-                if len_value == 1:
+                if len_value == 1 and not is_randomizable:
                     is_randomizable = False
         return is_randomizable
 
