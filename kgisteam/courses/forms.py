@@ -80,7 +80,7 @@ class CourseAdminForm(forms.ModelForm):
 
 class ProblemInlineForm(forms.ModelForm):
     class Meta:
-        exclude = []
+        exclude = ('calculated_answer',)
         model = Problem
 
     def clean_answer(self):

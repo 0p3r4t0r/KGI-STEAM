@@ -67,7 +67,7 @@ class ProblemInline(admin.StackedInline):
     formfield_overrides = {
         MartorField: {'widget': AdminMartorWidget},
     }
-    readonly_fields = ("calculated_answer_with_units",)
+    readonly_fields = ('calculated_answer_with_units',)
 
     def calculated_answer_with_units(self, obj):
         """ Wrap the units in \( \) so that MathJax will render them."""
