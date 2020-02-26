@@ -33,7 +33,7 @@ Environmental variables:
     Required variables are called with os.environ['ENV_VAL'].
     Optional variables are called with os.getenv('ENV_VAL').
 
-Example .env file for debugging:
+Example .env_settings file for debugging:
     export LOCAL=1
     export DEBUG=1
     export SECRET_KEY='You will never guess, that this is only a test!'
@@ -42,6 +42,14 @@ settings_dotenv = os.path.join(BASE_DIR, 'kgisteam', '.env_settings')
 if not os.path.isfile(settings_dotenv):
     print('\n\tNo dot env file found at {}'.format(settings_dotenv))
     print('\tDetails in {}\n'.format(os.path.abspath(__file__)))
+    print(
+    '''
+        Example .env_settings file for debugging:
+        export LOCAL=1
+        export DEBUG=1
+        export SECRET_KEY='You will never guess, that this is only a test!'
+    '''
+    )
     exit(0)
 load_dotenv(dotenv_path=settings_dotenv, verbose=True)
 

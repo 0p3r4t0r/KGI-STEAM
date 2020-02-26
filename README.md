@@ -1,8 +1,29 @@
 # KGI STEAM
-
 The name is a combination of an abbreviation for Kogakuin 
 (the school where I used to work) and the 
 acronym [STEAM](https://en.wikipedia.org/wiki/STEAM_fields).
+
+This software was developed to automate the repetative tasks 
+that go along with being a teacher, with the ultimate goal being to reduce
+the number of working hours required per week to a reasonable amount.
+
+The vast majority of the code was written off-the-cuff during meetings
+and so this certainly wasn't intended to be robust piece of
+software by any means. However, more often than not what matters at the
+end of the day (especially in regards to personal projects), is whether 
+or not your code was effective and I can say that having KGI STEAM as a
+cirriculum management system did greatly reduce the amount of time it
+took to prepare, organize and distribute lesson materials.
+
+It's far from perfect, but it's good enough and overall I'm proud of what I've done here.
+At present I don't plan to use the site ever again, but I'm leaving it here in case
+someone else finds it useful.
+
+
+## Table of Contents
+* [Features](#Features)
+* [Tech Stack](#Tech-Stack)
+* [Deployment](#Deployment)
 
 
 
@@ -44,3 +65,13 @@ so students don't have to remember another set of login credentials.
 
 *   [Unsplash](https://unsplash.com/search/photos/open-source)
     for providing the images for the courses.
+
+
+
+
+## Deployment
+1. Create a python virtual environment.
+2. From within your virtual env run `pip install -r requirements.txt`
+3. Try running `manage.py runserver`, if that doesn't work follow the
+   instructions printed in the error message and setup a .env_settings file.
+4. Apply the migrations `manage.py migrate`.
