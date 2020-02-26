@@ -88,13 +88,6 @@ class ProblemInlineForm(forms.ModelForm):
         answer = self.cleaned_data['answer']
         var_names_brackets = re.compile(r'(?<=\$)\w+')
         var_names_no_brackets = re.compile(r'(?<=\$){([^}]+)}')
-        # Check to make sure all vars begin with '$'
-        words_in_answer = re.findall(r'\b(?<!\$)[^0-9\.*+-\/\s]+\b', answer)
-        if words_in_answer:
-            raise ValidationError(
-                "Variables names must begin with '$'",
-                code='invalid',
-            )
         # Check that all variables are defined.
         vars = set(re.findall(r'\w+(?=\[)', vars_with_vals))
         answer_vars = set( 
