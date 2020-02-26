@@ -14,6 +14,7 @@ from courses.maths import evaluate_answer, sn_round, sn_round_str
 
 
 class BaseModel(models.Model):
+    """Add a last_modified field to all models."""
     class Meta:
         abstract = True
 
@@ -23,18 +24,15 @@ class BaseModel(models.Model):
 class Course(BaseModel):
     MIDDLESCHOOL = 'MS'
     HIGHSCHOOL = 'HS'
-
     SCHOOL_CHOICES = (
         (MIDDLESCHOOL, 'Middle School'),
         (HIGHSCHOOL, 'High School'),
     )
-
     NEN_CHOICES = (
         (1, '1'),
         (2, '2'),
         (3, '3'),
     )
-
     MS_KUMI_CHOICES = (
         ('A', 'A'),
         ('B', 'B'),
@@ -42,7 +40,6 @@ class Course(BaseModel):
         ('D', 'D'),
         ('E', 'E'),
     )
-
     HS_KUMI_CHOICES = (
         ('1', '1'),
         ('2', '2'),
@@ -53,7 +50,6 @@ class Course(BaseModel):
         ('7', '7'),
         ('8', '8'),
     )
-
     year = models.IntegerField(
         default=timezone.now().year,
         validators=[
@@ -63,10 +59,6 @@ class Course(BaseModel):
             ),
         ]
     )
-   
-    """
-    NEED VALIDATORS FOR THESE FIELDS
-    """
     term1_start = models.DateField(
         blank = True,
         default = timezone.datetime.fromisoformat(
@@ -135,6 +127,7 @@ class Course(BaseModel):
 
     @property
     def resources(self):
+        """The resources that belong to the course."""
         return {
             category[1]: self.resource_set.filter(category=category[0])
             for category in ResourceBaseClass.CATEGORY_CHOICES
@@ -142,14 +135,17 @@ class Course(BaseModel):
 
     @property
     def terms(self) -> list:
+        """The start dates for all of the terms in the course."""
         return [ self.term1_start, self.term2_start, self.term3_start, self.term4_start ]
 
     @property
     def term_count(self) -> int:
+        """Returns the number of terms for the course."""
         return len([ term for term in self.terms if term ])
 
     @property
     def term_now(self):
+        """Returns the current term the course is in."""
         term_now = 0
         today = timezone.now().date()
         terms = self.terms
@@ -167,6 +163,7 @@ class Course(BaseModel):
 
     @property
     def term_type(self):
+        """Return semesters, trimesters, or quarters."""
         if not self.term1_start:
             return None
         elif self.term1_start and self.term2_start:
@@ -185,6 +182,7 @@ class Course(BaseModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        """{name} ({school}: {nen_kumi}) {year}"""
         return '{name} ({school}: {nen_kumi}) {year}'.format(
             name=self.name,
             school=self.school,
@@ -194,7 +192,6 @@ class Course(BaseModel):
 
 
 class Syllabus(BaseModel):
-
     class Meta:
         verbose_name_plural = "Syllabi"
     
@@ -215,6 +212,7 @@ class Syllabus(BaseModel):
         return reverse('courses:syllabus', kwargs=kwargs)
 
     def __str__(self):
+        """{course} syllabus"""
         return '{} syllabus'.format(self.course)
 
 
@@ -287,6 +285,7 @@ class Lesson(BaseModel):
 
     @property
     def links(self) -> list:
+        """Return the links for the lesson."""
         links_dict = { key: value for key, value in self.__dict__.items()
             if value and key.startswith('link')
         }
@@ -300,6 +299,7 @@ class Lesson(BaseModel):
 
     @property
     def term_num(self):
+        """Return the number for the term the syllabus is in."""
         course = self.syllabus.course
         term_type = course.term_type
         if term_type == None:
@@ -355,10 +355,10 @@ class Worksheet(BaseModel):
 
 
     @property
-    def solutions_released(self):
-        ''' Determine if solutions should be displayed whilst taking timezones
+    def solutions_released(self) -> bool:
+        """Determine if solutions should be displayed whilst taking timezones
         into account.
-        '''
+        """
         if self.solution_release_datetime < timezone.make_aware(timezone.datetime.now()):
             return  True
         else:
@@ -367,7 +367,6 @@ class Worksheet(BaseModel):
 
 class Problem(BaseModel):
     use_vars = None
-
     worksheet = models.ForeignKey(
         Worksheet,
         null=True,
@@ -377,8 +376,6 @@ class Problem(BaseModel):
         default='Your question here.',
         max_length=500,
     )
-
-    # variable_name[default_value, min, max, is_int]
     variables_with_values = models.CharField(
         blank = True,
         max_length=100,
@@ -411,11 +408,12 @@ class Problem(BaseModel):
 
     @property
     def html_id(self):
+        """Return a unique html id to be used in the templates."""
         return 'problem-pk{}'.format(self.pk)
 
     @property
     def variables_as_lists(self) -> dict:
-        """Return a dict of the form { variable_name: [values]"""
+        """Return dict { variable_name: [default_value, min, max, is_int] }"""
         if self.variables_with_values:
             variables = dict()
             for _ in [ var.strip() for var in self.variables_with_values.split('],') ]:
@@ -430,6 +428,7 @@ class Problem(BaseModel):
 
     @property
     def variables_as_floats(self) -> dict:
+        """Return { variable: value }"""
         if self.use_vars:
             return self.use_vars
         elif self.variables_with_values:
@@ -442,6 +441,7 @@ class Problem(BaseModel):
 
     @property
     def variables_as_strings(self) -> dict:
+        """Return { variable: value }"""
         if self.use_vars:
             return { key: sn_round_str(value)
                 for key, value
@@ -457,6 +457,7 @@ class Problem(BaseModel):
 
     @property
     def is_randomizable(self) -> bool:
+        """Determine if the numbers in a problem can be randomized."""
         is_randomizable = False
         if self.variables_as_lists:
             for name, value in self.variables_as_lists.items():
@@ -472,6 +473,7 @@ class Problem(BaseModel):
         return is_randomizable
 
     def variables_randomized(self) -> dict:
+        """Return { variable_name: randomized_value }"""
         vars = dict()
         if self.variables_as_lists:
             for name, value in self.variables_as_lists.items():
@@ -490,6 +492,7 @@ class Problem(BaseModel):
             return vars
 
     def use_variables(self, use_vars: dict) -> None:
+        """Hook for passing variables into a problem."""
         self.use_vars = use_vars
 
     @property
@@ -531,6 +534,12 @@ class Problem(BaseModel):
                 )
 
     def calculate_answer(self):
+        """Compute the answer to a problem.
+
+        Calculate the answer to a problem using the default values for all
+        variables.
+
+        """
         if self.use_vars:
             answer_template = Template(self.answer)
             answer = evaluate_answer(
@@ -555,29 +564,26 @@ class Problem(BaseModel):
             return False
 
     def save(self, *args, **kwargs):
-        """ Save the calculated_answer
-        https://docs.djangoproject.com/en/2.2/topics/db/models/#overriding-predefined-model-methods"""
+        """Save the calculated_answer"""
         self.calculated_answer = self.calculate_answer()
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
 
 class ResourceBaseClass(models.Model):
+    """Define the catagories for the resources."""
     class Meta:
         abstract=True
 
     IN_CLASS = 'IC'
     LANGUAGE_LEARNING = 'LL'
     FURTHER_STUDY = 'FS'
-
     CATEGORY_CHOICES = [
         (IN_CLASS, 'In Class'),
         (LANGUAGE_LEARNING, 'Language Learning'),
         (FURTHER_STUDY, 'Further Study'),
     ]
-
     url_max_length=200
     url_text_max_length=30
-
     category = models.CharField(
         max_length=2,
         choices=CATEGORY_CHOICES,
