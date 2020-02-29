@@ -3,25 +3,21 @@ The name is a combination of an abbreviation for Kogakuin
 (the school where I used to work) and the 
 acronym [STEAM](https://en.wikipedia.org/wiki/STEAM_fields).
 
-This software was developed to automate the repetative tasks 
-that go along with being a teacher, with the ultimate goal being to reduce
-the number of working hours required per week to a reasonable amount.
-
 The vast majority of the code was written off-the-cuff during meetings
 and so this certainly wasn't intended to be robust piece of
-software by any means. However, more often than not what matters at the
-end of the day (especially in regards to personal projects), is whether 
-or not your code was effective and I can say that having KGI STEAM as a
-cirriculum management system did greatly reduce the amount of time it
-took to prepare, organize and distribute lesson materials.
-
-It's far from perfect, but it's good enough and overall I'm proud of what I've done here.
-At present I don't plan to use the site ever again, but I'm leaving it here in case
-someone else finds it useful.
+software by any means. It's far from perfect, but it was at least good enough 
+to help manage my workload.
 
 
 ## Table of Contents
 * [Features](#Features)
+    * [Making a Worksheet](#Making-a-Worksheet)
+        * [Problem field](#Problem-field)
+        * [Variables with values field](#Variables-with-values-field)
+        * [Answer field](#Answer-field)
+        * [Answer units field](#Answer-units-field)
+        * [Solution field](#Solution-field)
+        * [Calculated answer with units](#Calculated-answer-with-units)
 * [Tech Stack](#Tech-Stack)
 * [Deployment](#Deployment)
 
@@ -29,17 +25,57 @@ someone else finds it useful.
 
 
 ## Features
-The site is designed to allow students to practice solving problems. It requires no login,
-so students don't have to remember another set of login credentials.
+The site is designed to allow students to practice solving problems. It
+requires no login, so students don't have to remember another set of login 
+credentials.
 
 ### For students
 * Try a problem and check it instantly.
 * Randomize the numbers in your problems and try again.
 
+
 ### For teachers
 * Use the syllabus to remind students what's going on in class.
 * Worksheets allow you to render mathematical equations on the web.
 * Resources allow students to quickly navigate to any external links you may need for class.
+
+
+#### Making a Worksheet
+
+##### Problem field
+The first field is the problem field. In addition to standard markdown you
+can add inline LaTeX enclosing your LaTeX in \\\\(  \\\\). You can also add
+variable to your problem by prefixing your variable names with a dollar sign.
+
+* Valid variable names: `$var1`, `$var_car`, `$m_electron`
+
+##### Variables with values field
+allows you to specify the values of your variables. **You shouldn't prefix 
+variable names with '$' in this field.** The variables should be separated 
+by commas and can each take up to four arguments.
+
+* `variable_name[default_value, minimum, maximum, is_int=0]`
+* `is_int` should be either 0 or 1.
+*  If only `default_value` is specified, then the problem will not be 
+   randomizable.
+
+##### Answer field
+A mathematical expression used to calculate the answer to each problem. 
+
+##### Answer units field
+An optional field used to display the units for the answer.
+
+##### Solution Field
+This field works the same way as the problem field with one additional feature.
+By default the variable `$calculated_answer` can be used to retrieve the value
+from the calculated answer field.
+
+##### Calculated answer with units
+The result of evaluating the expression in the **answer field**. If units were
+specified they will be displayed alongside the value.
+
+![Example Problem](__screenshots/problemEx.png)
+![Example Solution](__screenshots/solutionEx.png)
 
 
 
