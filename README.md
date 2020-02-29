@@ -18,8 +18,9 @@ to help manage my workload.
         * [Answer units field](#Answer-units-field)
         * [Solution field](#Solution-field)
         * [Calculated answer with units](#Calculated-answer-with-units)
+* [Installation Notes](#Installation-Notes)
+* [Demo Site](#Demo-Site)
 * [Tech Stack](#Tech-Stack)
-* [Deployment](#Deployment)
 
 
 
@@ -80,6 +81,27 @@ specified they will be displayed alongside the value.
 
 
 
+## Installation Notes
+1. Create a python virtual environment.
+2. From within your virtual env run `pip install -r requirements.txt`
+3. Try running `manage.py runserver`, if that doesn't work follow the
+   instructions printed in the error message and setup a .env_settings file.
+4. Apply the migrations `manage.py migrate`.
+
+
+
+
+## Demo Site
+The GitHub contains a database called `demo.sqlite3`. The database contains
+an example course with a syllabus, worksheet, and several resources.
+
+### Demo Site Admin
+* Username: test.testington
+* password: not-password
+
+
+
+
 ## Tech Stack
 *  [Python Anywhere](https://www.pythonanywhere.com/)
 *  [Django 3.0](https://docs.djangoproject.com/en/3.0/)
@@ -101,13 +123,3 @@ specified they will be displayed alongside the value.
 
 *   [Unsplash](https://unsplash.com/search/photos/open-source)
     for providing the images for the courses.
-
-
-
-
-## Deployment
-1. Create a python virtual environment.
-2. From within your virtual env run `pip install -r requirements.txt`
-3. Try running `manage.py runserver`, if that doesn't work follow the
-   instructions printed in the error message and setup a .env_settings file.
-4. Apply the migrations `manage.py migrate`.

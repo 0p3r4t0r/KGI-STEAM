@@ -161,7 +161,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': os.environ.get('MYSQL_ENGINE', default='django.db.backends.sqlite3'),
-            'NAME': os.environ.get('MYSQL_NAME', default=os.path.join(BASE_DIR, 'db_for_testing.sqlite3')),
+            'NAME': os.environ.get('MYSQL_NAME', default=os.path.join(BASE_DIR, 'demo.sqlite3')),
             }
         }
 
