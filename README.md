@@ -4,9 +4,15 @@ The name is a combination of an abbreviation for Kogakuin
 acronym [STEAM](https://en.wikipedia.org/wiki/STEAM_fields).
 
 The vast majority of the code was written off-the-cuff during meetings
-and so this certainly wasn't intended to be robust piece of
-software by any means. It's far from perfect, but it was at least good enough 
-to help manage my workload.
+and so this wasn't originally intended to be robust piece of
+software by any means.
+
+After recieving heavy use by students and faculty
+at the school where I used to workm I took the time to develop what started
+as a side-project into a full-fledged education application. Eventually
+I left teaching to pursue a career in software development, but having put so
+much work into this project, I decided open-source it in hopes that
+someone else might find it useful.
 
 
 ## Table of Contents
